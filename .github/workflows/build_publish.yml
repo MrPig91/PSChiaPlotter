@@ -1,0 +1,25 @@
+name: build_Publish
+
+# Controls when the action will run. 
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - PSChiaPlotter/**
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  publish-to-gallery:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and publish
+      env:
+        PWSHGALLERY: ${{ secrets.PWSHGALLERY }}
+      shell: pwsh
+      run: |
+        .\build_scripts\build.ps1
