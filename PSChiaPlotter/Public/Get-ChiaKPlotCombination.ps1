@@ -24,6 +24,7 @@ function Get-ChiaKPlotCombination{
                 DriveLetter = $letter
                 FriendlyName = $Drive.FileSystemLabel
             }
+            $AllCombos.psobject.TypeNames.Insert(0,"PSChiaPlotter.KSizeCombination")
             $AllCombos
         }
     }
