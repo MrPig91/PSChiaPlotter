@@ -25,14 +25,14 @@ Add-Content -Path $modulePath -Value "Export-ModuleMember -function $FunctionsTo
 
 $FunctionsToExport =  $FunctionsToExport.split(", ",[System.StringSplitOptions]::RemoveEmptyEntries)
 
-#$formatsFolderPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\Formats"
-#$formatfiles = (Get-ChildItem -Path $formatsFolderPath).Name | foreach {".\Formats\$_"}
+$formatsFolderPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\Formats"
+$formatfiles = (Get-ChildItem -Path $formatsFolderPath).Name | foreach {".\Formats\$_"}
 
 $manifestParameters = @{
      Path = "$homedirectory\$ManifesetName"
      RootModule = $ModuleName
      ModuleVersion = $VersionNumber
-     #FormatsToProcess = $formatfiles
+     FormatsToProcess = $formatfiles
      #ScriptsToProcess = $scriptFiles
      FunctionsToExport = $FunctionsToExport
      Author = "Mrpig91"
