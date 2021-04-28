@@ -34,6 +34,7 @@ function Get-ChiaPlottingStatistic {
                     "TotalTime_sec" = [int]$TotalTime
                     "Time_Started" = (Get-Item -Path $log).CreationTime
                 }
+                Clear-Variable -Name "Phase_1","Phase_2","Phase_3","Phase_4","TotalTime"
             }
         }
     }
