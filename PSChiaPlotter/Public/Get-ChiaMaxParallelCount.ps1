@@ -9,7 +9,8 @@ function Get-ChiaMaxParallelCount {
         [int]$BufferMiB = 3390
     )
     $Processor = Get-CimInstance -ClassName Win32_Processor
-    $MaxParallelCountCPU = $Processor.ThreadCount / $ThreadCount
+    $Threads = ($Processor | measure -Property ThreadCount -Sum).Sum
+    $MaxParallelCountCPU = $Threads / $ThreadCount
     #1mb = 1048576 bytes
     $RAM = (Get-CimInstance -ClassName Win32_PhysicalMemory | measure -Property Capacity -Sum).Sum / 1mb
     $MaxParallelCountRAM = [Math]::Floor([decimal]($RAM / $BufferMiB))
@@ -26,8 +27,9 @@ function Get-ChiaMaxParallelCount {
         ThreadCount = $ThreadCount
         Buffer = $BufferMiB
         MaxParallelPlots = $MaxCount
-        CPUTotalThreads = $Processor.ThreadCount
-        CPUCores = $Processor.NumberOfCores
+        CPUTotalThreads = $Threads
+        CPUCores = ($Processor | Measure -Property NumberOfCores -Sum).Sum
+        NumberOfProcessors = ($Processor | measure).Count
         TotalRAM_MiB = $RAM
         BottleNeck = $BottleNeck
         SSD_TB = $SSD_TB
