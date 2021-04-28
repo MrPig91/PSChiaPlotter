@@ -1,10 +1,3 @@
-#Buying and SSD
-#1. Capacity - derived from current hardware (CPU and RAM) ex. 3 parallel plots = 1TB
-#2. Endurance - derived from total planned plots - ex. 600 TBW for <35 TB Farm
-#3. Form Factor - 2.5 SATA or M.2
-#4. Interface - SATA or NVMe
-#5. Speed - MLC / TLC / QLC (just no)
-
 function Get-ChiaMaxParallelCount {
     [CmdletBinding()]
     param(
