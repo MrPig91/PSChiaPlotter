@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>PSChiaPlotter.ChiaPlottingStatistic</Name>
+      <ViewSelectedBy>
+        <TypeName>PSChiaPlotter.ChiaPlottingStatistic</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+            <TableColumnHeader>
+                <Label>KSize</Label>
+                <Width>5</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>RAM(MiB)</Label>
+                <Width>8</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Threads</Label>
+                <Width>7</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Phase 1</Label>
+                <Width>11</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Phase 2</Label>
+                <Width>11</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Phase 3</Label>
+                <Width>11</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Phase 4</Label>
+                <Width>11</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Total Time</Label>
+                <Width>11</Width>
+            </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>KSize</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>RAM(MiB)</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Threads</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                    ConvertTo-FriendlyTimeSpan -Seconds $_."Phase_1_sec"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                    ConvertTo-FriendlyTimeSpan -Seconds $_."Phase_2_sec"
+                </ScriptBlock>
+              </TableColumnItem> 
+              <TableColumnItem>
+                <ScriptBlock>
+                    ConvertTo-FriendlyTimeSpan -Seconds $_."Phase_3_sec"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                    ConvertTo-FriendlyTimeSpan -Seconds $_."Phase_4_sec"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                    ConvertTo-FriendlyTimeSpan -Seconds $_."TotalTime_sec"
+                </ScriptBlock>
+              </TableColumnItem> 
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
