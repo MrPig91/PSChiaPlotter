@@ -13,8 +13,8 @@
                 <Width>5</Width>
             </TableColumnHeader>
             <TableColumnHeader>
-                <Label>RAM(MiB)</Label>
-                <Width>8</Width>
+                <Label>RAM</Label>
+                <Width>4</Width>
             </TableColumnHeader>
             <TableColumnHeader>
                 <Label>Threads</Label>
@@ -37,7 +37,15 @@
                 <Width>11</Width>
             </TableColumnHeader>
             <TableColumnHeader>
-                <Label>Total Time</Label>
+                <Label>Total Plot Time</Label>
+                <Width>11</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Plot And Copy Time</Label>
+                <Width>18</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Copy Time</Label>
                 <Width>11</Width>
             </TableColumnHeader>
         </TableHeaders>
@@ -77,7 +85,17 @@
                 <ScriptBlock>
                     ConvertTo-FriendlyTimeSpan -Seconds $_."TotalTime_sec"
                 </ScriptBlock>
-              </TableColumnItem> 
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                    ConvertTo-FriendlyTimeSpan -Seconds $_."PlotAndCopyTime_sec"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                    ConvertTo-FriendlyTimeSpan -Seconds $_."CopyTime_sec"
+                </ScriptBlock>
+              </TableColumnItem>  
             </TableColumnItems>
           </TableRowEntry>
         </TableRowEntries>

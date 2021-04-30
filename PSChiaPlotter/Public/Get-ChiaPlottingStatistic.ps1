@@ -8,7 +8,7 @@ function Get-ChiaPlottingStatistic {
     Process{
         foreach ($log in $path){
             if (Test-Path $log){
-                $Content = Get-Content -Path $log | Select-String "Time for phase","Total time","Plot size","Buffer size","threads of stripe" | foreach {$_.ToString()}
+                $Content = Get-Content -Path $log | Select-String "Time for phase","Total time","Plot size","Buffer size","threads of stripe","Copy time" | foreach {$_.ToString()}
                 foreach ($line in $Content){
                     switch -Wildcard ($line){
                         "Plot size*" {$PlotSize = $line.split(' ') | select -Skip 3} #using select for these since indexing will error if empty
@@ -19,6 +19,7 @@ function Get-ChiaPlottingStatistic {
                         "*phase 3*" {$Phase_3 = $line.Split(' ') | select -First 1 -Skip 5}
                         "*phase 4*" {$phase_4 = $line.Split(' ') | select -First 1 -Skip 5}
                         "Total time*" {$TotalTime = $line.Split(' ') | select -First 1 -Skip 3}
+                        "Copy time*" {$CopyTime = $line.Split(' ') | select -First 1 -Skip 3}
                         default {Write-Information "Could not match line: $line"}
                     }
                 }
@@ -32,6 +33,8 @@ function Get-ChiaPlottingStatistic {
                     "Phase_3_sec" = [int]$Phase_3
                     "Phase_4_sec" = [int]$phase_4
                     "TotalTime_sec" = [int]$TotalTime
+                    "CopyTime_sec" = [int]$CopyTime
+                    "PlotAndCopyTime_sec" = ([int]$CopyTime + [int]$TotalTime)
                     "Time_Started" = (Get-Item -Path $log).CreationTime
                 }
                 Clear-Variable -Name "Phase_1","Phase_2","Phase_3","Phase_4","TotalTime"
