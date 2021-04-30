@@ -2,7 +2,7 @@ function Get-ChiaPlottingStatistic {
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [string[]]$Path = (Get-ChildItem -Path $env:USERPROFILE\.chia\mainnet\plotter\).FullName
+        [string[]]$Path = (Get-ChildItem -Path $env:USERPROFILE\.chia\mainnet\plotter\ | sort CreationTime -Descending).FullName
     )
 
     Process{
@@ -37,7 +37,7 @@ function Get-ChiaPlottingStatistic {
                     "PlotAndCopyTime_sec" = ([int]$CopyTime + [int]$TotalTime)
                     "Time_Started" = (Get-Item -Path $log).CreationTime
                 }
-                Clear-Variable -Name "Phase_1","Phase_2","Phase_3","Phase_4","TotalTime","CopyTime_sec","PlotAndCopyTime_sec"
+                Clear-Variable -Name "Phase_1","Phase_2","Phase_3","Phase_4","TotalTime","CopyTime" -ErrorAction SilentlyContinue
             }
         }
     }
