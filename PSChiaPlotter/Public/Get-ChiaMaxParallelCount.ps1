@@ -9,7 +9,7 @@ function Get-ChiaMaxParallelCount {
         [int]$BufferMiB = 3390
     )
 
-    if ($PSBoundParameters.ContainsKey($ThreadCount) -or $PSBoundParameters.ContainsKey($BufferMiB)){
+    if (!$PSBoundParameters.ContainsKey("ThreadCount") -and !$PSBoundParameters.ContainsKey("BufferMiB")){
         Write-Warning "All calculations based on plotting k32 plot size only. SSD TB suggestion rounded up to the nearest TB."
     }
     else{
