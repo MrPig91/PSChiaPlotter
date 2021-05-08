@@ -1,7 +1,7 @@
 # PSChiaPlotter
 A repo for powershell module that helps Chia Plotting. 
 
-I highly recommend running this in powershell to add chia.exe to your ENV:Path variable so you don't have switch to its directory.
+Run this in Powershell one time to add the Chia.exe directory to your $ENV:Path in profile script so that it is available every time you open powershell.
 
 ```Powershell
 $addToProfile = '
