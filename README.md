@@ -35,6 +35,6 @@ for ($i = 1; $i -le $parallel;$i++){
 $date = Get-date -format yyyy-MM-dd-hh-mm-ss
 $logpath = Join-Path $LogDir $date
 Start-Process -FilePath powershell.exe -ArgumentList "chia.exe plots create -n $plotsperQueue -b $Buffer -r $Threads -t $tempDir -d $FinalDir | Tee-Object -FilePath $($LogPath)_$($i).log"
-Start-Sleep -Seconds 3600
+Start-Sleep -Seconds $delay
 }
 ```
