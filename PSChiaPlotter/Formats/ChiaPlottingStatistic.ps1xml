@@ -48,6 +48,14 @@
                 <Label>Copy Time</Label>
                 <Width>11</Width>
             </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Temp</Label>
+                <Width>5</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Final</Label>
+                <Width>5</Width>
+            </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
           <TableRowEntry>
@@ -95,7 +103,13 @@
                 <ScriptBlock>
                     ConvertTo-FriendlyTimeSpan -Seconds $_."CopyTime_sec"
                 </ScriptBlock>
-              </TableColumnItem>  
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Temp_drive</PropertyName>
+              </TableColumnItem> 
+              <TableColumnItem>
+                <PropertyName>Final_drive</PropertyName>
+              </TableColumnItem> 
             </TableColumnItems>
           </TableRowEntry>
         </TableRowEntries>

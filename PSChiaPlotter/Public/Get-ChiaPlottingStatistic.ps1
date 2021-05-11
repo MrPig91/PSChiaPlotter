@@ -8,7 +8,7 @@ function Get-ChiaPlottingStatistic {
     Process{
         foreach ($log in $path){
             if (Test-Path $log){
-                $Content = Get-Content -Path $log | Select-String "Time for phase","Total time","Plot size","Buffer size","threads of stripe","Copy time" | foreach {$_.ToString()}
+                $Content = Get-Content -Path $log | Select-String "Time for phase","Total time","Plot size","Buffer size","threads of stripe","Copy time","Copied final file from","Starting plotting progress into temporary dirs" | foreach {$_.ToString()}
                 foreach ($line in $Content){
                     switch -Wildcard ($line){
                         "Plot size*" {$PlotSize = $line.split(' ') | select -Skip 3} #using select for these since indexing will error if empty
@@ -20,6 +20,8 @@ function Get-ChiaPlottingStatistic {
                         "*phase 4*" {$phase_4 = $line.Split(' ') | select -First 1 -Skip 5}
                         "Total time*" {$TotalTime = $line.Split(' ') | select -First 1 -Skip 3}
                         "Copy time*" {$CopyTime = $line.Split(' ') | select -First 1 -Skip 3}
+                        "Starting plotting progress into temporary dirs*" {$TempDrive = ($line.Split(' ') | select -First 1 -Skip 6).Split('\') | select -First 1 }
+                        "Copied final file from*" {$FinalDrive = ($line.Split(' ') | select -First 1 -Skip 6).Split('\').Replace('"', '') | select -First 1}
                         default {Write-Information "Could not match line: $line"}
                     }
                 }
@@ -35,7 +37,9 @@ function Get-ChiaPlottingStatistic {
                     "TotalTime_sec" = [int]$TotalTime
                     "CopyTime_sec" = [int]$CopyTime
                     "PlotAndCopyTime_sec" = ([int]$CopyTime + [int]$TotalTime)
-                    "Time_Started" = (Get-Item -Path $log).CreationTime
+                    "Time_Started" = (Get-Item -Path $log).CreationTime 
+                    "Temp_drive" = $TempDrive
+                    "Final_drive" = $FinalDrive
                 }
                 Clear-Variable -Name "Phase_1","Phase_2","Phase_3","Phase_4","TotalTime","CopyTime" -ErrorAction SilentlyContinue
             }
