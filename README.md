@@ -1,6 +1,14 @@
 # PSChiaPlotter
+
 A repo for powershell module that helps Chia Plotting. 
 
+## Installation
+Open a powershell as administrator and run the following command:
+```Powershell
+Install-Module -Name PSChiaPlotter
+```
+
+## Setup
 Run this in Powershell one time to add the Chia.exe directory to your $ENV:Path in your profile script so that it is available every time you open powershell.
 
 ```Powershell
