@@ -5,13 +5,12 @@ A repo for powershell module that helps Chia Plotting.
 ## Installation
 Open a powershell as administrator and run the following command:
 ```Powershell
-Install-Module -Name PSChiaPlotter
+Install-Module -Repository PSGallery -Name PSChiaPlotter
 ```
 
-If you want to update to the latest version, run those commands:
+If you want to update to the latest version, run those command:
 ```Powershell
-Uninstall-Module -Name PSChiaPlotter
-Install-Module -Name PSChiaPlotter
+Update-Module PSChiaPlotter
 ```
 
 ## Setup
