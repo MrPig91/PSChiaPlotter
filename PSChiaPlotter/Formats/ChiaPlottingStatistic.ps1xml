@@ -14,7 +14,7 @@
             </TableColumnHeader>
             <TableColumnHeader>
                 <Label>RAM</Label>
-                <Width>4</Width>
+                <Width>5</Width>
             </TableColumnHeader>
             <TableColumnHeader>
                 <Label>Threads</Label>
