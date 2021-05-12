@@ -8,6 +8,12 @@ Open a powershell as administrator and run the following command:
 Install-Module -Name PSChiaPlotter
 ```
 
+If you want to update to the latest version, run those commands:
+```Powershell
+Uninstall-Module -Name PSChiaPlotter
+Install-Module -Name PSChiaPlotter
+```
+
 ## Setup
 Run this in Powershell one time to add the Chia.exe directory to your $ENV:Path in your profile script so that it is available every time you open powershell.
 
