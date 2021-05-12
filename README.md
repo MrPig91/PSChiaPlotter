@@ -8,7 +8,7 @@ Open a powershell as administrator and run the following command:
 Install-Module -Repository PSGallery -Name PSChiaPlotter
 ```
 
-If you want to update to the latest version, run those command:
+If you want to update to the latest version, run this command:
 ```Powershell
 Update-Module PSChiaPlotter
 ```
