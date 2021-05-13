@@ -128,7 +128,7 @@ function Start-ChiaPlotting {
                 [PSCustomObject]@{
                     KSize = $KSize
                     Buffer = $Buffer
-                    Threads = $ThreadCount
+                    Threads = $Threads
                     PID = $PlottingProcess.Id
                     StartTime = $PlottingProcess.StartTime
                     TempDir = $TempDirectoryPath
