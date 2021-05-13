@@ -82,68 +82,63 @@ function Start-ChiaPlotting {
 
     if ($ChiaPath){
         Write-Information "Chia path exists, starting the plotting process"
-        try{
-            if ($NoNewWindow){
-                for ($plotNumber = 1;$plotNumber -le $TotalPlots;$plotNumber++){
-                    try{
-                        $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog-" + $plotNumber + ".log")
-                        $PlottingParam = @{
-                            FilePath = $ChiaPath
-                            ArgumentList = $ChiaArguments
-                            RedirectStandardOutput = $LogPath
-                            NoNewWindow = $NoNewWindow.IsPresent
-                        }
-                        $chiaProcess = Start-Process @PlottingParam -PassThru
-                        $host.ui.RawUI.WindowTitle = "$QueueName - Plot $plotNumber out of $TotalPlots | Chia Process Id - $($chiaProcess.id)"
+        if ($NoNewWindow){
+            for ($plotNumber = 1;$plotNumber -le $TotalPlots;$plotNumber++){
+                try{
+                    $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog-" + $plotNumber + ".log")
+                    $PlottingParam = @{
+                        FilePath = $ChiaPath
+                        ArgumentList = $ChiaArguments
+                        RedirectStandardOutput = $LogPath
+                        NoNewWindow = $NoNewWindow.IsPresent
+                    }
+                    $chiaProcess = Start-Process @PlottingParam -PassThru
+                    $host.ui.RawUI.WindowTitle = "$QueueName - Plot $plotNumber out of $TotalPlots | Chia Process Id - $($chiaProcess.id)"
 
-                        #Have noticed that giving the process a second to start before checking the logs works better
-                        Start-Sleep 1
-                    
-                        while (!$chiaProcess.HasExited){
-                            try{
-                                $progress = Get-ChiaPlotProgress -LogPath $LogPath -ErrorAction Stop
-                                Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "$($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $progress.EST_TimeReamining.TotalSeconds
-                                Start-Sleep 5
-                            }
-                            catch{
-                                Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "WARNING! PROGRESS UPDATES HAS FAILED! $($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $progress.EST_TimeReamining.TotalSeconds
-                                Start-Sleep 30
-                            }
+                    #Have noticed that giving the process a second to start before checking the logs works better
+                    Start-Sleep 1
+                
+                    while (!$chiaProcess.HasExited){
+                        try{
+                            $progress = Get-ChiaPlotProgress -LogPath $LogPath -ErrorAction Stop
+                            Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "$($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $progress.EST_TimeReamining.TotalSeconds
+                            Start-Sleep 5
+                        }
+                        catch{
+                            Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "WARNING! PROGRESS UPDATES HAS FAILED! $($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $progress.EST_TimeReamining.TotalSeconds
+                            Start-Sleep 30
                         }
                     }
-                    catch{
-                        $PSCmdlet.WriteError($_)
-                    }
-                } #for
-            } #if noNewWindow
-            else{
-                $ChiaArguments += " -n $TotalPlots"
-                $PlottingParam = @{
-                    FilePath = $ChiaPath
-                    ArgumentList = $ChiaArguments
-                    RedirectStandardOutput = $LogPath
-                    NoNewWindow = $NoNewWindow.IsPresent
                 }
-                $PlottingProcess = Start-Process @PlottingParam -PassThru
-                [PSCustomObject]@{
-                    KSize = $KSize
-                    Buffer = $Buffer
-                    Threads = $Threads
-                    PID = $PlottingProcess.Id
-                    StartTime = $PlottingProcess.StartTime
-                    TempDir = $TempDirectoryPath
-                    FinalDir = $FinalDirectoryPath
-                    TempDir2 = $SecondTempDirecoryPath
-                    LogPath = $LogPath
-                    TotalPlotCount = $TotalPlots
-                    BitfieldEnabled = !$DisableBitfield.IsPresent
-                    ExcludeFinalDir = $ExcludeFinalDirectory.IsPresent
+                catch{
+                    $PSCmdlet.WriteError($_)
                 }
-                Write-Information "Plotting started, PID = $PID"
-            } # else
-        } # if chia path exists
-        catch{
-            $PSCmdlet.WriteError($_)
-        }
-    } #if
+            } #for
+        } #if noNewWindow
+        else{
+            $ChiaArguments += " -n $TotalPlots"
+            $PlottingParam = @{
+                FilePath = $ChiaPath
+                ArgumentList = $ChiaArguments
+                RedirectStandardOutput = $LogPath
+                NoNewWindow = $NoNewWindow.IsPresent
+            }
+            $PlottingProcess = Start-Process @PlottingParam -PassThru
+            [PSCustomObject]@{
+                KSize = $KSize
+                Buffer = $Buffer
+                Threads = $Threads
+                PID = $PlottingProcess.Id
+                StartTime = $PlottingProcess.StartTime
+                TempDir = $TempDirectoryPath
+                FinalDir = $FinalDirectoryPath
+                TempDir2 = $SecondTempDirecoryPath
+                LogPath = $LogPath
+                TotalPlotCount = $TotalPlots
+                BitfieldEnabled = !$DisableBitfield.IsPresent
+                ExcludeFinalDir = $ExcludeFinalDirectory.IsPresent
+            }
+            Write-Information "Plotting started, PID = $PID"
+        } # else
+    } #if chia path exits
 }
