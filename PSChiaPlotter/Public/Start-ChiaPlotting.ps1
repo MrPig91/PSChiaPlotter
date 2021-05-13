@@ -1,4 +1,4 @@
-function Start-ChiaBasicPlotting {
+function Start-ChiaPlotting {
     [CmdletBinding()]
     param(
         [ValidateRange(32,35)]
