@@ -14,13 +14,13 @@ function Start-ChiaParallelPlotting {
         [int]$Threads = 2,
 
         [Parameter(Mandatory)]
-        [ValidateScript({Test-Path -Path $_})]
+        [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$TempDirectoryPath,
         [Parameter(Mandatory)]
-        [ValidateScript({Test-Path -Path $_})]
+        [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$FinalDirectoryPath,
         [Parameter(Mandatory)]
-        [ValidateScript({Test-Path -Path $_})]
+        [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$LogDirectoryPath = "$ENV:USERPROFILE\.chia\mainnet\plotter",
 
         [switch]$NoExit
