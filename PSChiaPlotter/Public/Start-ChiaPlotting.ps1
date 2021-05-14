@@ -16,23 +16,24 @@ function Start-ChiaPlotting {
         [switch]$ExcludeFinalDirectory,
     
         [Parameter(Mandatory)]
-        [ValidateScript({Test-Path $_})]
+        [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$TempDirectoryPath,
 
         [Parameter()]
-        [ValidateScript({Test-Path $_})]
+        [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$SecondTempDirecoryPath,
 
         [Parameter(Mandatory)]
-        [ValidateScript({Test-Path $_})]
+        [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$FinalDirectoryPath,
 
         #$FarmerPublicKey,
         #$PoolPublicKey,
 
+        [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$LogDirectoryPath = "$ENV:USERPROFILE\.chia\mainnet\plotter",
 
-        [switch]$NoNewWindow,
+        [switch]$NewWindow,
 
         [string]$QueueName
     )
@@ -82,7 +83,7 @@ function Start-ChiaPlotting {
 
     if ($ChiaPath){
         Write-Information "Chia path exists, starting the plotting process"
-        if ($NoNewWindow){
+        if (!$NewWindow){
             for ($plotNumber = 1;$plotNumber -le $TotalPlots;$plotNumber++){
                 try{
                     $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog-" + $plotNumber + ".log")
