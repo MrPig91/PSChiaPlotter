@@ -32,7 +32,7 @@ function Start-ChiaParallelPlotting {
         }
         $processParam = @{
             FilePath = "powershell.exe"
-            ArgumentList = "$NoExitFlag -Command Start-ChiaPlotting -TotalPlots $plotsperQueue -Buffer $Buffer -Threads $Threads -TempDirectoryPath $TempDirectoryPath -FinalDirectoryPath $FinalDirectoryPath -LogDirectoryPath $LogDirectoryPath -QueueName Run_$Queue -NoNewWindow"
+            ArgumentList = "$NoExitFlag -Command Start-ChiaPlotting -TotalPlots $plotsperQueue -Buffer $Buffer -Threads $Threads -TempDirectoryPath $TempDirectoryPath -FinalDirectoryPath $FinalDirectoryPath -LogDirectoryPath $LogDirectoryPath -QueueName Run_$Queue"
         }
         Start-Process @processParam
         if ($Queue -lt $ParallelCount){
