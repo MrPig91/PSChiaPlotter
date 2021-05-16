@@ -15,6 +15,9 @@ function Start-ChiaPlotting {
         [switch]$DisableBitfield,
         [switch]$ExcludeFinalDirectory,
     
+		[Parameter(Mandatory)]        
+        [string]$WindowName,
+	
         [Parameter(Mandatory)]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$TempDirectoryPath,
@@ -94,7 +97,7 @@ function Start-ChiaPlotting {
                         NoNewWindow = $NoNewWindow.IsPresent
                     }
                     $chiaProcess = Start-Process @PlottingParam -PassThru
-                    $host.ui.RawUI.WindowTitle = "$QueueName - Plot $plotNumber out of $TotalPlots | Chia Process Id - $($chiaProcess.id)"
+                    $host.ui.RawUI.WindowTitle = "$WindowName | $QueueName - Plot $plotNumber out of $TotalPlots | Chia Process Id - $($chiaProcess.id)"
 
                     #Have noticed that giving the process a second to start before checking the logs works better
                     Start-Sleep 1
