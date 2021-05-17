@@ -23,8 +23,15 @@ function Start-ChiaParallelPlotting {
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$LogDirectoryPath = "$ENV:USERPROFILE\.chia\mainnet\plotter",
 
-        [switch]$NoExit
+        [switch]$NoExit,
+
+        [ValidateNotNullOrEmpty()]
+        [string]$WindowTitle
     )
+
+    if ($PSBoundParameters.ContainsKey("WindowTitle")){
+        $AddTitle = "-WindowTitle $WindowTitle"
+    }
 
     for ($Queue = 1; $Queue -le $ParallelCount;$Queue++){
         if ($NoExit){
@@ -32,7 +39,7 @@ function Start-ChiaParallelPlotting {
         }
         $processParam = @{
             FilePath = "powershell.exe"
-            ArgumentList = "$NoExitFlag -Command Start-ChiaPlotting -TotalPlots $plotsperQueue -Buffer $Buffer -Threads $Threads -TempDirectoryPath $TempDirectoryPath -FinalDirectoryPath $FinalDirectoryPath -LogDirectoryPath $LogDirectoryPath -QueueName Run_$Queue"
+            ArgumentList = "$NoExitFlag -Command Start-ChiaPlotting -TotalPlots $plotsperQueue -Buffer $Buffer -Threads $Threads -TempDirectoryPath $TempDirectoryPath -FinalDirectoryPath $FinalDirectoryPath -LogDirectoryPath $LogDirectoryPath -QueueName Queue_$Queue $AddTitle"
         }
         Start-Process @processParam
         if ($Queue -lt $ParallelCount){
