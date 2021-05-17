@@ -35,7 +35,9 @@ function Start-ChiaPlotting {
 
         [switch]$NewWindow,
 
-        [string]$QueueName
+        [string]$QueueName = "Default_Queue",
+
+        [string]$WindowTitle
     )
 
     if (-not$PSBoundParameters.ContainsKey("Buffer")){
@@ -46,6 +48,10 @@ function Start-ChiaPlotting {
             35 {$Buffer = 29600}
         }
         Write-Information "Buffer set to: $Buffer"
+    }
+
+    if ($PSBoundParameters.ContainsKey("WindowTitle")){
+        $WindowTitle = $WindowTitle + " |"
     }
 
     $E = if ($DisableBitfield){"-e"}
@@ -94,7 +100,7 @@ function Start-ChiaPlotting {
                         NoNewWindow = $NoNewWindow.IsPresent
                     }
                     $chiaProcess = Start-Process @PlottingParam -PassThru
-                    $host.ui.RawUI.WindowTitle = "$QueueName - Plot $plotNumber out of $TotalPlots | Chia Process Id - $($chiaProcess.id)"
+                    $host.ui.RawUI.WindowTitle = "$WindowTitle $QueueName - Plot $plotNumber out of $TotalPlots | Chia Process Id - $($chiaProcess.id)"
 
                     #Have noticed that giving the process a second to start before checking the logs works better
                     Start-Sleep 1
@@ -102,11 +108,17 @@ function Start-ChiaPlotting {
                     while (!$chiaProcess.HasExited){
                         try{
                             $progress = Get-ChiaPlotProgress -LogPath $LogPath -ErrorAction Stop
-                            Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "$($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $progress.EST_TimeReamining.TotalSeconds
+
+                            #write-progress will fail if secondsremaining is less than 0...
+                            $secondsRemaining = $progress.EST_TimeReamining.TotalSeconds
+                            if ($progress.EST_TimeReamining.TotalSeconds -le 0){
+                                $secondsRemaining = 0
+                            }
+                            Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "$($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $secondsRemaining
                             Start-Sleep 5
                         }
                         catch{
-                            Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "WARNING! PROGRESS UPDATES HAS FAILED! $($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $progress.EST_TimeReamining.TotalSeconds
+                            Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "WARNING! PROGRESS UPDATES HAS FAILED! $($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $secondsRemaining
                             Start-Sleep 30
                         }
                     }
