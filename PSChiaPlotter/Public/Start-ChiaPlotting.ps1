@@ -15,12 +15,11 @@ function Start-ChiaPlotting {
         [switch]$DisableBitfield,
         [switch]$ExcludeFinalDirectory,
     
-		[Parameter(Mandatory)]        
-        [string]$WindowName,
-	
         [Parameter(Mandatory)]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$TempDirectoryPath,
+		
+		[string]$WindowName,
 
         [Parameter()]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
@@ -40,6 +39,10 @@ function Start-ChiaPlotting {
 
         [string]$QueueName
     )
+
+	if ([string]::IsNullorEmpty($WindowName)) {
+			$WindowName = "TEST"
+	}
 
     if (-not$PSBoundParameters.ContainsKey("Buffer")){
         switch ($KSize){
