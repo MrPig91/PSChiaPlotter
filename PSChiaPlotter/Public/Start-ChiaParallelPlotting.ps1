@@ -13,9 +13,8 @@ function Start-ChiaParallelPlotting {
         [ValidateRange(1,128)]
         [int]$Threads = 2,
 
-
-		[Parameter(Mandatory)]
-        [string]$WindowName,		
+        [string]$WindowName,	
+		
         [Parameter(Mandatory)]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$TempDirectoryPath,
@@ -28,6 +27,10 @@ function Start-ChiaParallelPlotting {
 
         [switch]$NoExit
     )
+
+if ([string]::IsNullorEmpty($WindowName)) {
+			$WindowName = "TEST"
+	}
 
     for ($Queue = 1; $Queue -le $ParallelCount;$Queue++){
         if ($NoExit){
