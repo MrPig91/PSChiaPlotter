@@ -11,7 +11,7 @@ function Get-ChiaPlotProgress {
     $phase2_line_end = 834
     $phase3_line_end = 2474
     $phase4_line_end = 2620
-    $copyfile_line_end = 2627
+    $copyfile_line_end = 2624
     $phase1_weight = 33
     $phase2_weight = 20
     $phase3_weight = 42
