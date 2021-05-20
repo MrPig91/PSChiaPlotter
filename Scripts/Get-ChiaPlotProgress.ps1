@@ -25,6 +25,7 @@ function Get-ChiaPlotProgress {
 
     $LogFile = Get-Content -Path $LogPath
     $line_count = $LogFile.Count
+    $plotId = $LogFile | Select-String -SimpleMatch "ID: " | foreach {$_.ToString().Split(" ")[1]}
 
     if ($line_count -ge $phase1_line_end){
         $progress += $phase1_weight
@@ -38,6 +39,7 @@ function Get-ChiaPlotProgress {
             Phase = "Phase 1"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     if ($line_count -ge $phase2_line_end){
@@ -52,6 +54,7 @@ function Get-ChiaPlotProgress {
             Phase = "Phase 2"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     if ($line_count -ge $phase3_line_end){
@@ -66,6 +69,7 @@ function Get-ChiaPlotProgress {
             Phase = "Phase 3"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     if ($line_count -ge $phase4_line_end){
@@ -80,6 +84,7 @@ function Get-ChiaPlotProgress {
             Phase = "Phase 4"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     if ($line_count -lt $copyfile_line_end){
@@ -90,6 +95,7 @@ function Get-ChiaPlotProgress {
             Phase = "Copying"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     $progress += $copyphase_weight
@@ -98,5 +104,6 @@ function Get-ChiaPlotProgress {
         Phase = "Completed"
         ElaspedTime = New-TimeSpan -Start $StartTime -End $LogItem.LastWriteTime
         EST_TimeReamining = 0
+        PlotId = $plotId
     }
 }
