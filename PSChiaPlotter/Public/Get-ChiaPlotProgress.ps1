@@ -6,6 +6,10 @@ function Get-ChiaPlotProgress {
         [string]$LogPath
     )
 
+    if ([System.IO.Directory]::Exists($LogPath)){
+        Write-Error "You provided a directory path and not a file path to the log file" -ErrorAction Stop
+    }
+
     #base code from https://github.com/swar/Swar-Chia-Plot-Manager/blob/7287eef4796dbfa4cc009086c6502d19f0706f3e/config.yaml.default
     $phase1_line_end = 801
     $phase2_line_end = 834
@@ -24,6 +28,7 @@ function Get-ChiaPlotProgress {
     $ElaspedTime = New-TimeSpan -Start $StartTime -End $EndTime
 
     $LogFile = Get-Content -Path $LogPath
+    $plotId = $LogFile | Select-String -SimpleMatch "ID: " | foreach {$_.ToString().Split(" ")[1]}
     $line_count = $LogFile.Count
 
     if ($line_count -ge $phase1_line_end){
@@ -38,6 +43,7 @@ function Get-ChiaPlotProgress {
             Phase = "Phase 1"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     if ($line_count -ge $phase2_line_end){
@@ -51,7 +57,8 @@ function Get-ChiaPlotProgress {
             Progress = [math]::Round($progress,2)
             Phase = "Phase 2"
             ElaspedTime = $ElaspedTime
-            EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining   
+            PlotId = $plotId
         }
     }
     if ($line_count -ge $phase3_line_end){
@@ -66,6 +73,7 @@ function Get-ChiaPlotProgress {
             Phase = "Phase 3"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     if ($line_count -ge $phase4_line_end){
@@ -80,6 +88,7 @@ function Get-ChiaPlotProgress {
             Phase = "Phase 4"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     if ($line_count -lt $copyfile_line_end){
@@ -90,6 +99,7 @@ function Get-ChiaPlotProgress {
             Phase = "Copying"
             ElaspedTime = $ElaspedTime
             EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
+            PlotId = $plotId
         }
     }
     $progress += $copyphase_weight
@@ -98,5 +108,6 @@ function Get-ChiaPlotProgress {
         Phase = "Completed"
         ElaspedTime = New-TimeSpan -Start $StartTime -End $LogItem.LastWriteTime
         EST_TimeReamining = 0
+        PlotId = $plotId
     }
 }
