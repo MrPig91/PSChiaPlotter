@@ -25,7 +25,12 @@ for ($plotNumber = 1;$plotNumber -le $plotTotal;$plotNumber++){
 
     while (!$chiaProcess.HasExited){
         $progress = Get-ChiaPlotProgress -LogPath $logPath
+        #$plotid = $progress.plotid
+        $plotid = Get-Content -Path $logPath | Select-String -SimpleMatch "ID: " | foreach {$_.ToString().Split(" ")[1]}
         Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $plotTotal" -Status "$($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $progress.EST_TimeReamining.TotalSeconds
         sleep 10
+    }
+    if ($chiaProcess.ExitCode -ne 0){
+        Get-ChildItem -Path $tempDir -Filter "*$plotid*.tmp" | Remove-Item -Force
     }
 }
