@@ -97,7 +97,7 @@ function Start-ChiaPlotting {
                         FilePath = $ChiaPath
                         ArgumentList = $ChiaArguments
                         RedirectStandardOutput = $LogPath
-                        NoNewWindow = $NoNewWindow.IsPresent
+                        NoNewWindow = $true
                     }
                     $chiaProcess = Start-Process @PlottingParam -PassThru
                     $host.ui.RawUI.WindowTitle = "$WindowTitle $QueueName - Plot $plotNumber out of $TotalPlots | Chia Process Id - $($chiaProcess.id)"
@@ -108,7 +108,7 @@ function Start-ChiaPlotting {
                     while (!$chiaProcess.HasExited){
                         try{
                             $progress = Get-ChiaPlotProgress -LogPath $LogPath -ErrorAction Stop
-
+                            $plotid = $progress.PlotId
                             #write-progress will fail if secondsremaining is less than 0...
                             $secondsRemaining = $progress.EST_TimeReamining.TotalSeconds
                             if ($progress.EST_TimeReamining.TotalSeconds -le 0){
@@ -121,6 +121,9 @@ function Start-ChiaPlotting {
                             Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "WARNING! PROGRESS UPDATES HAS FAILED! $($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $secondsRemaining
                             Start-Sleep 30
                         }
+                    } #while
+                    if ($chiaProcess.ExitCode -ne 0){
+                        Get-ChildItem -Path $TempDirectoryPath -Filter "*$plotid*.tmp" | Remove-Item -Force
                     }
                 }
                 catch{
@@ -134,7 +137,6 @@ function Start-ChiaPlotting {
                 FilePath = $ChiaPath
                 ArgumentList = $ChiaArguments
                 RedirectStandardOutput = $LogPath
-                NoNewWindow = $NoNewWindow.IsPresent
             }
             $PlottingProcess = Start-Process @PlottingParam -PassThru
             [PSCustomObject]@{
