@@ -134,9 +134,9 @@
                         <TextBox x:Name="Threads_TextBox" Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Path=NewChiaJob.InitialChiaParameters.Threads}"/>
                         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-                            <CheckBox Content="Disable Bitfield" IsChecked="False"
+                            <CheckBox Content="Disable Bitfield" IsChecked="{Binding Path=DisableBitfield}" IsThreeState="False"
                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
-                            <CheckBox Content="Exclude Final Directory" IsChecked="False" Margin="5,0,0,0"
+                            <CheckBox Content="Exclude Final Directory" IsChecked="{Binding Path=ExcludeFinalDirectory}" Margin="5,0,0,0" IsThreeState="False"
                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
                         </StackPanel>
                         
