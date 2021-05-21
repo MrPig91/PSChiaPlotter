@@ -30,6 +30,24 @@
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
         </Style>
+        <Style x:Key="TempBusType" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value="NVMe">
+                    <Setter Property="Foreground" Value="Green"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TempMediaType" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value="SSD">
+                    <Setter Property="Foreground" Value="Green" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -159,10 +177,29 @@
                                   ItemsSource="{Binding Path=TempAvailableVolumes}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="DriveLetter: " FontWeight="Normal"/>
-                                        <TextBlock Text="{Binding Path=DriveLetter}" FontWeight="Bold" VerticalAlignment="Center"/>
-                                    </StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                            <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                            <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                            <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource TempMediaType}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                                            <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                            <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource TempBusType}" />
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
