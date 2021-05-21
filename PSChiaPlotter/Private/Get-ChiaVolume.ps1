@@ -13,7 +13,7 @@ function Get-ChiaVolume {
         try{
             $partition = $AllPartitions | where DriveLetter -eq $volume.DriveLetter
             $disk = $AllDisks | where DiskNumber -eq $partition.DiskNumber
-            $physicalDisk = $AllphysicalDisk | where UniqueId -eq $disk.UniqueId
+            $physicalDisk = $AllphysicalDisk | where DeviceId -eq $disk.DiskNumber
 
             $Label = $volume.FileSystemLabel
             if ([string]::IsNullOrEmpty($volume.FileSystemLabell)){
