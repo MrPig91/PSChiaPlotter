@@ -22,6 +22,8 @@ namespace PSChiaPlotter
         public ChiaVolume TempVolume { get; set; }
         public ChiaVolume FinalVolume { get; set; }
         public string LogDirectory { get; set; }
+        public bool DisableBitField { get; set; }
+        public bool ExcludeFinalDirectory { get; set; }
 
         public ChiaParameters()
         {
@@ -36,6 +38,8 @@ namespace PSChiaPlotter
             RAM = ram;
             Threads = threads;
             LogDirectory = logdir;
+            DisableBitField = true;
+            ExcludeFinalDirectory = true;
         }
         public ChiaParameters(ChiaParameters chiaParameters)
         {
@@ -43,6 +47,8 @@ namespace PSChiaPlotter
             RAM = chiaParameters.RAM;
             Threads = chiaParameters.Threads;
             LogDirectory = chiaParameters.LogDirectory;
+            DisableBitField = chiaParameters.DisableBitField;
+            ExcludeFinalDirectory = chiaParameters.ExcludeFinalDirectory;
         }
     }
 
@@ -463,13 +469,11 @@ namespace PSChiaPlotter
             }
         }
     
-        public ChiaRun(int jobnumber,int quequenumber,int runnumber, Process chiaprocess, ChiaParameters chiaparameters)
+        public ChiaRun(int jobnumber,int quequenumber,int runnumber, ChiaParameters chiaparameters)
         {
             JobNumber = jobnumber;
             QueueNumber = quequenumber;
             RunNumber = runnumber;
-            ChiaProcess = chiaprocess;
-            ProcessID = chiaprocess.Id;
             Progress = .41;
             PlottingParameters = chiaparameters;
         }
