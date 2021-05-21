@@ -739,6 +739,7 @@ namespace PSChiaPlotter
 
         public ObservableCollection<ChiaQueue> AllQueues { get; set; }
         public ObservableCollection<ChiaJob> AllJobs { get; set; }
+        public ObservableCollection<ChiaVolume> AllVolumes { get; set; }
 
 
         public MainViewModel()
@@ -749,6 +750,7 @@ namespace PSChiaPlotter
             FailedRuns = new ObservableCollection<ChiaRun>();
             AllQueues = new ObservableCollection<ChiaQueue>();
             AllJobs = new ObservableCollection<ChiaJob>();
+            AllVolumes = new ObservableCollection<ChiaVolume>();
 
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllJobs, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllQueues, new System.Object());
@@ -756,6 +758,7 @@ namespace PSChiaPlotter
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(CurrentRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(CompletedRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(FailedRuns, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllVolumes, new System.Object());
         }
 
         public ObservableCollection<ChiaRun> CurrentChiaRuns { get; set; }
