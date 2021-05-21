@@ -640,6 +640,8 @@ namespace PSChiaPlotter
         public long FreeSpace { get; set; }
         public string DiskName { get; set; }
         public bool SystemVolume { get; set; }
+        public string BusType { get; set; }
+        public string MediaType { get; set; }
 
         public string DirectoryPath
         {
