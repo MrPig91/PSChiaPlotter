@@ -33,41 +33,44 @@ function New-ChiaQueueRunspace {
                 $TempVolume = Get-BestChiaTempDrive $Job.TempVolumes
                 $FinalVolume = Get-BestChiaTempDrive $Job.FinalVolumes
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
-                Show-Messagebox -Text "$($TempVolume.DirectoryPath) - $($TempVolume.DriveLetter)"
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume
+                $newRun = [PSChiaPlotter.ChiaRun]::new($job.JobNumber,$Queue.QueueNumber,$runNumber,$plottingParameters)
                 if ($DataHash.Debug){
                     $ChiaProcess = start-process -filepath notepad.exe -PassThru
+                    $newRun.ChiaProcess = $ChiaProcess
+                    $newRun.ProcessId = $ChiaProcess.Id
+                    $Job.RunsInProgress.Add($newRun)
+                    $TempVolume.CurrentChiaRuns.Add($newRun)
+                    #$FinalVolume.CurrentChiaRuns.Add($newRun)
+                    $Queue.CurrentRun = $newRun
+                    $DataHash.MainViewModel.CurrentRuns.Add($newRun)
+                    while (-not$ChiaProcess.HasExited){
+                        $Queue.CurrentTime = [DateTime]::Now
+                        $newRun.CurrentTime = [DateTime]::Now
+                        $newRun.Progress += 5
+                        sleep (10 + $Queue.QueueNumber)
+                    }
+                    $Job.RunsInProgress.Remove($newRun)
+                    $Job.CompletedPlotCount++
+                    $newRun.ExitCode = $ChiaProcess.ExitCode
+                    $newRun.ExitTime = $ChiaProcess.ExitTime
+                    if ($ChiaProcess.ExitCode -eq 0){
+                        $newRun.Status = "Completed"
+                    }
+                    else{
+                        $newRun.Status = "Failed"
+                    }
+                    $Queue.CompletedPlotCount++
+                    $DataHash.MainViewModel.CurrentRuns.Remove($newRun)
+                    $DataHash.MainViewModel.CompletedRuns.Add($newRun)
+                    #sleep to give some time for updating
+                    sleep 2
                 }
                 else{
-                    #Start-ChiaPlottingProcess
+                    #Show-Object $newRun
+                    Start-GUIChiaPlotting -ChiaRun $newRun -ChiaQueue $Queue -ChiaJob $Job
                 }
-                $newRun = [PSChiaPlotter.ChiaRun]::new($job.JobNumber,$Queue.QueueNumber,$runNumber,$ChiaProcess,$plottingParameters)
-                $Job.RunsInProgress.Add($newRun)
-                $TempVolume.CurrentChiaRuns.Add($newRun)
-                #$FinalVolume.CurrentChiaRuns.Add($newRun)
-                $newRun.LogPath = $job.InitialChiaParameters.LogDirectory + "\LogName.log"
-                $Queue.CurrentRun = $newRun
-                $DataHash.MainViewModel.CurrentRuns.Add($newRun)
-                while (-not$ChiaProcess.HasExited){
-                    $Queue.CurrentTime = [DateTime]::Now
-                    $newRun.CurrentTime = [DateTime]::Now
-                    $newRun.Progress += 5
-                    sleep (10 + $Queue.QueueNumber)
-                }
-                $Job.RunsInProgress.Remove($newRun)
-                $Job.CompletedPlotCount++
-                $newRun.ExitCode = $ChiaProcess.ExitCode
-                $newRun.ExitTime = $ChiaProcess.ExitTime
-                if ($ChiaProcess.ExitCode -eq 0){
-                    $newRun.Status = "Completed"
-                }
-                else{
-                    $newRun.Status = "Failed"
-                }
-                $Queue.CompletedPlotCount++
-                $DataHash.MainViewModel.CurrentRuns.Remove($newRun)
-                $DataHash.MainViewModel.CompletedRuns.Add($newRun)
                 #sleep to give some time for updating
                 sleep 2
             }
