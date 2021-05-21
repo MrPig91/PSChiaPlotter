@@ -361,9 +361,11 @@ namespace PSChiaPlotter
         public int QueueNumber { get; set; }
         public int RunNumber { get; set; }
         public string Phase { get; set; }
+    
         public string LogDirectory { get; set; }
         public string LogPath { get; set; }
         public int ProcessID { get; set; }
+        public ChiaParameters PlottingParameters { get; set; }
         public string Status
         {
             get { return _status; }
@@ -411,8 +413,6 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-
-        public ChiaParameters PlottingParameters { get; set; }
     
         public int ExitCode { get; set; }
         public DateTime ExitTime { get; set; }
@@ -429,7 +429,14 @@ namespace PSChiaPlotter
     
         private void OpenLogFile()
         {
-            Process.Start("notepad.exe", LogPath);
+            try
+            {
+                Process.Start(LogPath);
+            }
+            catch
+            {
+                MessageBox.Show(string.Join("Unable to log file :( - Check here -> ",LogPath));
+            }
         }
     
         private void KillProcess()
