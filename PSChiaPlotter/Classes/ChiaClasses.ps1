@@ -682,20 +682,64 @@ namespace PSChiaPlotter
 
     }
 
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
+        private TimeSpan _fastestrun;
+        private TimeSpan _slowestrun;
+        private double _tbplottedperday;
+        private double _plotsplottedperday;
+
+        public TimeSpan FastestRun
+        {
+            get { return _fastestrun; }
+            set
+            {
+                _fastestrun = value;
+                OnPropertyChanged();
+            }
+        }
+        public TimeSpan SlowestRun
+        {
+            get { return _slowestrun; }
+            set
+            {
+                _slowestrun = value;
+                OnPropertyChanged();
+            }
+        }
+        public double TBPlottedPerDay
+        {
+            get { return _tbplottedperday; }
+            set
+            {
+                _tbplottedperday = value;
+                OnPropertyChanged();
+            }
+        }
+        public double PlotPlottedPerDay
+        {
+            get { return _plotsplottedperday; }
+            set
+            {
+                _plotsplottedperday = value;
+                OnPropertyChanged();
+            }
+        }
         public ObservableCollection<ChiaRun> AllRuns { get; set; }
         public ObservableCollection<ChiaRun> CurrentRuns { get; set; }
         public ObservableCollection<ChiaRun> CompletedRuns { get; set; }
+        public ObservableCollection<ChiaRun> FailedRuns { get; set; }
 
         public ObservableCollection<ChiaQueue> AllQueues { get; set; }
         public ObservableCollection<ChiaJob> AllJobs { get; set; }
+
 
         public MainViewModel()
         {
             AllRuns = new ObservableCollection<ChiaRun>();
             CurrentRuns = new ObservableCollection<ChiaRun>();
             CompletedRuns = new ObservableCollection<ChiaRun>();
+            FailedRuns = new ObservableCollection<ChiaRun>();
             AllQueues = new ObservableCollection<ChiaQueue>();
             AllJobs = new ObservableCollection<ChiaJob>();
 
@@ -704,6 +748,21 @@ namespace PSChiaPlotter
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(CurrentRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(CompletedRuns, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(FailedRuns, new System.Object());
+        }
+
+        public ObservableCollection<ChiaRun> CurrentChiaRuns { get; set; }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string caller = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(caller));
+            }
         }
 
     }
