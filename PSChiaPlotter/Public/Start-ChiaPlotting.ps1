@@ -78,7 +78,7 @@ function Start-ChiaPlotting {
     else{
         $Message = "The log path provided was not found: $LogDirectoryPath"
         $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
-                [System.IO.FileNotFoundException]::new($Message,$SErvicePath),
+                [System.IO.FileNotFoundException]::new($Message,$LogPath),
                 'LogPathInvalid',
                 [System.Management.Automation.ErrorCategory]::ObjectNotFound,
                 "$LogDirectoryPath"
