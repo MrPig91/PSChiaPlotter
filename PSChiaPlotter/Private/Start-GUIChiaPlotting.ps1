@@ -55,6 +55,7 @@ function Start-GUIChiaPlotting {
             $PSCmdlet.ThrowTerminatingError($ErrorRecord)
         $PSCmdlet.ThrowTerminatingError("Invalid Log Path Directory: $LogDirectoryPath")
     }
+    $ChiaRun.LogPath = $LogPath
 
     if ($ChiaPath){
         Write-Information "Chia path exists, starting the plotting process"
@@ -64,9 +65,11 @@ function Start-GUIChiaPlotting {
                 FilePath = $ChiaPath
                 ArgumentList = $ChiaArguments
                 RedirectStandardOutput = $LogPath
-                NoNewWindow = $true
             }
-            $chiaProcess = Start-Process @PlottingParam -PassThru 3> $Null
+            $chiaProcess = Start-Process @PlottingParam -PassThru -WindowStyle Hidden
+
+            #this is 100% require for th exit code to be seen by powershell when redirectingstandardoutput
+            $handle = $chiaProcess.Handle
 
             $ChiaRun.ChiaProcess = $ChiaProcess
             $ChiaRun.ProcessId = $ChiaProcess.Id
@@ -105,7 +108,10 @@ function Start-GUIChiaPlotting {
             $ChiaJob.RunsInProgress.Remove($ChiaRun)
             $ChiaJob.CompletedPlotCount++
             $ChiaRun.ExitCode = $ChiaRun.ChiaPRocess.ExitCode
-            #$ChiaRun.ExitTime = $ChiaProcess.ExitTime
+            #if this is null then an error will occur if we try to set this property
+            if ($Chia.ExitTime){
+                $ChiaRun.ExitTime = $ChiaProcess.ExitTime
+            }
 
             if ($ChiaRun.ChiaPRocess.ExitCode -ne 0){
                 $ChiaRun.Status = "Failed"
