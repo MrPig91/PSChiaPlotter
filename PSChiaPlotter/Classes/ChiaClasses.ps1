@@ -226,7 +226,6 @@ namespace PSChiaPlotter
             get { return _status; }
             set
             {
-                PreviousStatus = Status;
                 _status = value;
                 if (_status == "Finished")
                 {
@@ -283,7 +282,6 @@ namespace PSChiaPlotter
             ButtonContent = "Pause";
             ButtonEnabled = false;
             PlottingParameters = parameters;
-            PreviousStatus = "Waiting";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -316,8 +314,6 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-
-        private string PreviousStatus { get; set; }
 
         private void PauseResumeQueue()
         {
