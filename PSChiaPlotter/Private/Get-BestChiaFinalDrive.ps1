@@ -3,10 +3,15 @@ function Get-BestChiaFinalDrive {
     param(
         $ChiaVolumes
     )
+    $requiredFinalSize = 101.4 * 1gb
 
     foreach ($finalpvol in $ChiaVolumes){
         $newVolumeInfo = Get-Volume -DriveLetter $finalvol.DriveLetter
         $finalvol.FreeSpace = $newVolumeInfo.SizeRemaining
     }
-    $ChiaVolumes | sort -Property FreeSpace -Descending | Select -First 1
+    $BestVolume = $ChiaVolumes | sort -Property FreeSpace -Descending | Select -First 1
+    $MasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $BestVolume.DriveLetter
+    if (($finalvol.SizeRemaining - ($MasterVolume.PendingPlots * 101.4)) -gt $requiredFinalSize){
+            $BestVolume
+    }
 }
