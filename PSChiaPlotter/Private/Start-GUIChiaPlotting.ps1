@@ -1,9 +1,7 @@
 function Start-GUIChiaPlotting {
     [CmdletBinding()]
     param(
-<#         [Parameter()]
-        [ValidateScript({[System.IO.Directory]::Exists($_)})]
-        [string]$SecondTempDirecoryPath, #>
+        #[string]$SecondTempDirecoryPath,
         #$FarmerPublicKey,
         #$PoolPublicKey,
 
@@ -76,7 +74,11 @@ function Start-GUIChiaPlotting {
             $ChiaJob.RunsInProgress.Add($ChiaRun)
 
             $ChiaRun.PlottingParameters.TempVolume.CurrentChiaRuns.Add($ChiaRun)
-            #$FinalVolume.CurrentChiaRuns.Add($ChiaRun)
+            $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.TempVolume.DriveLetter
+            $TempMasterVolume.CurrentChiaRuns.Add($ChiaRun)
+            $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.FinalVolume.DriveLetter
+            $FinalMasterVolume.PendingPlots++
+
             $ChiaQueue.CurrentRun = $ChiaRun
             $DataHash.MainViewModel.CurrentRuns.Add($ChiaRun)
 
@@ -98,6 +100,7 @@ function Start-GUIChiaPlotting {
                         $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
                     }
                     $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
+                    $ChiaRun.TempSize = Get-ChiaTempSize -DirectoryPath $ChiaRun.$TempDirectoryPath -PlotId $plotid
                     Start-Sleep (5 + $ChiaQueue.QueueNumber)
                 }
                 catch{
@@ -107,6 +110,8 @@ function Start-GUIChiaPlotting {
 
             $ChiaJob.RunsInProgress.Remove($ChiaRun)
             $ChiaJob.CompletedPlotCount++
+            $FinalMasterVolume.PendingPlots--
+            $TempMasterVolume.CurrentChiaRuns.Remove($ChiaRun)
             $ChiaRun.ExitCode = $ChiaRun.ChiaPRocess.ExitCode
             #if this is null then an error will occur if we try to set this property
             if ($Chia.ExitTime){
@@ -115,17 +120,27 @@ function Start-GUIChiaPlotting {
 
             if ($ChiaRun.ChiaPRocess.ExitCode -ne 0){
                 $ChiaRun.Status = "Failed"
+                $DataHash.MainViewModel.FailedRuns.Add($ChiaRun)
                 Get-ChildItem -Path $TempDirectoryPath -Filter "*$plotid*.tmp" | Remove-Item -Force
             }
             else{
                 $ChiaRun.Status = "Completed"
+                $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
             }
             $ChiaQueue.CompletedPlotCount++
             $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)
             $ChiaRun.PlottingParameters.TempVolume.CurrentChiaRuns.Remove($ChiaRun)
-            $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
         }
         catch{
+            if (-not$DataHash.MainViewModel.FailedRuns.Contains($ChiaRun)){
+                $DataHash.MainViewModel.FailedRuns.Add($ChiaRun)
+            }
+            if ($DataHash.MainViewModel.CurrentRuns.Contains($ChiaRun)){
+                $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)
+            }
+            if ($ChiaJob.RunsInProgress.Contains($ChiaRun)){
+                $ChiaJob.RunsInProgress.Remove($ChiaRun)
+            }
             $PSCmdlet.WriteError($_)
         }
     } #if chia path exits
