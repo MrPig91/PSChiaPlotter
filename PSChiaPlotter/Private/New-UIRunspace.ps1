@@ -92,22 +92,6 @@ function New-UIRunspace{
                 }
             })
 
-            <# $DataHash.AllJobs = New-Object System.Collections.ObjectModel.ObservableCollection[System.Object]
-            [System.Windows.Data.BindingOperations]::EnableCollectionSynchronization($DataHash.AllJobs, [System.Object]::new())
-            $UIHash.Jobs_DataGrid.ItemsSource = $DataHash.AllJobs
-
-            $DataHash.AllQueues = New-Object System.Collections.ObjectModel.ObservableCollection[System.Object]
-            [System.Windows.Data.BindingOperations]::EnableCollectionSynchronization($DataHash.AllQueues, [System.Object]::new())
-            $UIHash.Queues_DataGrid.ItemsSource = $DataHash.AllQueues
-
-            $DataHash.AllRuns = New-Object System.Collections.ObjectModel.ObservableCollection[System.Object]
-            [System.Windows.Data.BindingOperations]::EnableCollectionSynchronization($DataHash.AllRuns, [System.Object]::new())
-            $UIHash.Runs_DataGrid.ItemsSource = $DataHash.AllRuns
-
-            $DataHash.CompletedRuns = New-Object System.Collections.ObjectModel.ObservableCollection[System.Object]
-            [System.Windows.Data.BindingOperations]::EnableCollectionSynchronization($DataHash.CompletedRuns, [System.Object]::new())
-            $UIHash.CompletedRuns_DataGrid.ItemsSource = $DataHash.CompletedRuns
- #>
             #$ScriptsHash.QueueHandle = $ScriptsHash.QueueRunspace.BeginInvoke()
 
             $UIHash.MainWindow.add_Closing({
