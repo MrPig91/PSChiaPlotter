@@ -34,16 +34,16 @@ function New-ChiaQueueRunspace {
                 Do {
                     $TempVolume = Get-BestChiaTempDrive $Job.TempVolumes
                     $FinalVolume = Get-BestChiaTempDrive $Job.FinalVolumes
-                    if ($tempvol -eq $Null){
+                    if ($tempVolume -eq $Null){
                         $Queue.Status = "Waiting on Temp Space"
                         Start-Sleep -Seconds 60
                     }
-                    elseif ($tempvol -eq $Null){
+                    elseif ($FinalVolume -eq $Null){
                         $Queue.Status = "Waiting on Final Dir Space"
                         Start-Sleep -Seconds 60
                     }
                 }
-                while ($TempVolume -eq $null -or $finalpvol -eq $null)
+                while ($TempVolume -eq $null -or $FinalVolume -eq $null)
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume
