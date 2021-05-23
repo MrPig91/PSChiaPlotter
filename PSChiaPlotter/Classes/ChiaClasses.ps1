@@ -761,8 +761,6 @@ namespace PSChiaPlotter
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllVolumes, new System.Object());
         }
 
-        public ObservableCollection<ChiaRun> CurrentChiaRuns { get; set; }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
