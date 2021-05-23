@@ -11,7 +11,7 @@ function Get-BestChiaFinalDrive {
     }
     $BestVolume = $ChiaVolumes | sort -Property FreeSpace -Descending | Select -First 1
     $MasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $BestVolume.DriveLetter
-    if (($finalvol.SizeRemaining - ($MasterVolume.PendingPlots * 101.4)) -gt $requiredFinalSize){
+    if (($finalvol.SizeRemaining - ($MasterVolume.PendingPlots * 101.425)) -gt $requiredFinalSize){
             $BestVolume
     }
 }
