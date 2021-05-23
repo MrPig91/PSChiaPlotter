@@ -356,11 +356,31 @@ namespace PSChiaPlotter
         private TimeSpan _runtime;
         private DateTime _currenttime;
         private string _status;
+        private int _tempsize;
+        private string _phasse;
     
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
         public int RunNumber { get; set; }
-        public string Phase { get; set; }
+        public string Phase
+        {
+            get { return _phasse; }
+            set
+            {
+                _phasse = value;
+                OnPropertyChanged();
+            }
+        }
+    
+        public int TempSize
+        {
+            get { return _tempsize; }
+            set
+            {
+                _tempsize = value;
+                OnPropertyChanged();
+            }
+        }
     
         public string LogDirectory { get; set; }
         public string LogPath { get; set; }
