@@ -80,8 +80,7 @@
             <RowDefinition Height="5" />
             <RowDefinition Height="auto" MaxHeight="200"/>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="*" MinHeight="125"/>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="1.25*" MinHeight="125"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
@@ -176,101 +175,127 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="5" />
                 </Grid.RowDefinitions>
-
-                <Grid Grid.Row="1" Grid.Column="1">
-
-                </Grid>
-                <DataGrid x:Name="Runs_DataGrid"
+                <TabControl TabStripPlacement="Top" Grid.Row="1" Grid.Column="1">
+                    <TabItem Header="Current Runs">
+                        <DataGrid x:Name="Runs_DataGrid"
                           Grid.Row="1" Grid.Column="1"
                           ItemsSource="{Binding Path=CurrentRuns}"
                           AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
-                        <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
-                        <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
-                        <DataGridTextColumn Header="Phase" Binding="{Binding Path=Phase}" />
-                        <DataGridTemplateColumn Width="150" Header="Progress" SortMemberPath="Progress" CanUserSort="True">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <ProgressBar
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
+                                <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
+                                <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
+                                <DataGridTextColumn Header="Phase" Binding="{Binding Path=Phase}" />
+                                <DataGridTemplateColumn Width="150" Header="Progress" SortMemberPath="Progress" CanUserSort="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <ProgressBar
                                         x:Name="ProgressBar"
                                         Value="{Binding Progress}"/>
-                                        <TextBlock
+                                                <TextBlock
                                         Text="{Binding ElementName=ProgressBar, Path=Value, StringFormat={}{0:0}%}"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="EstTimeRemaining" Binding="{Binding Path=EstTimeRemaining}" />
-                        <DataGridTextColumn Header="TempSize" Binding="{Binding Path=TempSize}" />
-                        <DataGridTextColumn Header="TempDir" Binding="{Binding Path=PlottingParameters.TempVolume.DirectoryPath}" />
-                        <DataGridTextColumn Header="FinalDir" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
-                        <DataGridTemplateColumn Header="LogPath">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock>
-                                    <Hyperlink NavigateUri="{Binding Path=LogPath}">
-                                        <TextBlock Text="{Binding Path=LogPath}"/>
-                                    </Hyperlink>
-                                </TextBlock>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
-                        <DataGridTemplateColumn Header="Abort">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Kill Process" Command="{Binding Path=KillProcessCommand}" BorderThickness="0"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-        </GroupBox>
-
-        <GroupBox Header="Completed Plots" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="5" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="5" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="5" />
-                </Grid.RowDefinitions>
-
-                <Grid Grid.Row="1" Grid.Column="1">
-
-                </Grid>
-                <DataGrid x:Name="CompletedRuns_DataGrid"
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="EstTimeRemaining" Binding="{Binding Path=EstTimeRemaining}" />
+                                <DataGridTextColumn Header="TempSize" Binding="{Binding Path=TempSize}" />
+                                <DataGridTextColumn Header="TempDir" Binding="{Binding Path=PlottingParameters.TempVolume.DirectoryPath}" />
+                                <DataGridTextColumn Header="FinalDir" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
+                                <DataGridTemplateColumn Header="LogPath">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Open Log" Command="{Binding Path=OpenLogProcessCommand}" BorderThickness="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
+                                <DataGridTemplateColumn Header="Abort">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Kill Process" Command="{Binding Path=KillProcessCommand}" BorderThickness="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="All Runs">
+                        <DataGrid x:Name="AllRuns_DataGrid"
+                          Grid.Row="1" Grid.Column="1"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          ItemsSource="{Binding Path=AllRuns}"
+                          RowStyle="{StaticResource HighlightRow}"
+                          >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
+                                <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
+                                <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
+                                <DataGridTextColumn Header="Start Time" Binding="{Binding Path=ChiaProcess.StartTime}" />
+                                <DataGridTextColumn Header="End Time" Binding="{Binding Path=ChiaProcess.ExitTime}" />
+                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
+                                <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
+                                <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ChiaProcess.ExitCode}" />
+                                <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="Completed Runs">
+                        <DataGrid x:Name="CompletetedRuns_DataGrid"
                           Grid.Row="1" Grid.Column="1"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           ItemsSource="{Binding Path=CompletedRuns}"
                           RowStyle="{StaticResource HighlightRow}"
                           >
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
-                        <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
-                        <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
-                        <DataGridTextColumn Header="Start Time" Binding="{Binding Path=ChiaProcess.StartTime}" />
-                        <DataGridTextColumn Header="End Time" Binding="{Binding Path=ChiaProcess.ExitTime}" />
-                        <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
-                        <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
-                        <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ChiaProcess.ExitCode}" />
-                        <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
+                                <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
+                                <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
+                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
+                                <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
+                                <DataGridTextColumn Header="Final Directory" Binding="{Binding Path=FinalVolume.DirectoryPath}" />
+                                <DataGridTemplateColumn Header="Log Info">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Open Stats" Command="{Binding Path=OpenStatsCommand}" BorderThickness="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="Failed Runs">
+                        <DataGrid x:Name="FailedRuns_DataGrid"
+                          Grid.Row="1" Grid.Column="1"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          ItemsSource="{Binding Path=FailedRuns}"
+                          RowStyle="{StaticResource HighlightRow}"
+                          >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
+                                <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
+                                <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
+                                <DataGridTextColumn Header="Start Time" Binding="{Binding Path=ChiaProcess.StartTime}" />
+                                <DataGridTextColumn Header="End Time" Binding="{Binding Path=ChiaProcess.ExitTime}" />
+                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
+                                <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
+                                <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ChiaProcess.ExitCode}" />
+                                <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="Summary" Grid.Row="5" Grid.Column="1">
+        <GroupBox Header="Summary" Grid.Row="4" Grid.Column="1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -305,7 +330,7 @@
                 </WrapPanel>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Plotting and Farming Drives" Grid.Row="5" Grid.Column="2">
+        <GroupBox Header="Plotting and Farming Drives" Grid.Row="4" Grid.Column="2">
             <DataGrid ItemsSource="{Binding Path=CurrentDrives}" AutoGenerateColumns="False" CanUserReorderColumns="True"
                        IsReadOnly="True" SelectionMode="Single" RowStyle="{StaticResource HighlightRow}">
                 <DataGrid.Columns>
