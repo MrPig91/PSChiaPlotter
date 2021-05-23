@@ -29,6 +29,12 @@ function New-UIRunspace{
             $DataHash.MainViewModel = [PSChiaPlotter.MainViewModel]::new()
             $UIHash.MainWindow.DataContext = $DataHash.MainViewModel
 
+            #Add Master Copy of volumes to MainViewModel these are used to keep track of
+            # all jobs that are running on the drives
+            Get-ChiaVolume | foreach {
+                $DataHash.MainViewModel.AllVolumes.Add($_)
+            }
+
             #ButtonClick
             $UIHash.NewJob_Button.add_Click({
                 try{
@@ -128,7 +134,6 @@ function New-UIRunspace{
                         # handle hyperlink click
                         if (($null -ne $element.Parent.Parent) -and ($element.Parent.Parent.GetType().Name -eq "Hyperlink")) {
                             $hyperlink = $element.Parent.Parent
-                            Show-Messagebox $hyperlink.NavigateUri.OriginalString
                             if (Test-Path -LiteralPath $hyperlink.NavigateUri.OriginalString) {
                                 # launch file
                                 try{
@@ -148,7 +153,10 @@ function New-UIRunspace{
 
         }
         catch{
-            Show-Messagebox -Text $_.Exception.Message -Title "Show User Processes" -Icon Error
+            $Message = "$($_.Exception.Message)"
+            $Message += "`nLine # -$($_.InvocationInfo.ScriptLineNumber )"
+            $Message += "`nLine - $($_.InvocationInfo.Line)"
+            Show-Messagebox -Text $Message -Title "UI Runspace Error" -Icon Error
         }
     }
 }
