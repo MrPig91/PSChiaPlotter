@@ -22,7 +22,7 @@ function Start-GUIDebugRun{
     if (Test-Path $LogDirectoryPath){
         $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog" + ".log")
     }
-    $ChiaProcess = start-process -filepath notepad.exe -PassThru -RedirectStandardInput $LogPath
+    $ChiaProcess = start-process -filepath notepad.exe -PassThru -RedirectStandardOutput $LogPath
     $ChiaRun.ChiaProcess = $ChiaProcess
     $ChiaRun.ProcessId = $ChiaProcess.Id
     $ChiaJob.RunsInProgress.Add($ChiaRun)
