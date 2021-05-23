@@ -23,8 +23,10 @@ function Get-ChiaVolume {
                 $ChiaVolume = [PSChiaPlotter.ChiaVolume]::new($volume.DriveLetter,$Label,$volume.Size,$volume.SizeRemaining)
                 $ChiaVolume.BusType = $physicalDisk.BusType
                 $ChiaVolume.MediaType = $physicalDisk.MediaType
+                $MaxTempCount = [math]::Floor([decimal]($volume.size / (239 * 1gb)))
+                $ChiaVolume.MaxConCurrentTempChiaRuns = $MaxTempCount
                 $ChiaVolume
-                Clear-Variable PhysicalDisk,Disk,Partition
+                Clear-Variable PhysicalDisk,Disk,Partition,MaxTempCount
             }
         }
         catch{
