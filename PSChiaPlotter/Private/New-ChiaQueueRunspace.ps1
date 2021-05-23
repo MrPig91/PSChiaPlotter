@@ -33,7 +33,7 @@ function New-ChiaQueueRunspace {
                 #grab a volume that has enough space
                 Do {
                     $TempVolume = Get-BestChiaTempDrive $Job.TempVolumes
-                    $FinalVolume = Get-BestChiaTempDrive $Job.FinalVolumes
+                    $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes
                     if ($tempVolume -eq $Null){
                         $Queue.Status = "Waiting on Temp Space"
                         Start-Sleep -Seconds 60
