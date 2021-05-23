@@ -645,6 +645,9 @@ namespace PSChiaPlotter
     public class ChiaVolume : INotifyPropertyChanged
     {
         private string _directorypath;
+        private long _calculatedfreespace;
+        private ObservableCollection<ChiaRun> _currentchiaruns;
+
         public char DriveLetter { get; set; }
         public string Label { get; set; }
         public long Size { get; set; }
@@ -653,6 +656,15 @@ namespace PSChiaPlotter
         public bool SystemVolume { get; set; }
         public string BusType { get; set; }
         public string MediaType { get; set; }
+        public long CalculatedFreeSpace
+        {
+            get { return _calculatedfreespace; }
+            set
+            {
+                _calculatedfreespace = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string DirectoryPath
         {
@@ -663,8 +675,19 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        
-        public ObservableCollection<ChiaRun> CurrentChiaRuns { get; set; }
+        public ObservableCollection<ChiaRun> CurrentChiaRuns
+        {
+            get { return _currentchiaruns; }
+            set
+            {
+                _currentchiaruns = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int MaxConCurrentTempChiaRuns { get; set; }
+        public int PendingPlots { get; set; }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
