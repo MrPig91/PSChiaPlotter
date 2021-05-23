@@ -44,6 +44,9 @@ function New-ChiaQueueRunspace {
                     }
                 }
                 while ($TempVolume -eq $null -or $FinalVolume -eq $null)
+                if (($Job.CompletedPlotCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                    break
+                }
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume

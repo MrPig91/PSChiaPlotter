@@ -331,7 +331,7 @@
             </Grid>
         </GroupBox>
         <GroupBox Header="Plotting and Farming Drives" Grid.Row="4" Grid.Column="2">
-            <DataGrid ItemsSource="{Binding Path=CurrentDrives}" AutoGenerateColumns="False" CanUserReorderColumns="True"
+            <DataGrid ItemsSource="{Binding Path=AllVolumes}" AutoGenerateColumns="False" CanUserReorderColumns="True"
                        IsReadOnly="True" SelectionMode="Single" RowStyle="{StaticResource HighlightRow}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="DriveLetter" Binding="{Binding Path=DriveLetter}" />
