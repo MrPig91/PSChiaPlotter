@@ -51,3 +51,6 @@ Start-Process -FilePath powershell.exe -ArgumentList "chia.exe plots create -n $
 Start-Sleep -Seconds $delay
 }
 ```
+
+If you find these tools useful and want to donate you can send XCH to the below address.
+XCH: xch1xlsrczvnfzjfeg7ejpaxy7evcn0nvsr73s4gcmzdqd7zkzlvy8ds49qvv2
