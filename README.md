@@ -28,6 +28,7 @@ Add-Content -Path $profile.CurrentUserAllHosts -Value $addToProfile
 
 If you get an error stating "Add-Content : Could not find a part of the path "C:\Users\yourUSERNAME\Documents\WindowsPowerShell\profile.ps1"." Then you made need to create any missing folders in that path. 
 
+## Example Script
 If you want a very basic chia scripting file for parallel plotting with delays you can use the one below. Chia.exe directory must be added to $ENV:Path as shown below.
 ```Powershell
 param(
@@ -52,5 +53,6 @@ Start-Sleep -Seconds $delay
 }
 ```
 
+## Donate
 If you find these tools useful and want to donate you can send XCH to the below address.
 XCH: xch1xlsrczvnfzjfeg7ejpaxy7evcn0nvsr73s4gcmzdqd7zkzlvy8ds49qvv2
