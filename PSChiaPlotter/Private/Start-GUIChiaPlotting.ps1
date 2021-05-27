@@ -77,10 +77,11 @@ function Start-GUIChiaPlotting {
             $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.TempVolume.DriveLetter
             $TempMasterVolume.CurrentChiaRuns.Add($ChiaRun)
             $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.FinalVolume.DriveLetter
-            $FinalMasterVolume.PendingPlots++
+            $FinalMasterVolume.PendingFinalRuns.Add($ChiaRun)
 
             $ChiaQueue.CurrentRun = $ChiaRun
             $DataHash.MainViewModel.CurrentRuns.Add($ChiaRun)
+            $DataHash.MainViewModel.AllRuns.Add($ChiaRun)
 
             #Have noticed that giving the process a second to start before checking the logs works better
             Start-Sleep 1
@@ -110,7 +111,7 @@ function Start-GUIChiaPlotting {
 
             $ChiaJob.RunsInProgress.Remove($ChiaRun)
             $ChiaJob.CompletedPlotCount++
-            $FinalMasterVolume.PendingPlots--
+            $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
             $TempMasterVolume.CurrentChiaRuns.Remove($ChiaRun)
             $ChiaRun.ExitCode = $ChiaRun.ChiaPRocess.ExitCode
             #if this is null then an error will occur if we try to set this property
@@ -140,6 +141,11 @@ function Start-GUIChiaPlotting {
             }
             if ($ChiaJob.RunsInProgress.Contains($ChiaRun)){
                 $ChiaJob.RunsInProgress.Remove($ChiaRun)
+            }
+            if ($FinalMasterVolume){
+                if ($FinalMasterVolume.PendingFinalRuns.Contains($ChiaRun)){
+                    $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
+                }
             }
             $PSCmdlet.WriteError($_)
         }
