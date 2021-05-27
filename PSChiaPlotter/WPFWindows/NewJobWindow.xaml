@@ -48,6 +48,24 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="FinalBusType" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value="SATA">
+                    <Setter Property="Foreground" Value="Green"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="FinalMediaType" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value="HDD">
+                    <Setter Property="Foreground" Value="Green" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -199,6 +217,10 @@
                                             <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
                                             <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource TempBusType}" />
                                         </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3">
+                                            <Label Content="Max Parallel: " VerticalAlignment="Center" FontWeight="Normal"/>
+                                            <TextBlock Text="{Binding Path=MaxConCurrentTempChiaRuns}" VerticalAlignment="Center"/>
+                                        </StackPanel>
                                     </Grid>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -209,19 +231,29 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1" />
+                                            <ColumnDefinition Width="auto" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="1" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="1" />
                                             <RowDefinition Height="*" />
-                                            <RowDefinition Height="1" />
                                         </Grid.RowDefinitions>
 
-                                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-                                            <Label Content="DriveLetter: " FontWeight="Normal"/>
-                                            <TextBlock Text="{Binding Path=DriveLetter}" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                            <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                            <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                            <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource FinalMediaType}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                                            <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                            <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource FinalBusType}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3">
+                                            <Label Content="Potential Plots: " VerticalAlignment="Center" FontWeight="Normal"/>
+                                            <TextBlock Text="{Binding Path=PotentialFinalPlotsRemaining}" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>
