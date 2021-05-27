@@ -664,6 +664,7 @@ namespace PSChiaPlotter
         private long _freespace;
         private double _freespaceingb;
         private double _percentfree;
+        private int _potentialfinalplotsremaining;
         public char DriveLetter { get; set; }
         public string Label { get; set; }
         public long Size { get; set; }
@@ -673,6 +674,7 @@ namespace PSChiaPlotter
             get { return _freespace; }
             set
             {
+                PotentialFinalPlotsRemaining = (int)Math.Floor((decimal)(value / 108877420954));
                 double freespace = value / 1073741824;
                 double percentfree = value / Size;
                 FreeSpaceInGB = Math.Round(freespace,2);
@@ -703,6 +705,15 @@ namespace PSChiaPlotter
         public bool SystemVolume { get; set; }
         public string BusType { get; set; }
         public string MediaType { get; set; }
+        public int PotentialFinalPlotsRemaining
+        {
+            get { return _potentialfinalplotsremaining; }
+            set
+            {
+                _potentialfinalplotsremaining = value;
+                OnPropertyChanged();
+            }
+        }
         public int MaxConCurrentTempChiaRuns { get; set; }
         public ObservableCollection<ChiaRun> PendingFinalRuns { get; set; }
 
@@ -731,7 +742,6 @@ namespace PSChiaPlotter
 
         public ChiaVolume(char driveletter, string label, long size, long freespace)
         {
-
             DriveLetter = driveletter;
             Label = label;
             Size = size;
@@ -746,6 +756,7 @@ namespace PSChiaPlotter
             SizeInGB = Math.Round(sizeinGB, 2);
             FreeSpaceInGB = Math.Round(freespaceinGB, 2);
             PercentFree = Math.Round(percentfree, 2);
+            PotentialFinalPlotsRemaining = (int)Math.Floor((decimal)freespace / 108877420954);
         }
 
     }
