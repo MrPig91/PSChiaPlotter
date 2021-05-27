@@ -335,8 +335,29 @@
                        IsReadOnly="True" SelectionMode="Single" RowStyle="{StaticResource HighlightRow}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="DriveLetter" Binding="{Binding Path=DriveLetter}" />
-                    <DataGridTextColumn Header="FreeSpace" Binding="{Binding Path=FreeSpace}" />
+                    <DataGridTextColumn Header="FreeSpace (GB)" Binding="{Binding Path=FreeSpaceInGB}" />
+                    <DataGridTemplateColumn Width="150" Header="PercentFree %" SortMemberPath="FreeSpace" CanUserSort="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar
+                                        x:Name="FreeSpaceBar"
+                                        Value="{Binding Path=PercentFree}"
+                                        Background="Pink"/>
+                                    <TextBlock
+                                        Text="{Binding ElementName=FreeSpaceBar, Path=Value, StringFormat={}{0:0}%}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Size (GB)" Binding="{Binding Path=SizeInGB}" />
                     <DataGridTextColumn Header="# Runs" Binding="{Binding Path=CurrentChiaRuns.Count}" />
+                    <DataGridTextColumn Header="Pending Final Plots" Binding="{Binding Path=PendingFinalRuns.Count}" />
+                    <DataGridTextColumn Header="Bus Type" Binding="{Binding Path=BusType}" />
+                    <DataGridTextColumn Header="Media Type" Binding="{Binding Path=MediaType}" />
+                    <DataGridTextColumn Header="Label" Binding="{Binding Path=Label}" />
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
