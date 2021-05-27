@@ -12,7 +12,7 @@ function Get-BestChiaTempDrive {
     $BestVolume = $ChiaVolumes | sort -Property FreeSpace -Descending | Select -First 1
     $MasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $BestVolume.DriveLetter
     if ($MasterVolume.CurrentChiaRuns.Count -lt $MasterVolume.MaxConCurrentTempChiaRuns){
-        if (($tempvol.FreeSpace - ($MasterVolume.PendingPlots * 101.4)) -gt $requiredTempSize){
+        if (($tempvol.FreeSpace - ($MasterVolume.PendingFinalRuns.Count * 101.4)) -gt $requiredTempSize){
             $BestVolume
         }
     }
