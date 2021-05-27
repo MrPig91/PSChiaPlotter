@@ -661,26 +661,50 @@ namespace PSChiaPlotter
     public class ChiaVolume : INotifyPropertyChanged
     {
         private string _directorypath;
-        private long _calculatedfreespace;
-        private ObservableCollection<ChiaRun> _currentchiaruns;
-
+        private long _freespace;
+        private double _freespaceingb;
+        private double _percentfree;
         public char DriveLetter { get; set; }
         public string Label { get; set; }
         public long Size { get; set; }
-        public long FreeSpace { get; set; }
+        public double SizeInGB { get; set; }
+        public long FreeSpace
+        {
+            get { return _freespace; }
+            set
+            {
+                double freespace = value / 1073741824;
+                double percentfree = value / Size;
+                FreeSpaceInGB = Math.Round(freespace,2);
+                PercentFree = Math.Round(percentfree, 2);
+                _freespace = value;
+                OnPropertyChanged();
+            }
+        }
+        public double FreeSpaceInGB
+        {
+            get { return _freespaceingb; }
+            set
+            {
+                _freespaceingb = value;
+                OnPropertyChanged();
+            }
+        }
+        public double PercentFree
+        {
+            get { return _percentfree; }
+            set
+            {
+                _percentfree = value;
+                OnPropertyChanged();
+            }
+        }
         public string DiskName { get; set; }
         public bool SystemVolume { get; set; }
         public string BusType { get; set; }
         public string MediaType { get; set; }
-        public long CalculatedFreeSpace
-        {
-            get { return _calculatedfreespace; }
-            set
-            {
-                _calculatedfreespace = value;
-                OnPropertyChanged();
-            }
-        }
+        public int MaxConCurrentTempChiaRuns { get; set; }
+        public ObservableCollection<ChiaRun> PendingFinalRuns { get; set; }
 
         public string DirectoryPath
         {
@@ -691,18 +715,7 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        public ObservableCollection<ChiaRun> CurrentChiaRuns
-        {
-            get { return _currentchiaruns; }
-            set
-            {
-                _currentchiaruns = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public int MaxConCurrentTempChiaRuns { get; set; }
-        public int PendingPlots { get; set; }
+        public ObservableCollection<ChiaRun> CurrentChiaRuns { get; set; }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -718,12 +731,21 @@ namespace PSChiaPlotter
 
         public ChiaVolume(char driveletter, string label, long size, long freespace)
         {
+
             DriveLetter = driveletter;
             Label = label;
             Size = size;
             FreeSpace = freespace;
             DirectoryPath = driveletter.ToString() + ":\\";
             CurrentChiaRuns = new ObservableCollection<ChiaRun>();
+            PendingFinalRuns = new ObservableCollection<ChiaRun>();
+
+            double freespaceinGB = (double)freespace / 1073741824;
+            double percentfree = (double)freespace / (double)size * 100;
+            double sizeinGB = (double)size / 1073741824;
+            SizeInGB = Math.Round(sizeinGB, 2);
+            FreeSpaceInGB = Math.Round(freespaceinGB, 2);
+            PercentFree = Math.Round(percentfree, 2);
         }
 
     }
