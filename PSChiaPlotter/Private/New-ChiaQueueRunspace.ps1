@@ -28,7 +28,6 @@ function New-ChiaQueueRunspace {
                         break
                     }
                 }
-                $Queue.Status = "Running"
 
                 #grab a volume that has enough space
                 Do {
@@ -47,6 +46,7 @@ function New-ChiaQueueRunspace {
                 if (($Job.CompletedPlotCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                     break
                 }
+                $Queue.Status = "Running"
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume
