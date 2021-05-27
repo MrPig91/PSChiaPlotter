@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="MainWindow" Height="600" Width="800">
+        Title="PSChiaPlotter" Height="600" Width="800">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="JobQueueTB" TargetType="TextBlock">
@@ -336,7 +336,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="DriveLetter" Binding="{Binding Path=DriveLetter}" />
                     <DataGridTextColumn Header="FreeSpace (GB)" Binding="{Binding Path=FreeSpaceInGB}" />
-                    <DataGridTemplateColumn Width="150" Header="PercentFree %" SortMemberPath="FreeSpace" CanUserSort="True">
+                    <DataGridTemplateColumn Width="150" Header="PercentFree %" SortMemberPath="PercentFree" CanUserSort="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
