@@ -29,5 +29,11 @@ function Test-ChiaParameters {
     if (-not[System.IO.Directory]::Exists($ChiaParameters.LogDirectory)){
         return "Log Directory does not exists"
     }
+    if ($NewJob.DelayInMinutes -gt 35791){
+        return "Delay Time is greater than 35791 minutes, which is the max"
+    }
+    if ($NewJob.FirstDelay -gt 35791){
+        return "First delay time is greater than 35791 minutes, which is the max"
+    }
     return $true
 }
