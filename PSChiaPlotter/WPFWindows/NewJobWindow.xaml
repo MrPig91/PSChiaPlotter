@@ -116,12 +116,12 @@
                         
                         <Label Content="Total Plots:" Grid.Row="1" Grid.Column="1" />
                         <Label Content="Parallel Count:" Grid.Column="3" Grid.Row="1" />
-                        <Label Content="Delay (seconds):" Grid.Column="3" Grid.Row="2" />
-                        <Label Content="First Delay:" Grid.Row="2" Grid.Column="1" />
+                        <Label Content="Delay (minutes):" Grid.Column="3" Grid.Row="2" />
+                        <Label Content="First Delay (min):" Grid.Row="2" Grid.Column="1" />
 
                         <TextBox x:Name="TotalPlots_TextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.TotalPlotCount}" />
                         <TextBox x:Name="Parallel_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.QueueCount}"/>
-                        <TextBox x:Name="Delay_TextBox" Grid.Row="2" Grid.Column="4" Text="{Binding Path=NewChiaJob.DelayInSeconds}" />
+                        <TextBox x:Name="Delay_TextBox" Grid.Row="2" Grid.Column="4" Text="{Binding Path=NewChiaJob.DelayInMinutes}" />
                         <TextBox x:Name="FirstDelay_TextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.FirstDelay}" />
                     </Grid>
                 </GroupBox>
