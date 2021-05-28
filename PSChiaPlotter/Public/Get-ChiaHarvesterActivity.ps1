@@ -1,10 +1,10 @@
 function Get-ChiaHarvesterActivity {
     [CmdletBinding()]
     param(
-        [string[]]$DebugLogFilePath = (Get-ChildItem -Path "$ENV:USERPROFILE\.chia\mainnet\log" -filter "debug.log*").FullName,
+        [string[]]$DebugLogFilePath = (Get-ChildItem -Path "$([System.Environment]::GetFolderPath("User"))\.chia\mainnet\log" -filter "debug.log*").FullName,
         [switch]$Summary
     )
-    $chiaharvesterlog = "([0-9:.\-T]*) harvester chia.harvester.harvester: INFO\s*([0-9]*) plots were eligible for farming ([a-z0-9.]*) Found ([0-9]*) proofs. Time: ([0-9.]*) s. Total ([0-9]*) plots"
+    $chiaharvesterlog = "([0-9:.\-T]*) harvester (?:src|chia).harvester.harvester(?:\s?): INFO\s*([0-9]*) plots were eligible for farming ([a-z0-9.]*) Found ([0-9]*) proofs. Time: ([0-9.]*) s. Total ([0-9]*) plots"
     foreach ($logfile in $DebugLogFilePath){
         try{
             $SummaryLog = New-Object 'System.Collections.Generic.List[System.Object]'
@@ -29,10 +29,17 @@ function Get-ChiaHarvesterActivity {
                     }
                 } #switch
             } #foreach line
-            if ($Summary){
-                $FirstandLast = $SummaryLog | sort Time -Descending | select -First 1 -Last 1 | sort -Descending
-                $RunTime = $FirstandLast[1].Time - $FirstandLast[0].Time
-                if ($RunTime -ne 0){$ChallengesPerMinute = $SummaryLog.Count / $RunTime.TotalMinutes}
+            if ($Summary.IsPresent -and $SummaryLog.Count -ne 0){
+                Write-Information "Computing Summary for $logfile"
+                if ([System.Environment]::OSVersion.Platform -eq "Win32NT"){
+                    $FirstandLast = $SummaryLog | Sort-Object Time -Descending | Select-Object -First 1 -Last 1 | Sort-Object -Descending
+                    $RunTime = $FirstandLast[1].Time - $FirstandLast[0].Time
+                    if ($RunTime.TotalMinutes -lt 0){$RunTime = $FirstandLast[0].Time - $FirstandLast[1].Time}
+                    if ($RunTime.TotalMinutes -ne 0){$ChallengesPerMinute = $SummaryLog.Count / $RunTime.TotalMinutes}
+                }
+                else{
+                    Write-Warning "Unable to calculate average challenges per min on linux due the timestamps missing the date portion."
+                }
                 [PSCustomObject]@{
                     PSTypeName = "PSChiaPlotter.ChiaHarvesterSummary"
                     RunTime = $RunTime
