@@ -1,6 +1,11 @@
 function Show-PSChiaPlotter {
     Add-Type -AssemblyName PresentationFramework
 
+    $PSChiaPlotterFolderPath = "$ENV:LOCALAPPDATA\PSChiaPlotter"
+    if (-not(Test-Path -Path $PSChiaPlotterFolderPath)){
+        New-Item -Path $PSChiaPlotterFolderPath -ItemType Directory | Out-Null
+    }
+
     $Global:UIHash = [hashtable]::Synchronized(@{})
     $Global:DataHash = [hashtable]::Synchronized(@{})
     $Global:ScriptsHash = [hashtable]::Synchronized(@{})
@@ -19,6 +24,7 @@ function Show-PSChiaPlotter {
     #DataHash Adding Properties
     $DataHash.ModuleRoot = $MyInvocation.MyCommand.Module.ModuleBase
     $DataHash.PrivateFunctions = Join-Path -Path $DataHash.ModuleRoot -ChildPath "Private"
+    $DataHash.LogPath = Join-Path $PSChiaPlotterFolderPath -ChildPath "PSChiaPlotterDebug.log"
     #$DataHash.Assemblies = Join-Path -Path $DataHash.ModuleRoot -ChildPath "Assemblies"
     $DataHash.WPF = Join-Path -Path $DataHash.ModuleRoot -ChildPath "WPFWindows"
     $DataHash.Classes = Join-Path -Path $DataHash.ModuleRoot -ChildPath "Classes"
