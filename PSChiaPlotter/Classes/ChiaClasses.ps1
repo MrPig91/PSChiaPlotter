@@ -158,7 +158,7 @@ namespace PSChiaPlotter
             }
         }
         public ObservableCollection<ChiaQueue> Queues { get; set; }
-        public int DelayInSeconds { get; set; }
+        public int DelayInMinutes { get; set; }
         public int FirstDelay { get; set; }
 
 
@@ -169,7 +169,7 @@ namespace PSChiaPlotter
             QueueCount = 1;
             TotalPlotCount = 1;
             FirstDelay = 0;
-            DelayInSeconds = 3600;
+            DelayInMinutes = 3600;
             Queues = new ObservableCollection<ChiaQueue>();
             RunsInProgress = new ObservableCollection<ChiaRun>();
             TempVolumes = new ObservableCollection<ChiaVolume>();
