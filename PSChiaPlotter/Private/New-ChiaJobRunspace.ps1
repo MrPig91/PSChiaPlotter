@@ -39,12 +39,13 @@ function New-ChiaJobRunspace{
                 $QueueRunspace.Runspacepool = $ScriptsHash.Runspacepool
                 $QueueRunspace.BeginInvoke()
                 if (($queue + 1) -ne $Job.QueueCount){
-                    sleep $job.DelayInSeconds
+                    #plus 10 seconds for a min delay for data syncing insurance
+                    Start-Sleep -Seconds ($Job.DelayInMinutes * 60 + 10)
                 }
             }
         }
         catch{
-            Show-Messagebox -Text $_.Exception.Message -Title "Job $($Job.JobNumber) - Runspace"
+            Show-Messagebox -Text $_.Exception.Message -Title "Job $($Job.JobNumber) - Runspace" | Out-Null
         }
     }.AddParameters($PSBoundParameters)
 }
