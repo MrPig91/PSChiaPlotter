@@ -354,6 +354,8 @@ namespace PSChiaPlotter
         private string _status;
         private int _tempsize;
         private string _phasse;
+        private int _exitcode;
+        private DateTime _exittime;
     
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -430,8 +432,24 @@ namespace PSChiaPlotter
             }
         }
     
-        public int ExitCode { get; set; }
-        public DateTime ExitTime { get; set; }
+        public int ExitCode
+        {
+            get { return _exitcode; }
+            set
+            {
+                _exitcode = value;
+                OnPropertyChanged();
+            }
+        }
+        public DateTime ExitTime
+        {
+            get { return _exittime; }
+            set
+            {
+                _exittime = value;
+                OnPropertyChanged();
+            }
+        }
         public System.Diagnostics.Process ChiaProcess { get; set; }
     
         public void OnPropertyChanged([CallerMemberName] string caller = null)
@@ -451,7 +469,7 @@ namespace PSChiaPlotter
             }
             catch
             {
-                MessageBox.Show(string.Join("Unable to log file :( - Check here -> ",LogPath));
+                MessageBox.Show(string.Join("Unable to log file :( - Check here -> ", LogPath));
             }
         }
     
@@ -463,7 +481,7 @@ namespace PSChiaPlotter
             }
             else
             {
-                if (MessageBox.Show("Are you sure you want to kill this plotting process?", "Kill Process Warning!",MessageBoxButton.YesNo,MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show("Are you sure you want to kill this plotting process?", "Kill Process Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     ChiaProcess.Kill();
                 }
@@ -492,7 +510,7 @@ namespace PSChiaPlotter
             }
         }
     
-        public ChiaRun(int jobnumber,int quequenumber,int runnumber, ChiaParameters chiaparameters)
+        public ChiaRun(int jobnumber, int quequenumber, int runnumber, ChiaParameters chiaparameters)
         {
             JobNumber = jobnumber;
             QueueNumber = quequenumber;
