@@ -74,8 +74,8 @@ function Start-ChiaPlotting {
 
 
     if ($PSBoundParameters.ContainsKey("SecondTempDirectoryPath")){
-        $SecondTempDirecoryPath = $SecondTempDirecoryPath.TrimEnd('\')
-        $ChiaArguments += " -2 $SecondTempDirecoryPath"
+        $SecondTempDirectoryPath = $SecondTempDirectoryPath.TrimEnd('\')
+        $ChiaArguments += " -2 $SecondTempDirectoryPath"
         Write-Information "Added 2nd Temp Dir to Chia ArguementList"
     }
     if ($PSBoundParameters.ContainsKey("FarmerPublicKey")){
@@ -86,21 +86,6 @@ function Start-ChiaPlotting {
     }
     if ($PSBoundParameters.ContainsKey("Buckets")){
         $ChiaArguments += " -u $Buckets"
-    }
-
-    if (Test-Path $LogDirectoryPath){
-        $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog" + ".log")
-    }
-    else{
-        $Message = "The log path provided was not found: $LogDirectoryPath"
-        $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
-                [System.IO.FileNotFoundException]::new($Message,$SErvicePath),
-                'LogPathInvalid',
-                [System.Management.Automation.ErrorCategory]::ObjectNotFound,
-                "$LogDirectoryPath"
-            )
-            $PSCmdlet.ThrowTerminatingError($ErrorRecord)
-        $PSCmdlet.ThrowTerminatingError("Invalid Log Path Directory: $LogDirectoryPath")
     }
 
     if ($ChiaPath){
