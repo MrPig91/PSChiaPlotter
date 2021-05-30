@@ -101,7 +101,7 @@ function Start-GUIChiaPlotting {
                         $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
                     }
                     $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
-                    $ChiaRun.TempSize = Get-ChiaTempSize -DirectoryPath $ChiaRun.$TempDirectoryPath -PlotId $plotid
+                    $ChiaRun.TempSize = Get-ChiaTempSize -DirectoryPath $TempDirectoryPath -PlotId $plotid
                     Start-Sleep (5 + $ChiaQueue.QueueNumber)
                 }
                 catch{
