@@ -785,6 +785,7 @@ namespace PSChiaPlotter
         private TimeSpan _slowestrun;
         private double _tbplottedperday;
         private double _plotsplottedperday;
+        private TimeSpan _averagetime;
 
         public TimeSpan FastestRun
         {
@@ -801,6 +802,16 @@ namespace PSChiaPlotter
             set
             {
                 _slowestrun = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public TimeSpan AverageTime
+        {
+            get { return _averagetime; }
+            set
+            {
+                _averagetime = value;
                 OnPropertyChanged();
             }
         }
