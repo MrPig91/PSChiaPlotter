@@ -21,14 +21,21 @@ function Start-ChiaPlotting {
 
         [Parameter()]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
-        [string]$SecondTempDirecoryPath,
+        [string]$SecondTempDirectoryPath,
 
         [Parameter(Mandatory)]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$FinalDirectoryPath,
 
-        #$FarmerPublicKey,
-        #$PoolPublicKey,
+        [Parameter()]
+        [string]$FarmerPublicKey,
+
+        [Parameter()]
+        [string]$PoolPublicKey,
+
+        [Parameter()]
+        [ValidateRange(1,[int]::MaxValue)]
+        [int]$Buckets,
 
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$LogDirectoryPath = "$ENV:USERPROFILE\.chia\mainnet\plotter",
@@ -66,10 +73,19 @@ function Start-ChiaPlotting {
     $ChiaArguments = "plots create -k $KSize -b $Buffer -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
 
 
-    if ($PSBoundParameters.ContainsKey("SecondTempDirecoryPath")){
+    if ($PSBoundParameters.ContainsKey("SecondTempDirectoryPath")){
         $SecondTempDirecoryPath = $SecondTempDirecoryPath.TrimEnd('\')
         $ChiaArguments += " -2 $SecondTempDirecoryPath"
         Write-Information "Added 2nd Temp Dir to Chia ArguementList"
+    }
+    if ($PSBoundParameters.ContainsKey("FarmerPublicKey")){
+        $ChiaArguments += " -f $FarmerPublicKey"
+    }
+    if ($PSBoundParameters.ContainsKey("PoolPublicKey")){
+        $ChiaArguments += " -p $PoolPublicKey"
+    }
+    if ($PSBoundParameters.ContainsKey("Buckets")){
+        $ChiaArguments += " -u $Buckets"
     }
 
     if (Test-Path $LogDirectoryPath){
