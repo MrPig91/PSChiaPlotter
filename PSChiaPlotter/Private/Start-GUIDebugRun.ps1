@@ -27,6 +27,7 @@ function Start-GUIDebugRun{
         $handle = $ChiaProcess.Handle
         $ChiaRun.ChiaProcess = $ChiaProcess
         $ChiaRun.ProcessId = $ChiaProcess.Id
+        $DataHash.MainViewModel.AllRuns.Add($ChiaRun)
         $ChiaJob.RunsInProgress.Add($ChiaRun)
         $TempVolume.CurrentChiaRuns.Add($ChiaRun)
         
@@ -48,6 +49,9 @@ function Start-GUIDebugRun{
         $ChiaJob.RunsInProgress.Remove($ChiaRun)
         $ChiaJob.CompletedPlotCount++
         $ChiaRun.ExitCode = $ChiaProcess.ExitCode
+        if ($ChiaProcess.ExitTime -ne $null){
+            $ChiaRun.ExitTime = $ChiaProcess.ExitTime
+        }
         $ChiaRun.ExitTime = $ChiaProcess.ExitTime
         if ($ChiaProcess.ExitCode -eq 0){
             $ChiaRun.Status = "Completed"
