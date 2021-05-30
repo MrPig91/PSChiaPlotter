@@ -56,6 +56,7 @@ function Start-GUIDebugRun{
         if ($ChiaProcess.ExitCode -eq 0){
             $ChiaRun.Status = "Completed"
             $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
+            Update-ChiaGUISummary -Success
         }
         else{
             $ChiaRun.Status = "Failed"

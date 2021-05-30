@@ -127,6 +127,7 @@ function Start-GUIChiaPlotting {
             else{
                 $ChiaRun.Status = "Completed"
                 $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
+                Update-ChiaGUISummary -Success
             }
             $ChiaQueue.CompletedPlotCount++
             $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)
