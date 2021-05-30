@@ -236,10 +236,10 @@
                                 <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
                                 <DataGridTextColumn Header="Start Time" Binding="{Binding Path=ChiaProcess.StartTime}" />
-                                <DataGridTextColumn Header="End Time" Binding="{Binding Path=ChiaProcess.ExitTime}" />
+                                <DataGridTextColumn Header="End Time" Binding="{Binding Path=ExitTime}" />
                                 <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
                                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
-                                <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ChiaProcess.ExitCode}" />
+                                <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ExitCode}" />
                                 <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
                             </DataGrid.Columns>
                         </DataGrid>
@@ -258,7 +258,7 @@
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
                                 <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
                                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
-                                <DataGridTextColumn Header="Final Directory" Binding="{Binding Path=FinalVolume.DirectoryPath}" />
+                                <DataGridTextColumn Header="Final Directory" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
                                 <DataGridTemplateColumn Header="Log Info">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
