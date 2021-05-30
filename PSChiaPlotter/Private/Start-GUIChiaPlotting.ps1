@@ -112,7 +112,7 @@ function Start-GUIChiaPlotting {
             $TempMasterVolume.CurrentChiaRuns.Remove($ChiaRun)
             $ChiaRun.ExitCode = $ChiaRun.ChiaPRocess.ExitCode
             #if this is null then an error will occur if we try to set this property
-            if ($Chia.ExitTime){
+            if ($ChiaRun.ExitTime){
                 $ChiaRun.ExitTime = $ChiaProcess.ExitTime
             }
 
