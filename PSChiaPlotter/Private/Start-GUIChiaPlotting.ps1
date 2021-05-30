@@ -39,9 +39,6 @@ function Start-GUIChiaPlotting {
         Write-Information "Added 2nd Temp Dir to Chia ArguementList"
     }
 
-    if (Test-Path $LogDirectoryPath){
-        $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog" + ".log")
-    }
     else{
         $Message = "The log path provided was not found: $LogDirectoryPath"
         $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
@@ -53,12 +50,12 @@ function Start-GUIChiaPlotting {
             $PSCmdlet.ThrowTerminatingError($ErrorRecord)
         $PSCmdlet.ThrowTerminatingError("Invalid Log Path Directory: $LogDirectoryPath")
     }
-    $ChiaRun.LogPath = $LogPath
 
     if ($ChiaPath){
         Write-Information "Chia path exists, starting the plotting process"
         try{
-            $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog-" + $plotNumber + ".log")
+            $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog-" + $ChiaQueue.QueueNumber + "-" + $ChiaRun.RunNumber + ".log")
+            $ChiaRun.LogPath = $LogPath
             $PlottingParam = @{
                 FilePath = $ChiaPath
                 ArgumentList = $ChiaArguments
