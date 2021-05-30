@@ -134,7 +134,8 @@
                 </Grid.RowDefinitions>
 
                 <DataGrid x:Name="Queues_DataGrid" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=AllQueues}"
-                          AutoGenerateColumns="False" IsReadOnly="True" RowStyle="{StaticResource HighlightRow}">
+                          AutoGenerateColumns="False" IsReadOnly="True" RowStyle="{StaticResource HighlightRow}"
+                          MaxHeight="200">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="LightGray" Opacity=".2"/>
@@ -201,7 +202,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="EstTimeRemaining" Binding="{Binding Path=EstTimeRemaining}" />
+                                <DataGridTextColumn Header="EstTimeRemaining" Binding="{Binding Path=EstTimeRemaining, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" />
                                 <DataGridTextColumn Header="TempSize" Binding="{Binding Path=TempSize}" />
                                 <DataGridTextColumn Header="TempDir" Binding="{Binding Path=PlottingParameters.TempVolume.DirectoryPath}" />
                                 <DataGridTextColumn Header="FinalDir" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
@@ -237,7 +238,7 @@
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
                                 <DataGridTextColumn Header="Start Time" Binding="{Binding Path=ChiaProcess.StartTime}" />
                                 <DataGridTextColumn Header="End Time" Binding="{Binding Path=ExitTime}" />
-                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
+                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime, StringFormat={}{0:hh} hrs {0:mm} mins}" />
                                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
                                 <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ExitCode}" />
                                 <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
@@ -299,35 +300,51 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="103*" />
-                    <ColumnDefinition Width="49*"/>
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="5" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="5" />
                 </Grid.RowDefinitions>
 
-                <WrapPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                <UniformGrid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Rows="2" Columns="2">
                     <StackPanel Orientation="Vertical"  Margin="2,0,2,0">
                         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
                             <Label Content="Plots Created: " />
-                            <TextBlock Text="{Binding Path=PlotsCreated}" />
+                            <TextBlock Text="{Binding Path=CompletedRuns.Count}" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                             <Label Content="Failed Plots: " />
-                            <TextBlock Text="{Binding Path=FailedPlots}" />
+                            <TextBlock Text="{Binding Path=FailedRuns.Count}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="2,0,2,0">
                         <StackPanel Orientation="Horizontal">
                             <Label Content="TB Per Day:" />
-                            <TextBlock Text="{Binding Path=TBPerDay}" />
+                            <TextBlock Text="{Binding Path=TBPlottedPerDay}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Plots Per Day:" />
+                            <TextBlock Text="{Binding Path=PlotPlottedPerDay}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
-                </WrapPanel>
+                    <StackPanel Orientation="Vertical" Margin="2,0,2,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Best Time:" />
+                            <TextBlock Text="{Binding Path=FastestRun, StringFormat={}{0:hh} hrs {0:mm} mins}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Worst Time:" />
+                            <TextBlock Text="{Binding Path=SlowestRun, StringFormat={}{0:hh} hrs {0:mm} mins}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Average Time:" />
+                            <TextBlock Text="{Binding Path=AverageTime, StringFormat={}{0:hh} hrs {0:mm} mins}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                </UniformGrid>
             </Grid>
         </GroupBox>
         <GroupBox Header="Plotting and Farming Drives" Grid.Row="4" Grid.Column="2">
