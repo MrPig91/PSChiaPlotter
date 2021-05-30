@@ -148,7 +148,7 @@ function Start-ChiaPlotting {
                 StartTime = $PlottingProcess.StartTime
                 TempDir = $TempDirectoryPath
                 FinalDir = $FinalDirectoryPath
-                TempDir2 = $SecondTempDirecoryPath
+                TempDir2 = $SecondTempDirectoryPath
                 LogPath = $LogPath
                 TotalPlotCount = $TotalPlots
                 BitfieldEnabled = !$DisableBitfield.IsPresent
