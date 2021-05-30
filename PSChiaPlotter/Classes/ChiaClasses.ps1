@@ -169,7 +169,7 @@ namespace PSChiaPlotter
             QueueCount = 1;
             TotalPlotCount = 1;
             FirstDelay = 0;
-            DelayInMinutes = 3600;
+            DelayInMinutes = 60;
             Queues = new ObservableCollection<ChiaQueue>();
             RunsInProgress = new ObservableCollection<ChiaRun>();
             TempVolumes = new ObservableCollection<ChiaVolume>();
