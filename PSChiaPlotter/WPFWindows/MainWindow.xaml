@@ -110,7 +110,7 @@
                         <DataGridTextColumn Header="Total Plots" Binding="{Binding Path=TotalPlotCount}" />
                         <DataGridTextColumn Header="Plots in Progress" Binding="{Binding Path=RunsInProgress.Count}" />
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
-                        <DataGridTextColumn Header="Queue Delay" Binding="{Binding Path=DelayInSeconds}" />
+                        <DataGridTextColumn Header="Queue Delay" Binding="{Binding Path=DelayInMinutes}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
                         <DataGridTextColumn Header="Start Time" Binding="{Binding Path=StartTime}" />
                     </DataGrid.Columns>
