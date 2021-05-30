@@ -209,7 +209,7 @@
                                 <DataGridTemplateColumn Header="LogPath">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Open Log" Command="{Binding Path=OpenLogProcessCommand}" BorderThickness="0"/>
+                                            <Button Content="Open Log" Command="{Binding Path=OpenLogFileCommand}" ToolTip="{Binding Path=LogPath}" BorderThickness="0"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
