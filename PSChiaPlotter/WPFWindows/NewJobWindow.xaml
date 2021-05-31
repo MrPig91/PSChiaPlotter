@@ -66,6 +66,19 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="AddParamGroupbox" TargetType="GroupBox">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderBrush" Value="ForestGreen" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked}" Value="False">
+                    <Setter Property="BorderThickness" Value="0" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked}" Value="True">
+                    <Setter Property="BorderThickness" Value="2" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -94,6 +107,7 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="5" />
                 </Grid.RowDefinitions>
 
@@ -152,9 +166,9 @@
                         <TextBox x:Name="Threads_TextBox" Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Path=NewChiaJob.InitialChiaParameters.Threads}"/>
                         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-                            <CheckBox Content="Disable Bitfield" IsChecked="{Binding Path=DisableBitfield}" IsThreeState="False"
+                            <CheckBox Content="Disable Bitfield" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.DisableBitfield}" IsThreeState="False"
                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
-                            <CheckBox Content="Exclude Final Directory" IsChecked="{Binding Path=ExcludeFinalDirectory}" Margin="5,0,0,0" IsThreeState="False"
+                            <CheckBox Content="Exclude Final Directory" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ExcludeFinalDirectory}" Margin="5,0,0,0" IsThreeState="False"
                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
                         </StackPanel>
                         
@@ -341,6 +355,32 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource AddParamGroupbox}">
+                    <GroupBox.Header>
+                        <CheckBox x:Name="AdditionalParametersCheckBox" Content="Additional Parameters" IsChecked="False" IsThreeState="False" />
+                    </GroupBox.Header>
+                    <Grid IsEnabled="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked}" Visibility="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="5" />
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="1" />
+                        <Label Content="Farmer Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="2" />
+
+                        <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" />
+                        <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" />
+
                     </Grid>
                 </GroupBox>
             </Grid>

@@ -25,6 +25,9 @@ namespace PSChiaPlotter
         public bool DisableBitField { get; set; }
         public bool ExcludeFinalDirectory { get; set; }
 
+        public string PoolPublicKey { get; set; }
+        public string FarmerPublicKey { get; set; }
+
         public ChiaParameters()
         {
             KSize = 32;
