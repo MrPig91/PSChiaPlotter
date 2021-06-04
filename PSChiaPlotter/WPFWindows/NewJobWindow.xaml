@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="New Job" Height="600" Width="550">
+        Title="New Job" Height="600" Width="575">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="Label">
@@ -166,7 +166,7 @@
                         <TextBox x:Name="Threads_TextBox" Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Path=NewChiaJob.InitialChiaParameters.Threads}"/>
                         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-                            <CheckBox Content="Disable Bitfield" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.DisableBitfield}" IsThreeState="False"
+                            <CheckBox Content="Disable Bitfield" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.DisableBitField}" IsThreeState="False"
                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
                             <CheckBox Content="Exclude Final Directory" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ExcludeFinalDirectory}" Margin="5,0,0,0" IsThreeState="False"
                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
@@ -378,8 +378,8 @@
                         <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="1" />
                         <Label Content="Farmer Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="2" />
 
-                        <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" />
-                        <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" />
+                        <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
+                        <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
 
                     </Grid>
                 </GroupBox>
