@@ -52,6 +52,8 @@ namespace PSChiaPlotter
             LogDirectory = chiaParameters.LogDirectory;
             DisableBitField = chiaParameters.DisableBitField;
             ExcludeFinalDirectory = chiaParameters.ExcludeFinalDirectory;
+            PoolPublicKey = chiaParameters.PoolPublicKey;
+            FarmerPublicKey = chiaParameters.FarmerPublicKey;
         }
     }
 
