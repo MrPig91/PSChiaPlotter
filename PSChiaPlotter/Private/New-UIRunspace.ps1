@@ -14,9 +14,6 @@ function New-UIRunspace{
             $XAMLPath = Join-Path -Path $DataHash.WPF -ChildPath MainWindow.xaml
             $MainWindow = Import-Xaml -Path $XAMLPath
 
-            #DEBUG SWITCH
-            $DataHash.Debug = $true
-
             #Assign GUI Controls To Variables
             $UIHash.MainWindow = $MainWindow
             $UIHash.Jobs_DataGrid = $MainWindow.FindName("Jobs_DataGrid")
@@ -67,7 +64,8 @@ function New-UIRunspace{
                             $DataHash.MainViewModel.AllJobs.Add($newJob)
                             $newJobRunSpace = New-ChiaJobRunspace -Job $newJob
                             $newJobRunSpace.Runspacepool = $ScriptsHash.RunspacePool
-                            $newJobRunSpace.BeginInvoke()
+                            [void]$newJobRunSpace.BeginInvoke()
+                            $DataHash.Runspaces.Add($newJobRunSpace)
                             $UIHash.NewJob_Window.Close()
                         }
                         catch{
@@ -103,6 +101,7 @@ function New-UIRunspace{
                 }
                 else{
                     #$ScriptsHash.QueueHandle.EndInvoke($QueueHandle)
+                    Stop-PSChiaPlotter
                 }
             })
 
