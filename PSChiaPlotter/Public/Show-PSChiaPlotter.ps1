@@ -1,4 +1,7 @@
 function Show-PSChiaPlotter {
+    param(
+        [switch]$DebugWithNotepad
+    )
     Add-Type -AssemblyName PresentationFramework
 
     $PSChiaPlotterFolderPath = "$ENV:LOCALAPPDATA\PSChiaPlotter"
@@ -28,6 +31,9 @@ function Show-PSChiaPlotter {
     #$DataHash.Assemblies = Join-Path -Path $DataHash.ModuleRoot -ChildPath "Assemblies"
     $DataHash.WPF = Join-Path -Path $DataHash.ModuleRoot -ChildPath "WPFWindows"
     $DataHash.Classes = Join-Path -Path $DataHash.ModuleRoot -ChildPath "Classes"
+    $DataHash.Runspaces = New-Object System.Collections.Generic.List[System.Object]
+    #DEBUG SWITCH
+    $DataHash.Debug = $DebugWithNotepad.IsPresent
 
     $ScriptsHash.RunspacePool = $RunspacePool
 
@@ -43,5 +49,22 @@ function Show-PSChiaPlotter {
     #Create UI Thread
     $UIRunspace = New-UIRunspace
     $UIRunspace.RunspacePool = $RunspacePool
-    [void]$UIRunspace.BeginInvoke()
+    $DataHash.UIRunspace = $UIRunspace
+    $DataHash.UIHandle = $UIRunspace.BeginInvoke()
+
+    $RunspacePoolEvent = Register-ObjectEvent -InputObject $DataHash.UIRunspace -EventName InvocationStateChanged -Action {
+        $NewState = $Event.Sender.InvocationStateInfo.State
+        if ($NewState -eq "Completed"){
+            try{
+                $ScriptsHash.RunspacePool.Close()
+                $ScriptsHash.RunspacePool.Dispose()
+            }
+            catch{
+                #write log maybe
+            }
+        }
+        else{
+            #do nothing
+        }
+    }
 }
