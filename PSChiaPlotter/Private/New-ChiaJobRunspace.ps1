@@ -37,7 +37,8 @@ function New-ChiaJobRunspace{
                 $Job.Queues[$queue].Status = "Running"
                 $QueueRunspace = New-ChiaQueueRunspace -Queue $Job.Queues[$queue] -Job $Job
                 $QueueRunspace.Runspacepool = $ScriptsHash.Runspacepool
-                $QueueRunspace.BeginInvoke()
+                [void]$QueueRunspace.BeginInvoke()
+                $DataHash.Runspaces.Add($QueueRunspace)
                 if (($queue + 1) -ne $Job.QueueCount){
                     #plus 10 seconds for a min delay for data syncing insurance
                     Start-Sleep -Seconds ($Job.DelayInMinutes * 60 + 10)
