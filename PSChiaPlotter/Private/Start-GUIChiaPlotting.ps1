@@ -10,6 +10,7 @@ function Start-GUIChiaPlotting {
         $ChiaJob
     )
 
+    #not really needed, but just wanted to make each parameter its own variable
     $PlottingParameters = $ChiaRun.PlottingParameters
     $KSize = $PlottingParameters.KSize
     $Buffer = $PlottingParameters.RAM
@@ -19,7 +20,9 @@ function Start-GUIChiaPlotting {
     $TempDirectoryPath = $PlottingParameters.TempVolume.DirectoryPath
     $FinalDirectoryPath = $PlottingParameters.FinalVolume.DirectoryPath
     $LogDirectoryPath = $PlottingParameters.LogDirectory
-    $SecondTempDirecoryPath = $PlottingParameters.TempVolume.DirectoryPath
+    #$SecondTempDirecoryPath = $PlottingParameters.TempVolume.DirectoryPath
+    $PoolPublicKey = $PlottingParameters.PoolPublicKey
+    $FarmerPublicKey = $PlottingParameters.FarmerPublicKey
 
     $E = if ($DisableBitfield){"-e"}
     $X = if ($ExcludeFinalDirectory){"-x"}
@@ -32,23 +35,11 @@ function Start-GUIChiaPlotting {
     $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
     $ChiaArguments = "plots create -k $KSize -b $Buffer -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
 
-
-    if ($SecondTempDirecoryPath){
-        $SecondTempDirecoryPath = $SecondTempDirecoryPath.TrimEnd('\')
-        $ChiaArguments += " -2 $SecondTempDirecoryPath"
-        Write-Information "Added 2nd Temp Dir to Chia ArguementList"
+    if (-not[string]::IsNullOrWhiteSpace($PoolPublicKey)){
+        $ChiaArguments += " -p $PoolPublicKey"
     }
-
-    else{
-        $Message = "The log path provided was not found: $LogDirectoryPath"
-        $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
-                [System.IO.FileNotFoundException]::new($Message,$SErvicePath),
-                'LogPathInvalid',
-                [System.Management.Automation.ErrorCategory]::ObjectNotFound,
-                "$LogDirectoryPath"
-            )
-            $PSCmdlet.ThrowTerminatingError($ErrorRecord)
-        $PSCmdlet.ThrowTerminatingError("Invalid Log Path Directory: $LogDirectoryPath")
+    if (-not[string]::IsNullOrWhiteSpace($FarmerPublicKey)){
+        $ChiaArguments += " -f $FarmerPublicKey"
     }
 
     if ($ChiaPath){
@@ -62,6 +53,7 @@ function Start-GUIChiaPlotting {
                 RedirectStandardOutput = $LogPath
             }
             $chiaProcess = Start-Process @PlottingParam -PassThru -WindowStyle Hidden
+
 
             #this is 100% require for th exit code to be seen by powershell when redirectingstandardoutput
             $handle = $chiaProcess.Handle
