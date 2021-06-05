@@ -64,6 +64,8 @@ namespace PSChiaPlotter
         private TimeSpan _runtime;
         private TimeSpan _esttimeremaining;
         private int _completedplotcount;
+        private int _failedplotcount;
+        private int _completedruncount;
         private int _queuecount;
         private ObservableCollection<ChiaRun> _runsinprogress;
         private string _status;
@@ -101,6 +103,26 @@ namespace PSChiaPlotter
                 {
                     Status = "Completed";
                 }
+                OnPropertyChanged();
+            }
+        }
+
+        public int FailedPlotCount
+        {
+            get { return _failedplotcount; }
+            set
+            {
+                _failedplotcount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int CompletedRunCount
+        {
+            get { return _completedruncount; }
+            set
+            {
+                _completedruncount = value;
                 OnPropertyChanged();
             }
         }
@@ -194,6 +216,7 @@ namespace PSChiaPlotter
     public class ChiaQueue : INotifyPropertyChanged
     {
         private int _completedplotcount;
+        private int _failedplotcount;
         private string _status;
         private DateTime _starttime;
         private string _buttoncontent;
@@ -214,6 +237,15 @@ namespace PSChiaPlotter
             set
             {
                 _completedplotcount = value;
+                OnPropertyChanged();
+            }
+        }
+        public int FailedPlotCount
+        {
+            get { return _failedplotcount; }
+            set
+            {
+                _failedplotcount = value;
                 OnPropertyChanged();
             }
         }
@@ -466,7 +498,7 @@ namespace PSChiaPlotter
             }
         }
     
-        private void OpenLogFile()
+        public void OpenLogFile()
         {
             try
             {
@@ -474,7 +506,49 @@ namespace PSChiaPlotter
             }
             catch
             {
-                MessageBox.Show(string.Join("Unable to log file :( - Check here -> ", LogPath));
+                string[] array = new string[2];
+                array[0] = "Unable to open log file :( - Check here ->";
+                if (string.IsNullOrEmpty(LogPath))
+                {
+                    array[1] = "n/a";
+                }
+                else
+                {
+                    array[1] = LogPath;
+                }
+                
+                string message = string.Join(" ",array);
+                MessageBox.Show(message);
+            }
+        }
+    
+        public void OpenLogStats()
+        {
+            try
+            {
+                string[] array = new string[4];
+                array[0] = "-WindowStyle hidden -noprofile -Sta -Command Show-ChiaPlottingStatistic -LogPath ";
+                array[1] = "'";
+                array[2] = LogPath;
+                array[3] = "'";
+                string command = string.Join("", array);
+                Process.Start("powershell.exe", command);
+            }
+            catch
+            {
+                string[] array = new string[2];
+                array[0] = "Unable to open log file :( - Check here ->";
+                if (string.IsNullOrEmpty(LogPath))
+                {
+                    array[1] = "n/a";
+                }
+                else
+                {
+                    array[1] = LogPath;
+                }
+    
+                string message = string.Join(" ", array);
+                MessageBox.Show(message);
             }
         }
     
@@ -512,6 +586,17 @@ namespace PSChiaPlotter
                 if (_openlogfilecommand == null)
                     _openlogfilecommand = new RelayCommand(param => this.OpenLogFile());
                 return _openlogfilecommand;
+            }
+        }
+    
+        private ICommand _openlogstatscommand;
+        public ICommand OpenLogStatsCommand
+        {
+            get
+            {
+                if (_openlogstatscommand == null)
+                    _openlogstatscommand = new RelayCommand(param => this.OpenLogStats());
+                return _openlogstatscommand;
             }
         }
     
