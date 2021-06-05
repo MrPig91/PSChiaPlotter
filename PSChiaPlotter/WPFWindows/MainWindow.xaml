@@ -79,7 +79,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="5" />
             <RowDefinition Height="auto" MaxHeight="200"/>
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="1.25*" MinHeight="125"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="5" />
@@ -135,7 +135,7 @@
 
                 <DataGrid x:Name="Queues_DataGrid" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=AllQueues}"
                           AutoGenerateColumns="False" IsReadOnly="True" RowStyle="{StaticResource HighlightRow}"
-                          MaxHeight="200">
+                          MaxHeight="100">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="LightGray" Opacity=".2"/>
