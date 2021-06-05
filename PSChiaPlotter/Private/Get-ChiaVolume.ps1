@@ -16,7 +16,7 @@ function Get-ChiaVolume {
             $physicalDisk = $AllphysicalDisk | where DeviceId -eq $disk.DiskNumber
 
             $Label = $volume.FileSystemLabel
-            if ([string]::IsNullOrEmpty($volume.FileSystemLabell)){
+            if ([string]::IsNullOrEmpty($volume.FileSystemLabel)){
                 $Label = "N/A"
             }
             if ($physicalDisk){
