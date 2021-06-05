@@ -17,14 +17,14 @@ function New-ChiaQueueRunspace {
         Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
         Get-childItem -Path $DataHash.Classes -File | ForEach-Object {Import-Module $_.FullName}
         try{
-            for ($runNumber = 1;($Job.CompletedPlotCount + $Job.RunsInProgress.Count) -lt $Job.TotalPlotCount;$runNumber++){
+            for ($runNumber = 1;($Job.CompletedRunCount + $Job.RunsInProgress.Count) -lt $Job.TotalPlotCount;$runNumber++){
                 $ChiaProcess = $Null
                 if ($Queue.Pause){
                     $Queue.Status = "Paused"
                     while ($Queue.Pause){
                         sleep 10
                     }
-                    if (($Job.CompletedPlotCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                    if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                         break
                     }
                 }
@@ -43,7 +43,7 @@ function New-ChiaQueueRunspace {
                     }
                 }
                 while ($TempVolume -eq $null -or $FinalVolume -eq $null)
-                if (($Job.CompletedPlotCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                     break
                 }
                 $Queue.Status = "Running"
@@ -65,9 +65,9 @@ function New-ChiaQueueRunspace {
             $Queue.Status = "Finished"
         }
         catch{
-            Show-Messagebox -Text $_.Exception.Message -Title "Queue - $($Queue.QueueNumber)"
+            Show-Messagebox -Text $_.Exception.Message -Title "Queue - $($Queue.QueueNumber)" | Out-Null
             if ($ChiaProcess){
-                Show-Messagebox -Text "The Following Chia Process may be running and might need to killed - PID $($ChiaProcess.Id)" -Title "Queue"
+                Show-Messagebox -Text "The Following Chia Process may be running and might need to killed - PID $($ChiaProcess.Id)" -Title "Queue" | Out-Null
             }
         }
     }.AddParameters($PSBoundParameters)
