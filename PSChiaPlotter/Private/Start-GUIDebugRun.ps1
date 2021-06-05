@@ -44,10 +44,12 @@ function Start-GUIDebugRun{
             $ChiaRun.Progress += 5
             sleep (10 + $ChiaQueue.QueueNumber)
         }
+
         $TempMasterVolume.CurrentChiaRuns.Remove($ChiaRun)
         $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
         $ChiaJob.RunsInProgress.Remove($ChiaRun)
-        $ChiaJob.CompletedPlotCount++
+        $ChiaJob.CompletedRunCount++
+
         $ChiaRun.ExitCode = $ChiaProcess.ExitCode
         if ($ChiaProcess.ExitTime -ne $null){
             $ChiaRun.ExitTime = $ChiaProcess.ExitTime
@@ -55,14 +57,17 @@ function Start-GUIDebugRun{
         $ChiaRun.ExitTime = $ChiaProcess.ExitTime
         if ($ChiaProcess.ExitCode -eq 0){
             $ChiaRun.Status = "Completed"
+            $ChiaJob.CompletedPlotCount++
+            $ChiaQueue.CompletedPlotCount++
             $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
             Update-ChiaGUISummary -Success
         }
         else{
             $ChiaRun.Status = "Failed"
+            $ChiaJob.FailedPlotCount++
+            $ChiaQueue.FailedPlotCount++
             $DataHash.MainViewModel.FailedRuns.Add($ChiaRun)
         }
-        $ChiaQueue.CompletedPlotCount++
         $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)
     }
     catch{
