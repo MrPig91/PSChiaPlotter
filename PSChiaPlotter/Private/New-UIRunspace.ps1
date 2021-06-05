@@ -57,6 +57,12 @@ function New-UIRunspace{
                     $CreateJob_Button.add_Click({
                         try{
                             $Results = Test-ChiaParameters $newJob
+                            if ($NewJob.DelayInMinutes -eq 60){
+                                $response = Show-Messagebox -Text "You left the default delay time of 60 Minutes, continue?" -Button YesNo
+                                if ($response -eq [System.Windows.MessageBoxResult]::No){
+                                    return
+                                }
+                            }
                             if ($Results -ne $true){
                                 Show-Messagebox -Text $Results -Title "Invalid Parameters" -Icon Warning
                                 return
