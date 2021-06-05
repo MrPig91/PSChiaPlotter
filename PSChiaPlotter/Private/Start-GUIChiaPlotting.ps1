@@ -99,7 +99,7 @@ function Start-GUIChiaPlotting {
             } #while
 
             $ChiaJob.RunsInProgress.Remove($ChiaRun)
-            $ChiaJob.CompletedPlotCount++
+            $ChiaJob.CompletedRunCount++
             $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
             $TempMasterVolume.CurrentChiaRuns.Remove($ChiaRun)
             $ChiaRun.ExitCode = $ChiaRun.ChiaPRocess.ExitCode
@@ -110,15 +110,25 @@ function Start-GUIChiaPlotting {
 
             if ($ChiaRun.ChiaPRocess.ExitCode -ne 0){
                 $ChiaRun.Status = "Failed"
+                $ChiaQueue.FailedPlotCount++
+                $ChiaJob.FailedPlotCount++
                 $DataHash.MainViewModel.FailedRuns.Add($ChiaRun)
-                Get-ChildItem -Path $TempDirectoryPath -Filter "*$plotid*.tmp" | Remove-Item -Force
+                Get-ChildItem -Path $TempDirectoryPath -Filter "*$plotid*.tmp" | foreach {
+                    try{
+                        Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+                    }
+                    catch{
+                        Show-Messagebox -Text $_.Exception.Message | Out-Null
+                    }
+                }
             }
             else{
                 $ChiaRun.Status = "Completed"
+                $ChiaJob.CompletedPlotCount++
+                $ChiaQueue.CompletedPlotCount++
                 $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
                 Update-ChiaGUISummary -Success
             }
-            $ChiaQueue.CompletedPlotCount++
             $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)
             $ChiaRun.PlottingParameters.TempVolume.CurrentChiaRuns.Remove($ChiaRun)
         }
