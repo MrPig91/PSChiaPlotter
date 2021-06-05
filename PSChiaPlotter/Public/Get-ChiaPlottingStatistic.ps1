@@ -8,9 +8,10 @@ function Get-ChiaPlottingStatistic {
     Process{
         foreach ($log in $path){
             if (Test-Path $log){
-                $Content = Get-Content -Path $log | Select-String "Time for phase","Total time","Plot size","Buffer size","threads of stripe","Copy time","Copied final file from","Starting plotting progress into temporary dirs" | foreach {$_.ToString()}
+                $Content = Get-Content -Path $log | Select-String "ID: ","Time for phase","Total time","Plot size","Buffer size","threads of stripe","Copy time","Copied final file from","Starting plotting progress into temporary dirs" | foreach {$_.ToString()}
                 foreach ($line in $Content){
                     switch -Wildcard ($line){
+                        "ID: *" {$PlotID = $line.Split(' ') | select -Skip 1 -First 1}
                         "Plot size*" {$PlotSize = $line.split(' ') | select -Skip 3} #using select for these since indexing will error if empty
                         "Buffer Size*" {$BufferSize = ($line.Split(' ') | select -Skip 3).split("M") | select -First 1}
                         "*threads*" {$ThreadCount = $line.split(' ') | select -First 1 -Skip 1}
@@ -27,6 +28,7 @@ function Get-ChiaPlottingStatistic {
                 }
                 [PSCustomObject]@{
                     PSTypeName = "PSChiaPlotter.ChiaPlottingStatistic"
+                    PlotId = $PlotID
                     KSize = $PlotSize
                     "RAM(MiB)" = $BufferSize
                     Threads = $ThreadCount
@@ -41,7 +43,7 @@ function Get-ChiaPlottingStatistic {
                     "Temp_drive" = $TempDrive
                     "Final_drive" = $FinalDrive
                 }
-                Clear-Variable -Name "Phase_1","Phase_2","Phase_3","Phase_4","TotalTime","CopyTime" -ErrorAction SilentlyContinue
+                Clear-Variable -Name "PlotID","PlotSize","BufferSize","ThreadCount","Phase_1","Phase_2","Phase_3","Phase_4","TotalTime","CopyTime","FinalDrive","TempDrive" -ErrorAction SilentlyContinue
             }
         }
     }
