@@ -110,6 +110,7 @@
                         <DataGridTextColumn Header="Total Plots" Binding="{Binding Path=TotalPlotCount}" />
                         <DataGridTextColumn Header="Plots in Progress" Binding="{Binding Path=RunsInProgress.Count}" />
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
+                        <DataGridTextColumn Header="Plots Failed" Binding="{Binding Path=FailedPlotCount}" />
                         <DataGridTextColumn Header="Queue Delay" Binding="{Binding Path=DelayInMinutes}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
                         <DataGridTextColumn Header="Start Time" Binding="{Binding Path=StartTime}" />
@@ -150,9 +151,10 @@
                         <DataGridTextColumn Header="Job #" Binding="{Binding Path=JobNumber}"/>
                         <DataGridTextColumn Header="Queue #" Binding="{Binding Path=QueueNumber}" />
                         <DataGridTextColumn Header="Current Run #" Binding="{Binding Path=CurrentRun.RunNumber}" />
-                        <DataGridTextColumn Header="Completed Runs" Binding="{Binding Path=CompletedPlotCount}" />
+                        <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
+                        <DataGridTextColumn Header="Plots Failed" Binding="{Binding Path=FailedPlotCount}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
-                        <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
+                        <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime, StringFormat={}{0:hh} hrs {0:mm} mins}" />
                         <DataGridTemplateColumn Header="Pause/Resume">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -206,10 +208,17 @@
                                 <DataGridTextColumn Header="TempSize" Binding="{Binding Path=TempSize}" />
                                 <DataGridTextColumn Header="TempDir" Binding="{Binding Path=PlottingParameters.TempVolume.DirectoryPath}" />
                                 <DataGridTextColumn Header="FinalDir" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
-                                <DataGridTemplateColumn Header="LogPath">
+                                <DataGridTemplateColumn Header="Logs">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Open Log" Command="{Binding Path=OpenLogFileCommand}" ToolTip="{Binding Path=LogPath}" BorderThickness="0"/>
+                                            <Button Content="Open Log" Command="{Binding Path=OpenLogFileCommand}" BorderBrush="DarkGray" ToolTip="{Binding Path=LogPath}" BorderThickness="1"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Logs Stats">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Log Stats" Command="{Binding Path=OpenLogStatsCommand}"  BorderBrush="Blue" ToolTip="{Binding Path=LogPath}" BorderThickness="1"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -217,10 +226,12 @@
                                 <DataGridTemplateColumn Header="Abort">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Kill Process" Command="{Binding Path=KillProcessCommand}" BorderThickness="0"/>
+                                            <Button Content="Kill Process" Command="{Binding Path=KillProcessCommand}" BorderThickness="1" BorderBrush="Red"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
+                                <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
@@ -242,6 +253,22 @@
                                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
                                 <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ExitCode}" />
                                 <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
+                                <DataGridTemplateColumn Header="Logs">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Open Log" Command="{Binding Path=OpenLogFileCommand}" ToolTip="{Binding Path=LogPath}" BorderThickness="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
+                                <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
+                                <DataGridTemplateColumn Header="Logs Stats">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Log Stats" Command="{Binding Path=OpenLogStatsCommand}" ToolTip="{Binding Path=LogPath}" BorderThickness="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
@@ -259,15 +286,25 @@
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
                                 <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
                                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
+                                <DataGridTextColumn Header="Temp Directory" Binding="{Binding Path=PlottingParameters.TempVolume.DirectoryPath}" />
                                 <DataGridTextColumn Header="Final Directory" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
-                                <DataGridTemplateColumn Header="Log Info">
+                                <DataGridTemplateColumn Header="Logs Stats">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Open Stats" Command="{Binding Path=OpenStatsCommand}" BorderThickness="0"/>
+                                            <Button Content="Log Stats" Command="{Binding Path=OpenLogStatsCommand}" ToolTip="{Binding Path=LogPath}" BorderThickness="0"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
+                                <DataGridTemplateColumn Header="Logs">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Open Log" Command="{Binding Path=OpenLogFileCommand}" ToolTip="{Binding Path=LogPath}" BorderThickness="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
+                                <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
@@ -285,10 +322,19 @@
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
                                 <DataGridTextColumn Header="Start Time" Binding="{Binding Path=ChiaProcess.StartTime}" />
                                 <DataGridTextColumn Header="End Time" Binding="{Binding Path=ChiaProcess.ExitTime}" />
-                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
+                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime, StringFormat={}{0:hh} hrs {0:mm} mins}" />
                                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
                                 <DataGridTextColumn Header="Exit Code" Binding="{Binding Path=ChiaProcess.ExitCode}" />
                                 <DataGridTextColumn Header="PID" Binding="{Binding Path=ProcessID}" />
+                                <DataGridTemplateColumn Header="Logs">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Open Log" Command="{Binding Path=OpenLogFileCommand}" ToolTip="{Binding Path=LogPath}" BorderThickness="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
+                                <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
@@ -333,15 +379,15 @@
                     <StackPanel Orientation="Vertical" Margin="2,0,2,0">
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Best Time:" />
-                            <TextBlock Text="{Binding Path=FastestRun, StringFormat={}{0:hh} hrs {0:mm} mins}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Path=FastestRun, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Worst Time:" />
-                            <TextBlock Text="{Binding Path=SlowestRun, StringFormat={}{0:hh} hrs {0:mm} mins}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Path=SlowestRun, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Average Time:" />
-                            <TextBlock Text="{Binding Path=AverageTime, StringFormat={}{0:hh} hrs {0:mm} mins}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Path=AverageTime, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
                 </UniformGrid>
