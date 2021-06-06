@@ -30,7 +30,7 @@ function New-ChiaJobRunspace{
         try{
             for ($queue = 0;$queue -lt $Job.QueueCount;$queue++){
                 if ($queue -eq 0){
-                    sleep -Seconds $Job.FirstDelay
+                    sleep -Seconds ($Job.FirstDelay * 60)
                     $Job.Status = "Running"
                 }
                 #$Job.Queues[$queue].StartTime = [DateTime]::Now
