@@ -9,9 +9,9 @@ $RemoteVolumes = Get-PSDrive | where {$_.DisplayRoot -match "\\"}
 
 $AllVolumes = $LocalVolumes + $RemoteVolumes
 $AllPartitions = Get-Partition
-    $AllDisks = Get-Disk
-    $AllMappedDrives = $RemoteVolumes
-    $AllphysicalDisk = Get-PhysicalDisk
+$AllDisks = Get-Disk
+$AllMappedDrives = $RemoteVolumes
+$AllphysicalDisk = Get-PhysicalDisk
 
     foreach ($volume in $AllVolumes){
         try{
