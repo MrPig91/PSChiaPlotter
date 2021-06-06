@@ -17,13 +17,19 @@ function Test-ChiaParameters {
         if (-not[System.IO.Directory]::Exists($tempvol.DirectoryPath)){
             return "Temp Directory `"$($tempvol.DirectoryPath)`" does not exists"
         }
+        if (-not$tempvol.DirectoryPath.StartsWith($tempvol.DriveLetter)){
+            return "Directory path '$($tempvol.DirectoryPath)' for Drive $($tempvol.DriveLetter) does not start with $($tempvol.DriveLetter)"
+        }
     }
     if ($NewJob.FinalVolumes.Count -lt 1){
         return "No Final Drives have been added!"
     }
     foreach ($finalvol in $NewJob.FinalVolumes){
         if (-not[System.IO.Directory]::Exists($finalvol.DirectoryPath)){
-            return "Final Directory `"($($finalvol.DirectoryPath)`" does not exists"
+            return "Final Directory `"$($finalvol.DirectoryPath)`" does not exists"
+        }
+        if (-not$finalvol.DirectoryPath.StartsWith($finalvol.DriveLetter)){
+            return "Directory path '$($finalvol.DirectoryPath)' for Drive $($finalvol.DriveLetter) does not start with $($finalvol.DriveLetter)"
         }
     }
     if (-not[System.IO.Directory]::Exists($ChiaParameters.LogDirectory)){
