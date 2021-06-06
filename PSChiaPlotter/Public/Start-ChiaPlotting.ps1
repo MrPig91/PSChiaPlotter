@@ -21,14 +21,21 @@ function Start-ChiaPlotting {
 
         [Parameter()]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
-        [string]$SecondTempDirecoryPath,
+        [string]$SecondTempDirectoryPath,
 
         [Parameter(Mandatory)]
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$FinalDirectoryPath,
 
-        #$FarmerPublicKey,
-        #$PoolPublicKey,
+        [Parameter()]
+        [string]$FarmerPublicKey,
+
+        [Parameter()]
+        [string]$PoolPublicKey,
+
+        [Parameter()]
+        [ValidateRange(1,[int]::MaxValue)]
+        [int]$Buckets,
 
         [ValidateScript({[System.IO.Directory]::Exists($_)})]
         [string]$LogDirectoryPath = "$ENV:USERPROFILE\.chia\mainnet\plotter",
@@ -66,25 +73,20 @@ function Start-ChiaPlotting {
     $ChiaArguments = "plots create -k $KSize -b $Buffer -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
 
 
-    if ($PSBoundParameters.ContainsKey("SecondTempDirecoryPath")){
-        $SecondTempDirecoryPath = $SecondTempDirecoryPath.TrimEnd('\')
-        $ChiaArguments += " -2 $SecondTempDirecoryPath"
+    if ($PSBoundParameters.ContainsKey("SecondTempDirectoryPath")){
+        $SecondTempDirectoryPath = $SecondTempDirectoryPath.TrimEnd('\')
+        $ChiaArguments += " -2 $SecondTempDirectoryPath"
         Write-Information "Added 2nd Temp Dir to Chia ArguementList"
     }
-
-    if (Test-Path $LogDirectoryPath){
-        $LogPath = Join-Path $LogDirectoryPath ((Get-Date -Format yyyy_MM_dd_hh-mm-ss-tt_) + "plotlog" + ".log")
+    if ($PSBoundParameters.ContainsKey("FarmerPublicKey")){
+        $ChiaArguments += " -f $FarmerPublicKey"
     }
-    else{
-        $Message = "The log path provided was not found: $LogDirectoryPath"
-        $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
-                [System.IO.FileNotFoundException]::new($Message,$LogPath),
-                'LogPathInvalid',
-                [System.Management.Automation.ErrorCategory]::ObjectNotFound,
-                "$LogDirectoryPath"
-            )
-            $PSCmdlet.ThrowTerminatingError($ErrorRecord)
-        $PSCmdlet.ThrowTerminatingError("Invalid Log Path Directory: $LogDirectoryPath")
+    if ($PSBoundParameters.ContainsKey("PoolPublicKey")){
+        $ChiaArguments += " -p $PoolPublicKey"
+    }
+
+    if ($PSBoundParameters.ContainsKey("Buckets")){
+        $ChiaArguments += " -u $Buckets"
     }
 
     if ($ChiaPath){
@@ -147,7 +149,7 @@ function Start-ChiaPlotting {
                 StartTime = $PlottingProcess.StartTime
                 TempDir = $TempDirectoryPath
                 FinalDir = $FinalDirectoryPath
-                TempDir2 = $SecondTempDirecoryPath
+                TempDir2 = $SecondTempDirectoryPath
                 LogPath = $LogPath
                 TotalPlotCount = $TotalPlots
                 BitfieldEnabled = !$DisableBitfield.IsPresent
