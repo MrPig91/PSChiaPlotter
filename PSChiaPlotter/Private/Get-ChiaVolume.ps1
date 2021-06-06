@@ -48,7 +48,7 @@ $AllPartitions = Get-Partition
             if ([string]::IsNullOrEmpty($volume.DriveLetter)){
             $DriveLetter = $volume.Name
             }
-        Write-Warning "Unable to create a ChiaVolume from driveletter $($DriveLetter)"
-      }
-   }
+            Write-Warning "Unable to create a ChiaVolume from driveletter $($DriveLetter)"
+        }
+    }
 }
