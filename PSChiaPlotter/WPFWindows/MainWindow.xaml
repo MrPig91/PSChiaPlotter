@@ -205,6 +205,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="EstTimeRemaining" Binding="{Binding Path=EstTimeRemaining, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" />
+                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime, StringFormat={}{0:hh} hrs {0:mm} mins}" />
                                 <DataGridTextColumn Header="TempSize" Binding="{Binding Path=TempSize}" />
                                 <DataGridTextColumn Header="TempDir" Binding="{Binding Path=PlottingParameters.TempVolume.DirectoryPath}" />
                                 <DataGridTextColumn Header="FinalDir" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
@@ -284,7 +285,7 @@
                                 <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
                                 <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
-                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime}" />
+                                <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime,  StringFormat={}{0:hh} hrs {0:mm} mins}" />
                                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
                                 <DataGridTextColumn Header="Temp Directory" Binding="{Binding Path=PlottingParameters.TempVolume.DirectoryPath}" />
                                 <DataGridTextColumn Header="Final Directory" Binding="{Binding Path=PlottingParameters.FinalVolume.DirectoryPath}" />
@@ -393,7 +394,15 @@
                 </UniformGrid>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Plotting and Farming Drives" Grid.Row="4" Grid.Column="2">
+        <GroupBox Grid.Row="4" Grid.Column="2">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Plotting and Farming Drives - " FontSize="10"/>
+                    <Button x:Name="RefreshdrivesButton" Content="Refresh" FontSize="10" Margin="0,5,5,0" MaxHeight="15"
+                            VerticalAlignment="Top" Foreground="DarkBlue"
+                            BorderThickness="0" Background="Transparent"/>
+                </StackPanel>
+            </GroupBox.Header>
             <DataGrid ItemsSource="{Binding Path=AllVolumes}" AutoGenerateColumns="False" CanUserReorderColumns="True"
                        IsReadOnly="True" SelectionMode="Single" RowStyle="{StaticResource HighlightRow}">
                 <DataGrid.Columns>
