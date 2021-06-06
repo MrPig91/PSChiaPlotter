@@ -20,6 +20,8 @@ function New-UIRunspace{
             $UIHash.Queues_DataGrid = $MainWindow.FindName("Queues_DataGrid")
             $UIHash.Runs_DataGrid = $MainWindow.FindName("Runs_DataGrid")
             $UIHash.CompletedRuns_DataGrid = $MainWindow.FindName("CompletedRuns_DataGrid")
+            $UIHash.Refreshdrives_Button = $MainWindow.FindName("RefreshdrivesButton")
+            $DataHash.RefreshingDrives = $false
 
             $UIHash.NewJob_Button = $MainWindow.FindName("AddJob_Button")
 
@@ -93,6 +95,22 @@ function New-UIRunspace{
                 }
                 catch{
                     Show-Messagebox -Text $_.Exception.Message -Title "Create New Job Error" -Icon Error
+                }
+            })
+
+            $UIHash.Refreshdrives_Button.Add_Click({
+                try{
+                    if ($DataHash.RefreshingDrives){
+                        Show-Messagebox -Text "A drive refresh is currently in progress" -Icon Information
+                        return
+                    }
+                    $DataHash.RefreshingDrives = $true
+                    Update-ChiaVolume -ErrorAction Stop
+                    $DataHash.RefreshingDrives = $false
+                }
+                catch{
+                    $DataHash.RefreshingDrives = $false
+                    Show-Messagebox -Text $_.Exception.Message -Title "Refresh Drives" -Icon Error
                 }
             })
 
