@@ -33,13 +33,14 @@ $AllPartitions = Get-Partition
                 Clear-Variable PhysicalDisk,Disk,Partition,MaxTempCount
             }
                elseif ($mappedDrive){
-                $ChiaVolume = [PSChiaPlotter.ChiaVolume]::new($volume.DriveLetter,$Label,$volume.Size,$volume.SizeRemaining)
-                $ChiaVolume.BusType = $physicalDisk.BusType
-                $ChiaVolume.MediaType = $physicalDisk.MediaType
-                $MaxTempCount = [math]::Floor([decimal]($volume.size / (239 * 1gb)))
+                $volumeSize = (($volume.Free + $volume.Used)) 
+                $ChiaVolume = [PSChiaPlotter.ChiaVolume]::new($volume.Name,$Label,$volumeSize,$volume.Free)
+                $ChiaVolume.BusType = "SMB"
+                $ChiaVolume.MediaType = "Network Storage"
+                $MaxTempCount = [math]::Floor([decimal]($volumeSize / (239 * 1gb)))
                 $ChiaVolume.MaxConCurrentTempChiaRuns = $MaxTempCount
                 $ChiaVolume
-                Clear-Variable mappedDrive,Disk,Partition,MaxTempCount
+                Clear-Variable volumeSize,mappedDrive,Disk,Partition,MaxTempCount
             }
         }
         catch{
