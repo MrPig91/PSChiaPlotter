@@ -84,6 +84,7 @@ function Start-ChiaPlotting {
     if ($PSBoundParameters.ContainsKey("PoolPublicKey")){
         $ChiaArguments += " -p $PoolPublicKey"
     }
+
     if ($PSBoundParameters.ContainsKey("Buckets")){
         $ChiaArguments += " -u $Buckets"
     }
