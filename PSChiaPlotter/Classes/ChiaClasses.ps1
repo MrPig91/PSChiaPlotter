@@ -783,9 +783,9 @@ namespace PSChiaPlotter
             set
             {
                 PotentialFinalPlotsRemaining = (int)Math.Floor((decimal)(value / 108877420954));
-                double freespace = value / 1073741824;
-                double percentfree = value / Size;
-                FreeSpaceInGB = Math.Round(freespace,2);
+                double freespaceinGB = (double)value / 1073741824;
+                double percentfree = (double)value / (double)Size * 100;
+                FreeSpaceInGB = Math.Round(freespaceinGB,2);
                 PercentFree = Math.Round(percentfree, 2);
                 _freespace = value;
                 OnPropertyChanged();
