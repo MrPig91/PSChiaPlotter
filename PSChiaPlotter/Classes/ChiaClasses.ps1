@@ -99,10 +99,6 @@ namespace PSChiaPlotter
             set
             {
                 _completedplotcount = value;
-                if (CompletedPlotCount == TotalPlotCount)
-                {
-                    Status = "Completed";
-                }
                 OnPropertyChanged();
             }
         }
@@ -123,9 +119,14 @@ namespace PSChiaPlotter
             set
             {
                 _completedruncount = value;
+                if (CompletedRunCount == TotalPlotCount)
+                {
+                    Status = "Completed";
+                }
                 OnPropertyChanged();
             }
         }
+        
         public int QueueCount
         {
             get { return _queuecount; }
