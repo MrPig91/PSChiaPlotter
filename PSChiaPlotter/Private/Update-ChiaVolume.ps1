@@ -9,7 +9,6 @@ function Update-ChiaVolume {
             $matchedVolume.FreeSpace = $volume.FreeSpace
             $matchedVolume = $null
         }
-        Write-Host "Drive $($volume.DriveLetter) refreshed"
     }
 
     $newVolumes = $Volumes | where DriveLetter -notin $DataHash.MainViewModel.AllVolumes.DriveLetter
