@@ -5,9 +5,10 @@ function Get-BestChiaFinalDrive {
     )
     $finalplotsize = 101.4 * 1gb
 
+    $AllVolumes = Get-ChiaVolume
     foreach ($finalvol in $ChiaVolumes){
-        $newVolumeInfo = Get-Volume -DriveLetter $finalvol.DriveLetter
-        $finalvol.FreeSpace = $newVolumeInfo.SizeRemaining
+        $newVolumeInfo = $AllVolumes | where DriveLetter -eq $finalvol.DriveLetter
+        $finalvol.FreeSpace = $newVolumeInfo.FreeSpace
     }
     $sortedVolumes = $ChiaVolumes | sort -Property FreeSpace -Descending
     foreach ($volume in $sortedVolumes){

@@ -31,15 +31,21 @@ function New-ChiaQueueRunspace {
 
                 #grab a volume that has enough space
                 Do {
-                    $TempVolume = Get-BestChiaTempDrive $Job.TempVolumes
-                    $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes
-                    if ($TempVolume -eq $Null){
-                        $Queue.Status = "Waiting on Temp Space"
-                        Start-Sleep -Seconds 60
+                    Try{
+                        $TempVolume = Get-BestChiaTempDrive $Job.TempVolumes
+                        $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes
+                        if ($TempVolume -eq $Null){
+                            $Queue.Status = "Waiting on Temp Space"
+                            Start-Sleep -Seconds 60
+                        }
+                        elseif ($FinalVolume -eq $Null){
+                            $Queue.Status = "Waiting on Final Dir Space"
+                            Start-Sleep -Seconds 60
+                        }
                     }
-                    elseif ($FinalVolume -eq $Null){
-                        $Queue.Status = "Waiting on Final Dir Space"
-                        Start-Sleep -Seconds 60
+                    catch{
+                        $Queue.Status = "Failed To Grab Volume Info"
+                        Start-Sleep -Seconds 30
                     }
                 }
                 while ($TempVolume -eq $null -or $FinalVolume -eq $null)
