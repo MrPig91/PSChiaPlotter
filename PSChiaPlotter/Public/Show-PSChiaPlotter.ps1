@@ -19,7 +19,8 @@ function Show-PSChiaPlotter {
     $InitialSessionState.Variables.Add($UISync)
     $InitialSessionState.Variables.Add($DataSync)
     $InitialSessionState.Variables.Add($ScriptsSync)
-    $RunspacePool = [runspacefactory]::CreateRunspacePool(1,10,$InitialSessionState,$Host)
+    $MaxThreads = ([int]$ENV:NUMBER_OF_PROCESSORS + 5)
+    $RunspacePool = [runspacefactory]::CreateRunspacePool(1,$MaxThreads,$InitialSessionState,$Host)
     $RunspacePool.ApartmentState = "STA"
     $RunspacePool.ThreadOptions = "ReuseThread"
     $RunspacePool.open()
