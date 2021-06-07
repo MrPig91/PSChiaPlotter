@@ -37,6 +37,9 @@
                 <Trigger Property="Text" Value="NVMe">
                     <Setter Property="Foreground" Value="Green"/>
                 </Trigger>
+                <Trigger Property="Text" Value="Network">
+                    <Setter Property="Foreground" Value="Red"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="TempMediaType" TargetType="TextBlock">
