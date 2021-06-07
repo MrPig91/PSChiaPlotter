@@ -78,14 +78,14 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="5" />
-            <RowDefinition Height="auto" MaxHeight="200"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="1.25*" MinHeight="125"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
-        <GroupBox Header="Jobs" Name="Jobs_GroupBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+        <GroupBox Header="Jobs" Name="Jobs_GroupBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" MaxHeight="200">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -102,7 +102,7 @@
 
                 <DataGrid x:Name="Jobs_DataGrid"
                           Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="5"
-                          AutoGenerateColumns="False" MinHeight="50"
+                          AutoGenerateColumns="False" MinHeight="50" IsReadOnly="True"
                           ItemsSource="{Binding Path=AllJobs}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Job #" Binding="{Binding Path=JobNumber}" />
