@@ -34,4 +34,32 @@ function Get-ChiaVolume {
             Write-Warning "Unable to create a ChiaVolume from driveletter $($volume.DriveLetter)"
         }
     } #volume
+
+    $mappedDrives = Get-CimInstance -ClassName Win32_MappedLogicalDisk
+    $BusType = "Network"
+    $MediaType = "Unknown"
+    foreach ($drive in $mappedDrives){
+        try{
+            if ([string]::IsNullOrEmpty($drive.ProviderName)){
+                $Label = "N/A"
+            }
+            else{
+                $Label = $drive.ProviderName
+            }
+            if (-not[string]::IsNullOrEmpty($drive.DeviceID)){
+                $DriveLetter = $drive.DeviceID.TrimEnd(':')
+                $ChiaVolume = [PSChiaPlotter.ChiaVolume]::new($DriveLetter,$Label,$drive.Size,$drive.FreeSpace)
+                $ChiaVolume.BusType = $BusType
+                $ChiaVolume.MediaType = $MediaType
+                $MaxTempCount = [math]::Floor([decimal]($drive.size / (239 * 1gb)))
+                $ChiaVolume.MaxConCurrentTempChiaRuns = $MaxTempCount
+                $ChiaVolume
+                Clear-Variable DriveLetter
+            }
+        }
+        catch{
+            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -DebugLogPath $DataHash.LogPath
+            Write-Warning "Unable to create a ChiaVolume from driveletter $($DriveLetter.DriveLetter)"
+        }
+    }
 }
