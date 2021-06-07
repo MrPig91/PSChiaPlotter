@@ -50,6 +50,27 @@ How to user Start-ChiaHarvesterWatcher and Get-ChiaHarvesterActivity To Check Ha
 
 [![Plot Manager GUI Video](https://img.youtube.com/vi/wOLakMJDLTw/0.jpg)](https://www.youtube.com/watch?v=wOLakMJDLTw)
 
+## Road Map
+The following is a list of things I want to add or improve on in the module. Not listed in any particular order.
+
+- [ ] 1. Start-ChiaHarvesterWatcher
+  - [ ] Add blue color block when a proof is found. Also change RGB to last look up time
+- [ ] 2. Show-PSChiaPlotter 
+  - [ ] Add phase 1 concurrent plot limiter
+  - [ ] Add Tab page to show a datagrid with all plotting stats
+  - [ ] Add Current and Completed Tabs for Queue groupbox
+  - [ ] Add seeing RAID drives
+  - [ ] Update module when pool plotting comes out
+  - [ ] Add buckets parameter
+  - [ ] Add option to remove safety feature that prevents over allocating space when plotting
+  - [ ] Add KSize option instead of having K32 only
+  
+- [ ] 3. Get-ChiaKPlotCombination
+  - [ ] Add which KSize parameter to filter out which KSizes you want
+- [ ] 4. All Functions
+  - [ ] Add Comment Based Help with at least 2 examples for each
+  - [ ] Add ValueFromPipeline for functions that could use it
+
 ## Example Script
 If you want a very basic chia scripting file for parallel plotting with delays you can use the one below. Chia.exe directory must be added to $ENV:Path as shown above. Please note this script has nothing to do with the functions in this module and is only here to show people who want to write their own scripts using powershell.
 ```Powershell
