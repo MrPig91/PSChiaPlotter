@@ -37,8 +37,11 @@ function Start-ChiaHarvesterWatcher {
                     LookUpTime = [double]$Matches[5]
                     ProofsFound = $Matches[4]
                     TotalPlots = $Matches[6]
-                    FilterRatio = $Matches[2] / $Matches[6]
-                }
+                    FilterRatio = 0
+                } #psobject
+                try { #Prevent the divide by zero error message
+                    $harvesterActivity.FilterRatio = $Matches[2] / $Matches[6]
+                } catch { }
                 $TotalAttempts++
                 switch ($harvesterActivity.LookUpTime) {
                     {$_ -lt $BestSpeed} {$BestSpeed = $_}
