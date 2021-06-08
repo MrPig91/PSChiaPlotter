@@ -1,4 +1,5 @@
 function Show-PSChiaPlotter {
+    [CmdletBinding()]
     param(
         [switch]$DebugWithNotepad
     )
