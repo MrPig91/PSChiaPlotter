@@ -19,6 +19,7 @@ namespace PSChiaPlotter
         public int KSize { get; set; }
         public int RAM { get; set; }
         public int Threads { get; set; }
+        public int Buckets { get; set; }
         public ChiaVolume TempVolume { get; set; }
         public ChiaVolume FinalVolume { get; set; }
         public string LogDirectory { get; set; }
@@ -33,6 +34,7 @@ namespace PSChiaPlotter
             KSize = 32;
             RAM = 3390;
             Threads = 2;
+            Buckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
         }
         public ChiaParameters(int ksize,int ram,int threads,string logdir)
@@ -54,12 +56,14 @@ namespace PSChiaPlotter
             ExcludeFinalDirectory = chiaParameters.ExcludeFinalDirectory;
             PoolPublicKey = chiaParameters.PoolPublicKey;
             FarmerPublicKey = chiaParameters.FarmerPublicKey;
+            Buckets = chiaParameters.Buckets;
         }
     }
 
     public class ChiaJob : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        private string _jobname;
         private int _progress;
         private TimeSpan _runtime;
         private TimeSpan _esttimeremaining;
@@ -71,9 +75,27 @@ namespace PSChiaPlotter
         private string _status;
         private ObservableCollection<ChiaVolume> _tempvolumes;
         private ObservableCollection<ChiaVolume> _finalvolumes;
+        private bool _ignoremaxparallel;
 
         public int JobNumber { get; set; }
-        public string JobName { get; set; }
+        public string JobName
+        {
+            get { return _jobname; }
+            set
+            {
+                _jobname = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IgnoreMaxParallel
+        {
+            get { return _ignoremaxparallel; }
+            set
+            {
+                _ignoremaxparallel = value;
+                OnPropertyChanged();
+            }
+        }
         public string Status
         {
             get { return _status; }
@@ -126,7 +148,6 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        
         public int QueueCount
         {
             get { return _queuecount; }
@@ -308,9 +329,12 @@ namespace PSChiaPlotter
             }
         }
 
-        public ChiaQueue (int jobNum, int queueNum, ChiaParameters parameters)
+        public ChiaJob ParentJob { get; set; }
+
+        public ChiaQueue (int queueNum, ChiaParameters parameters, ChiaJob chiajob)
         {
-            JobNumber = jobNum;
+            ParentJob = chiajob;
+            JobNumber = chiajob.JobNumber;
             QueueNumber = queueNum;
             CompletedPlotCount = 0;
             StartTime = DateTime.Now;
@@ -600,11 +624,13 @@ namespace PSChiaPlotter
                 return _openlogstatscommand;
             }
         }
+        public ChiaQueue ParentQueue { get; set; }
     
-        public ChiaRun(int jobnumber, int quequenumber, int runnumber, ChiaParameters chiaparameters)
+        public ChiaRun(ChiaQueue chiaqueue,int runnumber, ChiaParameters chiaparameters)
         {
-            JobNumber = jobnumber;
-            QueueNumber = quequenumber;
+            ParentQueue = chiaqueue;
+            JobNumber = chiaqueue.ParentJob.JobNumber;
+            QueueNumber = chiaqueue.QueueNumber;
             RunNumber = runnumber;
             Progress = .41;
             PlottingParameters = chiaparameters;
@@ -776,8 +802,10 @@ namespace PSChiaPlotter
         private int _potentialfinalplotsremaining;
         public char DriveLetter { get; set; }
         public string Label { get; set; }
+        public string UniqueId { get; set; }
         public long Size { get; set; }
         public double SizeInGB { get; set; }
+
         public long FreeSpace
         {
             get { return _freespace; }
@@ -814,6 +842,7 @@ namespace PSChiaPlotter
         public bool SystemVolume { get; set; }
         public string BusType { get; set; }
         public string MediaType { get; set; }
+        public List<string> AccessPaths { get; set; }
         public int PotentialFinalPlotsRemaining
         {
             get { return _potentialfinalplotsremaining; }
@@ -825,7 +854,6 @@ namespace PSChiaPlotter
         }
         public int MaxConCurrentTempChiaRuns { get; set; }
         public ObservableCollection<ChiaRun> PendingFinalRuns { get; set; }
-
         public string DirectoryPath
         {
             get { return _directorypath; }
@@ -849,15 +877,15 @@ namespace PSChiaPlotter
             }
         }
 
-        public ChiaVolume(char driveletter, string label, long size, long freespace)
+        public ChiaVolume(string uniqueid, string label, long size, long freespace)
         {
-            DriveLetter = driveletter;
+            UniqueId = uniqueid;
             Label = label;
             Size = size;
             FreeSpace = freespace;
-            DirectoryPath = driveletter.ToString() + ":\\";
             CurrentChiaRuns = new ObservableCollection<ChiaRun>();
             PendingFinalRuns = new ObservableCollection<ChiaRun>();
+            AccessPaths = new List<string>();
 
             double freespaceinGB = (double)freespace / 1073741824;
             double percentfree = (double)freespace / (double)size * 100;
@@ -968,3 +996,43 @@ namespace PSChiaPlotter
     }
 }
 "@ -ReferencedAssemblies PresentationFramework,PresentationCore,WindowsBase,"System.Xaml"
+
+try{
+    add-type -type  @"
+	using System;
+	using System.Runtime.InteropServices;
+	using System.ComponentModel;
+	using System.IO;
+	namespace Disk
+	{
+		public class Size
+		{				
+			[DllImport("kernel32.dll")]
+			static extern uint GetCompressedFileSizeW([In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
+			out uint lpFileSizeHigh);
+						
+			public static ulong SizeOnDisk(string filename)
+			{
+			  uint High_Order;
+			  uint Low_Order;
+			  ulong GetSize;
+			  FileInfo CurrentFile = new FileInfo(filename);
+			  Low_Order = GetCompressedFileSizeW(CurrentFile.FullName, out High_Order);
+			  int GetError = Marshal.GetLastWin32Error();
+			 if (High_Order == 0 && Low_Order == 0xFFFFFFFF && GetError != 0)
+				{
+					throw new Win32Exception(GetError);
+				}
+			 else 
+				{ 
+					GetSize = ((ulong)High_Order << 32) + Low_Order;
+					return GetSize;
+				}
+			}
+		}
+	}
+"@ -ErrorAction Stop
+}
+catch{
+    Write-Information "Unable to add size on disk class"
+}

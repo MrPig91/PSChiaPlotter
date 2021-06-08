@@ -85,7 +85,7 @@
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
-        <GroupBox Header="Jobs" Name="Jobs_GroupBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+        <GroupBox Header="Jobs" Name="Jobs_GroupBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" MaxHeight="200">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -102,15 +102,17 @@
 
                 <DataGrid x:Name="Jobs_DataGrid"
                           Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="5"
-                          AutoGenerateColumns="False" MinHeight="50"
+                          AutoGenerateColumns="False" MinHeight="50" IsReadOnly="True"
                           ItemsSource="{Binding Path=AllJobs}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Job #" Binding="{Binding Path=JobNumber}" />
+                        <DataGridTextColumn Header="Job Name" Binding="{Binding Path=JobName}" Width="80"/>
                         <DataGridTextColumn Header="Queue Count" Binding="{Binding Path=QueueCount}" />
                         <DataGridTextColumn Header="Total Plots" Binding="{Binding Path=TotalPlotCount}" />
                         <DataGridTextColumn Header="Plots in Progress" Binding="{Binding Path=RunsInProgress.Count}" />
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
                         <DataGridTextColumn Header="Plots Failed" Binding="{Binding Path=FailedPlotCount}" />
+                        <DataGridTextColumn Header="Ignore Max Parallel" Binding="{Binding Path=IgnoreMaxParallel}" />
                         <DataGridTextColumn Header="Queue Delay" Binding="{Binding Path=DelayInMinutes}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
                         <DataGridTextColumn Header="Start Time" Binding="{Binding Path=StartTime}" />
@@ -149,6 +151,7 @@
                     </DataGrid.CellStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Job #" Binding="{Binding Path=JobNumber}"/>
+                        <DataGridTextColumn Header="Job Name" Binding="{Binding Path=ParentJob.JobName}" Width="80"/>
                         <DataGridTextColumn Header="Queue #" Binding="{Binding Path=QueueNumber}" />
                         <DataGridTextColumn Header="Current Run #" Binding="{Binding Path=CurrentRun.RunNumber}" />
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
@@ -183,9 +186,11 @@
                         <DataGrid x:Name="Runs_DataGrid"
                           Grid.Row="1" Grid.Column="1"
                           ItemsSource="{Binding Path=CurrentRuns}"
+                          IsReadOnly="True"
                           AutoGenerateColumns="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Job" Binding="{Binding Path=JobNumber}" />
+                                <DataGridTextColumn Header="Job Name" Binding="{Binding Path=ParentQueue.ParentJob.JobName}" Width="80"/>
                                 <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
                                 <DataGridTextColumn Header="Phase" Binding="{Binding Path=Phase}" />

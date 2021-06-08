@@ -7,13 +7,14 @@ function Get-BestChiaFinalDrive {
 
     $AllVolumes = Get-ChiaVolume
     foreach ($finalvol in $ChiaVolumes){
-        $newVolumeInfo = $AllVolumes | where DriveLetter -eq $finalvol.DriveLetter
+        $newVolumeInfo = $AllVolumes | where UniqueId -eq $finalvol.UniqueId
         $finalvol.FreeSpace = $newVolumeInfo.FreeSpace
+        $MasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $finalvol.UniqueId
+        $finalvol.PendingFinalRuns = $MasterVolume.PendingFinalRuns
     }
-    $sortedVolumes = $ChiaVolumes | sort -Property FreeSpace -Descending
+    $sortedVolumes = $ChiaVolumes | Sort-Object -Property @{Expression = {$_.PendingFinalRuns.Count}; Descending = $false},@{Expression = "FreeSpace"; Descending = $True}
     foreach ($volume in $sortedVolumes){
-        $MasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $volume.DriveLetter
-        if (($volume.FreeSpace - ($MasterVolume.PendingFinalRuns.Count * $finalplotsize)) -gt $finalplotsize){
+        if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $finalplotsize){
                 return $volume
         }
     }

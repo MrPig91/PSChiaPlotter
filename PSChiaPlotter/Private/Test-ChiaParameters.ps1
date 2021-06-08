@@ -4,11 +4,17 @@ function Test-ChiaParameters {
     )
     $ChiaParameters = $NewJob.InitialChiaParameters
 
-    if ($ChiaParameters.RAM -lt 3390){
-        return "RAM needs to be greater than 3390"
+    if ([string]::IsNullOrEmpty($NewJob.JobName)){
+        return "Job Name cannot be null or empty"
+    }
+    if ($ChiaParameters.RAM -lt 1000){
+        return "RAM needs to be greater than 1000"
     }
     if ($ChiaParameters.Threads -le 0){
         return "Threads needs to 1 or higher"
+    }
+    if ($ChiaParameters.Buckets -le 0){
+        return "Buckets cannot be less than 1"
     }
     if ($NewJob.TempVolumes.Count -lt 1){
         return "No Temp drives have been added!"
@@ -17,8 +23,14 @@ function Test-ChiaParameters {
         if (-not[System.IO.Directory]::Exists($tempvol.DirectoryPath)){
             return "Temp Directory `"$($tempvol.DirectoryPath)`" does not exists"
         }
-        if (-not$tempvol.DirectoryPath.StartsWith($tempvol.DriveLetter)){
-            return "Directory path '$($tempvol.DirectoryPath)' for Drive $($tempvol.DriveLetter) does not start with $($tempvol.DriveLetter)"
+        $ValidPath = $false
+        foreach ($path in $tempvol.AccessPaths){
+            if ($tempvol.DirectoryPath.StartsWith($path)){
+                $ValidPath = $true
+            }
+        } #foreach
+        if (-not$ValidPath){
+            return "Directory path '$($tempvol.DirectoryPath)' for Drive $($tempvol.DriveLetter) does not start with a valid access path, valid paths shown below.`n`n$($tempvol.AccessPaths | foreach {"$_`n"})"
         }
     }
     if ($NewJob.FinalVolumes.Count -lt 1){
@@ -28,8 +40,14 @@ function Test-ChiaParameters {
         if (-not[System.IO.Directory]::Exists($finalvol.DirectoryPath)){
             return "Final Directory `"$($finalvol.DirectoryPath)`" does not exists"
         }
-        if (-not$finalvol.DirectoryPath.StartsWith($finalvol.DriveLetter)){
-            return "Directory path '$($finalvol.DirectoryPath)' for Drive $($finalvol.DriveLetter) does not start with $($finalvol.DriveLetter)"
+        $ValidPath = $false
+        foreach ($path in $finalvol.AccessPaths){
+            if ($finalvol.DirectoryPath.StartsWith($path)){
+                $ValidPath = $true
+            }
+        } #foreach
+        if (-not$ValidPath){
+            return "Directory path '$($finalvol.DirectoryPath)' for Drive $($finalvol.DriveLetter) does not start with a valid access path, valid paths shown below.`n`n$($finalvol.AccessPaths | foreach {"$_`n"})"
         }
     }
     if (-not[System.IO.Directory]::Exists($ChiaParameters.LogDirectory)){

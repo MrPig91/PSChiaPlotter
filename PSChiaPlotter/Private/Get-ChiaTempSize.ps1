@@ -6,8 +6,15 @@ function Get-ChiaTempSize{
     )
     try{
         if ($PlotId -ne $null){
-            $tepmSize = (Get-ChildItem -Path $DirectoryPath -Filter "*$plotid*.tmp" | Measure-Object -Property Length -Sum).Sum
-            return [math]::Round($tepmSize / 1gb)
+            try{
+                #this will actually get the size on disk
+                $tepmSize = (Get-ChildItem -Path $DirectoryPath -Filter "*$plotid*.tmp" | foreach {[Disk.Size]::SizeOnDisk($_.FullName)} | measure -Sum).Sum
+                return [math]::Round($tepmSize / 1gb)
+            }
+            catch{
+                $tepmSize = (Get-ChildItem -Path $DirectoryPath -Filter "*$plotid*.tmp" | Measure-Object -Property Length -Sum).Sum
+                return [math]::Round($tepmSize / 1gb)
+            }
         }
         else{
             return 0

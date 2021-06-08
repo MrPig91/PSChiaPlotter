@@ -32,7 +32,7 @@ function New-ChiaQueueRunspace {
                 #grab a volume that has enough space
                 Do {
                     Try{
-                        $TempVolume = Get-BestChiaTempDrive $Job.TempVolumes
+                        $TempVolume = Get-BestChiaTempDrive -ChiaVolumes $Job.TempVolumes -ChiaJob $Job
                         $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes
                         if ($TempVolume -eq $Null){
                             $Queue.Status = "Waiting on Temp Space"
@@ -56,7 +56,7 @@ function New-ChiaQueueRunspace {
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume
-                $newRun = [PSChiaPlotter.ChiaRun]::new($job.JobNumber,$Queue.QueueNumber,$runNumber,$plottingParameters)
+                $newRun = [PSChiaPlotter.ChiaRun]::new($Queue,$runNumber,$plottingParameters)
                 
                 if ($DataHash.Debug){
                     Start-GUIDebugRun -ChiaRun $newRun -ChiaQueue $Queue -ChiaJob $Job
@@ -71,6 +71,7 @@ function New-ChiaQueueRunspace {
             $Queue.Status = "Finished"
         }
         catch{
+            #Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -DebugLogPath $DataHash.LogPath
             Show-Messagebox -Text $_.Exception.Message -Title "Queue - $($Queue.QueueNumber)" | Out-Null
             if ($ChiaProcess){
                 Show-Messagebox -Text "The Following Chia Process may be running and might need to killed - PID $($ChiaProcess.Id)" -Title "Queue" | Out-Null

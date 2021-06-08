@@ -29,11 +29,10 @@ function Start-GUIDebugRun{
         $ChiaRun.ProcessId = $ChiaProcess.Id
         $DataHash.MainViewModel.AllRuns.Add($ChiaRun)
         $ChiaJob.RunsInProgress.Add($ChiaRun)
-        $TempVolume.CurrentChiaRuns.Add($ChiaRun)
         
-        $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.TempVolume.DriveLetter
+        $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.TempVolume.UniqueId
         $TempMasterVolume.CurrentChiaRuns.Add($ChiaRun)
-        $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.FinalVolume.DriveLetter
+        $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.FinalVolume.UniqueId
         $FinalMasterVolume.PendingFinalRuns.Add($ChiaRun)
     
         $ChiaQueue.CurrentRun = $ChiaRun

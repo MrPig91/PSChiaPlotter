@@ -1,4 +1,5 @@
 function Show-PSChiaPlotter {
+    [CmdletBinding()]
     param(
         [switch]$DebugWithNotepad
     )
@@ -19,7 +20,23 @@ function Show-PSChiaPlotter {
     $InitialSessionState.Variables.Add($UISync)
     $InitialSessionState.Variables.Add($DataSync)
     $InitialSessionState.Variables.Add($ScriptsSync)
-    $RunspacePool = [runspacefactory]::CreateRunspacePool(1,10,$InitialSessionState,$Host)
+    $Threads = [int]$ENV:NUMBER_OF_PROCESSORS
+    if ($Threads -eq 0){
+        Write-Warning "Unable to grab the CPU thread count... please enter the thread count below"
+        $Threads = Read-Host -Prompt "How many CPU Threads does this system have?"
+        foreach ($char in $Threads.ToCharArray()){
+            if (-not[char]::IsNumber($char)){
+                Write-Warning "You didn't enter in a number..."
+                return
+            }
+        } #foreach
+        if (([int]$Threads -le 0)){
+            Write-Warning "You didn't enter in a number above 0... exiting"
+            return
+        }
+    }
+    $MaxThreads = ([int]$Threads + 5)
+    $RunspacePool = [runspacefactory]::CreateRunspacePool(1,$MaxThreads,$InitialSessionState,$Host)
     $RunspacePool.ApartmentState = "STA"
     $RunspacePool.ThreadOptions = "ReuseThread"
     $RunspacePool.open()

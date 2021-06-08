@@ -43,6 +43,7 @@ function New-UIRunspace{
                     $jobNumber = $DataHash.MainViewModel.AllJobs.Count + 1
                     $newJob = [PSChiaPlotter.ChiaJob]::new()
                     $newJob.JobNumber = $jobNumber
+                    $newJob.JobName = "Job $jobNumber"
                     $NewJobViewModel = [PSChiaPlotter.NewJobViewModel]::new($newJob)
 
                     #need to run get-chiavolume twice or the temp and final drives will be the same object in the application and will update each other...
@@ -126,32 +127,6 @@ function New-UIRunspace{
                 else{
                     #$ScriptsHash.QueueHandle.EndInvoke($QueueHandle)
                     Stop-PSChiaPlotter
-                }
-            })
-
-            #Hyperlink thingy
-            $UIHash.MainWindow.add_PreviewMouseLeftButtonDown({
-                Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
-                $grid = $UIHash.Runs_DataGrid
-                $result = [System.Windows.Media.VisualTreeHelper]::HitTest($grid, $_.GetPosition($grid))
-                $element = $result.VisualHit
-            
-                if (($null -ne $element) -and ($element.GetType().Name -eq "TextBlock")) {
-                    if ($null -ne $element.Parent) {
-                        # handle hyperlink click
-                        if (($null -ne $element.Parent.Parent) -and ($element.Parent.Parent.GetType().Name -eq "Hyperlink")) {
-                            $hyperlink = $element.Parent.Parent
-                            if (Test-Path -LiteralPath $hyperlink.NavigateUri.OriginalString) {
-                                # launch file
-                                try{
-                                    Invoke-Item -LiteralPath $hyperlink.NavigateUri.OriginalString -ErrorAction Stop
-                                }
-                                catch{
-                                    Show-Messagebox -Message "$($_.ErrorDetails.Message)" -Title "Hyperlink Click Error"
-                                }
-                            }
-                        }
-                    }
                 }
             })
 
