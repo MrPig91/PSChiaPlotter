@@ -61,9 +61,11 @@ The following is a list of things I want to add or improve on in the module. Not
   - [ ] Add Current and Completed Tabs for Queue groupbox
   - [ ] Add seeing RAID drives
   - [ ] Update module when pool plotting comes out
-  - [ ] Add buckets parameter
-  - [ ] Add option to remove safety feature that prevents over allocating space when plotting
+  - [X] Add buckets parameter
+  - [X] Add option to remove safety feature that prevents over allocating space when plotting
   - [ ] Add KSize option instead of having K32 only
+  - [X] Add Job Name
+  - [X] Add Drive Rotation in final and temp drives
   
 - [ ] 3. Get-ChiaKPlotCombination
   - [ ] Add which KSize parameter to filter out which KSizes you want
