@@ -17,7 +17,7 @@ function New-ChiaJobRunspace{
 
         for ($queue = 1; $queue -le $Job.QueueCount; $queue++){
             try{
-                $newQueue = [PSChiaPlotter.ChiaQueue]::new($Job.JobNumber,$queue,$job.InitialChiaParameters)
+                $newQueue = [PSChiaPlotter.ChiaQueue]::new($queue,$job.InitialChiaParameters,$job)
                 $newQueue.Status = "Waiting"
                 $DataHash.MainViewModel.AllQueues.Add($newQueue)
                 $Job.Queues.Add($newQueue)
