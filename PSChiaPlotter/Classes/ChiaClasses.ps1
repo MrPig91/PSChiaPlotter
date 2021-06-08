@@ -776,8 +776,10 @@ namespace PSChiaPlotter
         private int _potentialfinalplotsremaining;
         public char DriveLetter { get; set; }
         public string Label { get; set; }
+        public string UniqueId { get; set; }
         public long Size { get; set; }
         public double SizeInGB { get; set; }
+
         public long FreeSpace
         {
             get { return _freespace; }
@@ -814,6 +816,7 @@ namespace PSChiaPlotter
         public bool SystemVolume { get; set; }
         public string BusType { get; set; }
         public string MediaType { get; set; }
+        public List<string> AccessPaths { get; set; }
         public int PotentialFinalPlotsRemaining
         {
             get { return _potentialfinalplotsremaining; }
@@ -825,7 +828,6 @@ namespace PSChiaPlotter
         }
         public int MaxConCurrentTempChiaRuns { get; set; }
         public ObservableCollection<ChiaRun> PendingFinalRuns { get; set; }
-
         public string DirectoryPath
         {
             get { return _directorypath; }
@@ -849,15 +851,15 @@ namespace PSChiaPlotter
             }
         }
 
-        public ChiaVolume(char driveletter, string label, long size, long freespace)
+        public ChiaVolume(string uniqueid, string label, long size, long freespace)
         {
-            DriveLetter = driveletter;
+            UniqueId = uniqueid;
             Label = label;
             Size = size;
             FreeSpace = freespace;
-            DirectoryPath = driveletter.ToString() + ":\\";
             CurrentChiaRuns = new ObservableCollection<ChiaRun>();
             PendingFinalRuns = new ObservableCollection<ChiaRun>();
+            AccessPaths = new List<string>();
 
             double freespaceinGB = (double)freespace / 1073741824;
             double percentfree = (double)freespace / (double)size * 100;
