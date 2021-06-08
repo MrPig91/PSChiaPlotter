@@ -996,3 +996,43 @@ namespace PSChiaPlotter
     }
 }
 "@ -ReferencedAssemblies PresentationFramework,PresentationCore,WindowsBase,"System.Xaml"
+
+try{
+    add-type -type  @"
+	using System;
+	using System.Runtime.InteropServices;
+	using System.ComponentModel;
+	using System.IO;
+	namespace Disk
+	{
+		public class Size
+		{				
+			[DllImport("kernel32.dll")]
+			static extern uint GetCompressedFileSizeW([In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
+			out uint lpFileSizeHigh);
+						
+			public static ulong SizeOnDisk(string filename)
+			{
+			  uint High_Order;
+			  uint Low_Order;
+			  ulong GetSize;
+			  FileInfo CurrentFile = new FileInfo(filename);
+			  Low_Order = GetCompressedFileSizeW(CurrentFile.FullName, out High_Order);
+			  int GetError = Marshal.GetLastWin32Error();
+			 if (High_Order == 0 && Low_Order == 0xFFFFFFFF && GetError != 0)
+				{
+					throw new Win32Exception(GetError);
+				}
+			 else 
+				{ 
+					GetSize = ((ulong)High_Order << 32) + Low_Order;
+					return GetSize;
+				}
+			}
+		}
+	}
+"@ -ErrorAction Stop
+}
+catch{
+    Write-Information "Unable to add size on disk class"
+}
