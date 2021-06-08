@@ -157,24 +157,34 @@
                             <RowDefinition Height="5" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
                         <Label Content="K-Size: " Grid.Column="1" Grid.Row="1" />
                         <Label Content="RAM (MiB): " Grid.Column="3" Grid.Row="1" />
                         <Label Content="Threads: " Grid.Column="1" Grid.Row="2" />
+                        <Label Content="Buckets: " Grid.Column="3" Grid.Row="2" />
 
                         <TextBox Name="KSize_TextBox" Grid.Column="2" Grid.Row="1" Margin="5" Text="{Binding Path=NewChiaJob.InitialChiaParameters.KSize}" IsReadOnly="True" VerticalAlignment="Top" />
                         <TextBox x:Name="RAM_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.InitialChiaParameters.RAM}" />
                         <TextBox x:Name="Threads_TextBox" Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Path=NewChiaJob.InitialChiaParameters.Threads}"/>
-                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-                            <CheckBox Content="Disable Bitfield" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.DisableBitField}" IsThreeState="False"
-                                      HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
-                            <CheckBox Content="Exclude Final Directory" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ExcludeFinalDirectory}" Margin="5,0,0,0" IsThreeState="False"
-                                      HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
-                        </StackPanel>
-                        
+                        <TextBox x:Name="Buckets_TextBox" Grid.Row="2" Grid.Column="4" Text="{Binding Path=NewChiaJob.InitialChiaParameters.Buckets}" />
+                        <Separator Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="3" Height="1" VerticalAlignment="Center" Margin="5"/>
+                        <UniformGrid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Rows="1">
+                            <CheckBox Content="Disable Bitfield"
+                                Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Center"
+                                IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.DisableBitField}" IsThreeState="False"
+                                VerticalAlignment="Center" FontSize="11"/>
+                            <CheckBox Content="Exclude Final Directory"
+                                Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center"
+                                IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ExcludeFinalDirectory}"
+                                Margin="5,0,0,0" IsThreeState="False"
+                                VerticalAlignment="Center" FontSize="11"/>
+                        </UniformGrid>
+
                     </Grid>
                 </GroupBox>
 
@@ -202,11 +212,21 @@
                         <Label Content="Temp Drives: " Grid.Column="1" Grid.Row="1" />
                         <Label Content="Final Drives: " Grid.Column="1" Grid.Row="4" />
                         <Label Content="Log Directory: " Grid.Column="1" Grid.Row="7" />
-                        <Label Content="Added Temp Drives: " Grid.Column="1" Grid.Row="2" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
+                            <Label Content="Added Temp Drives: " Grid.Column="1" Grid.Row="2" VerticalAlignment="Top"/>
+                            <Separator Height="1" VerticalAlignment="Center" Margin="5"/>
+                            <CheckBox IsChecked="{Binding Path=NewChiaJob.IgnoreMaxParallel}" IsThreeState="False"
+                                      MaxWidth="125" VerticalContentAlignment="Center"
+                                      ToolTip="example - You will be able to plot 4 parallel plots on a 1 TB drive instead of 3 (do this at your own risk)">
+                                <TextBox Text="Ignore MaxParallel" IsReadOnly="True" TextAlignment="Center" BorderThickness="0" TextWrapping="Wrap" />
+                            </CheckBox>
+                        </StackPanel>
+
                         <Label Content="Added Final Drives: " Grid.Column="1" Grid.Row="5" VerticalAlignment="Top"/>
 
-                        <Separator Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3" Height="1" VerticalAlignment="Center" Margin="5"/>
-                        <Separator Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="6" Height="1" VerticalAlignment="Center" Margin="5"/>
+
+                        <Separator Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="6" Height="2" VerticalAlignment="Center" Margin="5"/>
+                        <Separator Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3" Height="2" VerticalAlignment="Center" Margin="5"/>
 
                         <ComboBox x:Name="TempDir_ComboBox" Grid.Row="1" Grid.Column="2" 
                                   ItemsSource="{Binding Path=TempAvailableVolumes}">
