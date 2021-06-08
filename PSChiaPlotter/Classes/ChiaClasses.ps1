@@ -19,6 +19,7 @@ namespace PSChiaPlotter
         public int KSize { get; set; }
         public int RAM { get; set; }
         public int Threads { get; set; }
+        public int Buckets { get; set; }
         public ChiaVolume TempVolume { get; set; }
         public ChiaVolume FinalVolume { get; set; }
         public string LogDirectory { get; set; }
@@ -33,6 +34,7 @@ namespace PSChiaPlotter
             KSize = 32;
             RAM = 3390;
             Threads = 2;
+            Buckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
         }
         public ChiaParameters(int ksize,int ram,int threads,string logdir)
@@ -54,12 +56,14 @@ namespace PSChiaPlotter
             ExcludeFinalDirectory = chiaParameters.ExcludeFinalDirectory;
             PoolPublicKey = chiaParameters.PoolPublicKey;
             FarmerPublicKey = chiaParameters.FarmerPublicKey;
+            Buckets = chiaParameters.Buckets;
         }
     }
 
     public class ChiaJob : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        private string _jobname;
         private int _progress;
         private TimeSpan _runtime;
         private TimeSpan _esttimeremaining;
@@ -71,9 +75,27 @@ namespace PSChiaPlotter
         private string _status;
         private ObservableCollection<ChiaVolume> _tempvolumes;
         private ObservableCollection<ChiaVolume> _finalvolumes;
+        private bool _ignoremaxparallel;
 
         public int JobNumber { get; set; }
-        public string JobName { get; set; }
+        public string JobName
+        {
+            get { return _jobname; }
+            set
+            {
+                _jobname = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IgnoreMaxParallel
+        {
+            get { return _ignoremaxparallel; }
+            set
+            {
+                _ignoremaxparallel = value;
+                OnPropertyChanged();
+            }
+        }
         public string Status
         {
             get { return _status; }
@@ -126,7 +148,6 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        
         public int QueueCount
         {
             get { return _queuecount; }
@@ -308,9 +329,12 @@ namespace PSChiaPlotter
             }
         }
 
-        public ChiaQueue (int jobNum, int queueNum, ChiaParameters parameters)
+        public ChiaJob ParentJob { get; set; }
+
+        public ChiaQueue (int queueNum, ChiaParameters parameters, ChiaJob chiajob)
         {
-            JobNumber = jobNum;
+            ParentJob = chiajob;
+            JobNumber = chiajob.JobNumber;
             QueueNumber = queueNum;
             CompletedPlotCount = 0;
             StartTime = DateTime.Now;
@@ -600,11 +624,13 @@ namespace PSChiaPlotter
                 return _openlogstatscommand;
             }
         }
+        public ChiaQueue ParentQueue { get; set; }
     
-        public ChiaRun(int jobnumber, int quequenumber, int runnumber, ChiaParameters chiaparameters)
+        public ChiaRun(ChiaQueue chiaqueue,int runnumber, ChiaParameters chiaparameters)
         {
-            JobNumber = jobnumber;
-            QueueNumber = quequenumber;
+            ParentQueue = chiaqueue;
+            JobNumber = chiaqueue.ParentJob.JobNumber;
+            QueueNumber = chiaqueue.QueueNumber;
             RunNumber = runnumber;
             Progress = .41;
             PlottingParameters = chiaparameters;
