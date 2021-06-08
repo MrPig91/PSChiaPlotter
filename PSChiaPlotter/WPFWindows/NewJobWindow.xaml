@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="New Job" Height="600" Width="575">
+        Title="New Job" Height="625" Width="575">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="Label">
@@ -92,12 +92,20 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="5" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer x:Name="Form_ScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                    Orientation="Horizontal" HorizontalAlignment="Center"
+                    Margin="0">
+            <Label Content="Job Name:" />
+            <TextBox Text="{Binding Path=NewChiaJob.JobName}" MinWidth="125" />
+        </StackPanel>
+
+        <ScrollViewer x:Name="Form_ScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -408,7 +416,7 @@
                 </GroupBox>
             </Grid>
         </ScrollViewer>
-        <Button x:Name="CreateJob_Button" Content="Start Job" Grid.Column="2" Grid.Row="2" Margin="5"/>
-        <Button x:Name="CancelJobCreation_Button" Content="Cancel" Grid.Column="1" Grid.Row="2" Margin="5" />
+        <Button x:Name="CreateJob_Button" Content="Start Job" Grid.Column="2" Grid.Row="3" Margin="5"/>
+        <Button x:Name="CancelJobCreation_Button" Content="Cancel" Grid.Column="1" Grid.Row="3" Margin="5" />
     </Grid>
 </Window>
