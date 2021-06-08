@@ -66,6 +66,9 @@ The following is a list of things I want to add or improve on in the module. Not
   - [ ] Add KSize option instead of having K32 only
   - [X] Add Job Name
   - [X] Add Drive Rotation in final and temp drives
+  - [ ] Add PSChiaPlotter Version on summary groupbox or somewhere
+  - [ ] Add Auto Check For Updates (or maybe a buttont to check for updates)
+  - [ ] Add release notes maybe...
   
 - [ ] 3. Get-ChiaKPlotCombination
   - [ ] Add which KSize parameter to filter out which KSizes you want
