@@ -4,11 +4,17 @@ function Test-ChiaParameters {
     )
     $ChiaParameters = $NewJob.InitialChiaParameters
 
+    if ([string]::IsNullOrEmpty($NewJob.JobName)){
+        return "Job Name cannot be null or empty"
+    }
     if ($ChiaParameters.RAM -lt 3390){
         return "RAM needs to be greater than 3390"
     }
     if ($ChiaParameters.Threads -le 0){
         return "Threads needs to 1 or higher"
+    }
+    if ($ChiaParameters.Buckets -le 0){
+        return "Buckets cannot be less than 1"
     }
     if ($NewJob.TempVolumes.Count -lt 1){
         return "No Temp drives have been added!"
