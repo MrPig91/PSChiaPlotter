@@ -23,6 +23,7 @@ function Start-GUIChiaPlotting {
     #$SecondTempDirecoryPath = $PlottingParameters.TempVolume.DirectoryPath
     $PoolPublicKey = $PlottingParameters.PoolPublicKey
     $FarmerPublicKey = $PlottingParameters.FarmerPublicKey
+    $Buckets = $PlottingParameters.Buckets
 
     $E = if ($DisableBitfield){"-e"}
     $X = if ($ExcludeFinalDirectory){"-x"}
@@ -33,7 +34,7 @@ function Start-GUIChiaPlotting {
 
     #path to chia.exe
     $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
-    $ChiaArguments = "plots create -k $KSize -b $Buffer -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
+    $ChiaArguments = "plots create -k $KSize -b $Buffer -u $Buckets -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
 
     if (-not[string]::IsNullOrWhiteSpace($PoolPublicKey)){
         $ChiaArguments += " -p $PoolPublicKey"
@@ -62,10 +63,9 @@ function Start-GUIChiaPlotting {
             $ChiaRun.ProcessId = $ChiaProcess.Id
             $ChiaJob.RunsInProgress.Add($ChiaRun)
 
-            $ChiaRun.PlottingParameters.TempVolume.CurrentChiaRuns.Add($ChiaRun)
-            $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.TempVolume.DriveLetter
+            $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.TempVolume.UniqueId
             $TempMasterVolume.CurrentChiaRuns.Add($ChiaRun)
-            $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where DriveLetter -eq $ChiaRun.PlottingParameters.FinalVolume.DriveLetter
+            $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.FinalVolume.UniqueId
             $FinalMasterVolume.PendingFinalRuns.Add($ChiaRun)
 
             $ChiaQueue.CurrentRun = $ChiaRun
@@ -130,7 +130,6 @@ function Start-GUIChiaPlotting {
                 Update-ChiaGUISummary -Success
             }
             $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)
-            $ChiaRun.PlottingParameters.TempVolume.CurrentChiaRuns.Remove($ChiaRun)
         }
         catch{
             if (-not$DataHash.MainViewModel.FailedRuns.Contains($ChiaRun)){
