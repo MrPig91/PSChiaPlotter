@@ -7,8 +7,8 @@ function Test-ChiaParameters {
     if ([string]::IsNullOrEmpty($NewJob.JobName)){
         return "Job Name cannot be null or empty"
     }
-    if ($ChiaParameters.RAM -lt 3390){
-        return "RAM needs to be greater than 3390"
+    if ($ChiaParameters.RAM -lt 1000){
+        return "RAM needs to be greater than 1000"
     }
     if ($ChiaParameters.Threads -le 0){
         return "Threads needs to 1 or higher"
