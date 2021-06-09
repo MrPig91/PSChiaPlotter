@@ -53,22 +53,23 @@ How to user Start-ChiaHarvesterWatcher and Get-ChiaHarvesterActivity To Check Ha
 ## Road Map
 The following is a list of things I want to add or improve on in the module. Not listed in any particular order.
 
-- [ ] 1. Start-ChiaHarvesterWatcher
-  - [ ] Add blue color block when a proof is found. Also change RGB to last look up time
+- [X] 1. Start-ChiaHarvesterWatcher
+  - [X] Add blue color block when a proof is found. Also change RGB to last look up time - Version 1.0.29+
+  - [X] Add DarkMode and NoWalls - Version 1.0.29+
 - [ ] 2. Show-PSChiaPlotter 
   - [ ] Add phase 1 concurrent plot limiter
   - [ ] Add Tab page to show a datagrid with all plotting stats
   - [ ] Add Current and Completed Tabs for Queue groupbox
-  - [ ] Add seeing RAID drives
+  - [X] Add seeing RAID drives - Version 1.0.28+
   - [ ] Update module when pool plotting comes out
   - [X] Add buckets parameter
-  - [X] Add option to remove safety feature that prevents over allocating space when plotting
+  - [X] Add option to remove safety feature that prevents over allocating space when plotting - Version 1.0.28+
   - [ ] Add KSize option instead of having K32 only
-  - [X] Add Job Name
-  - [X] Add Drive Rotation in final and temp drives
+  - [X] Add Job Name - Version 1.0.28+
+  - [X] Add Drive Rotation in final and temp drives - Version 1.0.28+
   - [ ] Add PSChiaPlotter Version on summary groupbox or somewhere
   - [ ] Add Auto Check For Updates (or maybe a buttont to check for updates)
-  - [ ] Add release notes maybe...
+  - [ ] Notifications Integration (Discord, Toast, etc.) 
   
 - [ ] 3. Get-ChiaKPlotCombination
   - [ ] Add which KSize parameter to filter out which KSizes you want
