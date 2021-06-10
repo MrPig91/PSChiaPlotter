@@ -41,12 +41,16 @@ function Get-ChiaVolume {
                 $DirectoryPaths | foreach {$ChiaVolume.AccessPaths.Add($_)}
                 $ChiaVolume
                 Clear-Variable PhysicalDisk,Disk,Partition,MaxTempCount -ErrorAction SilentlyContinue
+                $Log = @{
+                    LogType = "INFO"
+                    Message = "Chia Volume Found: Letter $($ChiaVolume.DriveLetter), UniqueId: $($ChiaVolume.UniqueID)"
+                }
+                Write-PSChiaPlotterLog @Log
             }
         }
         catch{
-            #Too dangerous to write to a the same log file at the moment without proper thread safe handling
-            #Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -DebugLogPath $DataHash.LogPath
-            #Write-Warning "Unable to create a ChiaVolume from driveletter $($volume.DriveLetter)"
+            Write-PSChiaPlotterLog -LogType "Warning" -Message "Unable to create a ChiaVolume from driveletter $($DriveLetter.DriveLetter)"
+            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message
         }
     } #volume
 
@@ -76,12 +80,17 @@ function Get-ChiaVolume {
                     $ChiaVolume.AccessPaths.Add($Label)
                 }
                 $ChiaVolume
-                Clear-Variable DriveLetter
+                Clear-Variable DriveLetter -ErrorAction SilentlyContinue
+                $Log = @{
+                    LogType = "INFO"
+                    Message = "Chia Volume Found: Letter $($ChiaVolume.DriveLetter), UniquieId: $($ChiaVolume.UniqueID)"
+                }
+                Write-PSChiaPlotterLog @Log
             }
         }
         catch{
-            #Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -DebugLogPath $DataHash.LogPath
-            #Write-Warning "Unable to create a ChiaVolume from driveletter $($DriveLetter.DriveLetter)"
+            Write-PSChiaPlotterLog -LogType "Warning" -Message "Unable to create a ChiaVolume from driveletter $($DriveLetter.DriveLetter)"
+            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message
         }
     }
 }
