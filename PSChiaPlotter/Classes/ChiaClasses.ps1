@@ -905,6 +905,7 @@ namespace PSChiaPlotter
         private double _tbplottedperday;
         private double _plotsplottedperday;
         private TimeSpan _averagetime;
+        private string _loglevel;
 
         public TimeSpan FastestRun
         {
@@ -952,6 +953,19 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
+        public string Version { get; set; }
+
+        public string LogPath { get; set; }
+        public string LogLevel
+        {
+            get { return _loglevel; }
+            set
+            {
+                _loglevel = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<ChiaRun> AllRuns { get; set; }
         public ObservableCollection<ChiaRun> CurrentRuns { get; set; }
         public ObservableCollection<ChiaRun> CompletedRuns { get; set; }
@@ -990,6 +1004,41 @@ namespace PSChiaPlotter
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(caller));
+            }
+        }
+
+        public void OpenLogFile()
+        {
+            try
+            {
+                Process.Start(LogPath);
+            }
+            catch
+            {
+                string[] array = new string[2];
+                array[0] = "Unable to open log file :( - Check here ->";
+                if (string.IsNullOrEmpty(LogPath))
+                {
+                    array[1] = "n/a";
+                }
+                else
+                {
+                    array[1] = LogPath;
+                }
+
+                string message = string.Join(" ", array);
+                MessageBox.Show(message);
+            }
+        }
+
+        private ICommand _openlogfilecommand;
+        public ICommand OpenLogFileCommand
+        {
+            get
+            {
+                if (_openlogfilecommand == null)
+                    _openlogfilecommand = new RelayCommand(param => this.OpenLogFile());
+                return _openlogfilecommand;
             }
         }
 
