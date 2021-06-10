@@ -67,8 +67,12 @@ The following is a list of things I want to add or improve on in the module. Not
   - [ ] Add KSize option instead of having K32 only
   - [X] Add Job Name - Version 1.0.28+
   - [X] Add Drive Rotation in final and temp drives - Version 1.0.28+
-  - [ ] Add PSChiaPlotter Version on summary groupbox or somewhere
-  - [ ] Add Auto Check For Updates (or maybe a buttont to check for updates)
+  - [X] Add PSChiaPlotter Version on summary groupbox or somewhere - Version 1.0.30+
+  - [X] Add Auto Check For Updates (or maybe a buttont to check for updates) - Version 1.0.30+
+  - [X] Add Logging Capabaility with different logging levels - Version 1.0.30+
+  - [X] Have GUI window not dependent on the Powershell window that started it - Version 1.0.30+
+  - [ ] Add the ability to add and remove columns on datagrids
+  - [ ] Add Phase % text and progress bar in background of the cell
   - [ ] Notifications Integration (Discord, Toast, etc.) 
   
 - [ ] 3. Get-ChiaKPlotCombination
