@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="PSChiaPlotter" Height="600" Width="800">
+        Title="PSChiaPlotter" Height="675" Width="825">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="JobQueueTB" TargetType="TextBlock">
@@ -362,40 +362,72 @@
                 </Grid.RowDefinitions>
 
                 <UniformGrid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Rows="2" Columns="2">
-                    <StackPanel Orientation="Vertical"  Margin="2,0,2,0">
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-                            <Label Content="Plots Created: " />
-                            <TextBlock Text="{Binding Path=CompletedRuns.Count}" VerticalAlignment="Center"/>
+                    <Border BorderThickness="1" BorderBrush="Black" Margin="1">
+                        <StackPanel Orientation="Vertical"  Margin="2,0,2,0">
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                                <Label Content="Plots Created: " />
+                                <TextBlock Text="{Binding Path=CompletedRuns.Count}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                                <Label Content="Failed Plots: " />
+                                <TextBlock Text="{Binding Path=FailedRuns.Count}" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
-                            <Label Content="Failed Plots: " />
-                            <TextBlock Text="{Binding Path=FailedRuns.Count}" VerticalAlignment="Center"/>
+                    </Border>
+                    <Border BorderThickness="1" BorderBrush="Black" Margin="1,1,4,1">
+                        <StackPanel Orientation="Vertical" Margin="2,0,2,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="TB Per Day:" />
+                                <TextBlock Text="{Binding Path=TBPlottedPerDay}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Plots Per Day:" />
+                                <TextBlock Text="{Binding Path=PlotPlottedPerDay}" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="2,0,2,0">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="TB Per Day:" />
-                            <TextBlock Text="{Binding Path=TBPlottedPerDay}" VerticalAlignment="Center"/>
+                    </Border>
+                    <Border BorderThickness="1" BorderBrush="Black" Margin="1">
+                        <StackPanel Orientation="Vertical" Margin="2,0,2,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Best Time:" />
+                                <TextBlock Text="{Binding Path=FastestRun, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Worst Time:" />
+                                <TextBlock Text="{Binding Path=SlowestRun, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Average Time:" />
+                                <TextBlock Text="{Binding Path=AverageTime, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Plots Per Day:" />
-                            <TextBlock Text="{Binding Path=PlotPlottedPerDay}" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="2,0,2,0">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Best Time:" />
-                            <TextBlock Text="{Binding Path=FastestRun, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Worst Time:" />
-                            <TextBlock Text="{Binding Path=SlowestRun, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Average Time:" />
-                            <TextBlock Text="{Binding Path=AverageTime, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} sec}" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </StackPanel>
+                    </Border>
+                    <Border BorderBrush="Black" BorderThickness="1" Margin="1,1,4,1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+
+                            <Label Content="Log Level:" VerticalAlignment="Center" ToolTip="{Binding Path=LogLevel}"/>
+                            <Label Content="Version: " Grid.Row="1"/>
+
+                            <ComboBox Name="LogLevelCombobox" Grid.Column="1" Margin="5" SelectedValue="{Binding Path=LogLevel}" SelectedValuePath="Text">
+                                <TextBlock Text="Error" FontWeight="Bold" />
+                                <TextBlock Text="Warning" FontWeight="Bold" />
+                                <TextBlock Text="Info" FontWeight="Bold" />
+                            </ComboBox>
+                            <TextBlock Text="{Binding Path=Version}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
+
+                            <Button x:Name="OpenLogButton" Content="Open Log" Grid.Row="2" Margin="5,0,0,0" ToolTip="{Binding Path=LogPath}"/>
+                            <Button x:Name="CheckForUpateButton" Content="Check Updates" Grid.Row="2" Grid.Column="1" Margin="5,0,5,0"/>
+                        </Grid>
+                    </Border>
                 </UniformGrid>
             </Grid>
         </GroupBox>
