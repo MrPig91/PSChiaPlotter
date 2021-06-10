@@ -16,7 +16,7 @@ function Show-PSChiaPlotter {
 
     if (-not$PSBoundParameters.ContainsKey("Threads")){
         $Threads = [int]$ENV:NUMBER_OF_PROCESSORS
-        if ($Threads -eq 0 -or $true){
+        if ($Threads -eq 0){
             Write-Warning "Unable to grab the CPU thread count... please enter the thread count below"
             $Respnose = Read-Host -Prompt "How many CPU Threads does this system have?"
             foreach ($char in $Respnose.ToCharArray()){
@@ -33,15 +33,20 @@ function Show-PSChiaPlotter {
         }
     }
 
+    $PSChiaPlotterFolderPath = Join-Path -Path $ENV:LOCALAPPDATA -ChildPath 'PSChiaPlotter\Logs'
+    $LogName = (Get-Date -Format yyyyMMdd) + '_debug.log'
+    $LogPath = Join-Path -Path $PSChiaPlotterFolderPath -ChildPath $LogName
     if (-not$NoNewWindow.IsPresent){
-        Start-Process -FilePath powershell.exe -ArgumentList "-NoExit -NoProfile -STA -Command Show-PSChiaPlotter -Threads $Threads" -WindowStyle Hidden
+        $parameters = @{
+            FilePath = "powershell.exe"
+            ArgumentList = "-NoExit -NoProfile -STA -Command Show-PSChiaPlotter -NoNewWindow -Threads $Threads"
+            WindowStyle = "Hidden"
+            RedirectStandardOutput = $LogPath
+        }
+        Start-Process @parameters
         return
     }
-    
-    $PSChiaPlotterFolderPath = Join-Path -Path $ENV:LOCALAPPDATA -ChildPath 'PSChiaPlotter\Logs'
-    $LogName = (Get-Date -Format yyyyMMdd_HHmmss) + '_debug.log'
-    $LogPath = Join-Path -Path $PSChiaPlotterFolderPath -ChildPath $LogName
-    Start-Transcript -Path $LogPath | Out-Null
+    #Start-Transcript -Path $LogPath | Out-Null
 
     $Global:UIHash = [hashtable]::Synchronized(@{})
     $Global:DataHash = [hashtable]::Synchronized(@{})
@@ -68,7 +73,7 @@ function Show-PSChiaPlotter {
     $DataHash.Runspaces = New-Object System.Collections.Generic.List[System.Object]
     #DEBUG SWITCH
     $DataHash.Debug = $DebugWithNotepad.IsPresent
-    $DataHash.DebugPath = $LogPath
+    $DataHash.LogPath = $LogPath
 
     $ScriptsHash.RunspacePool = $RunspacePool
 
@@ -86,23 +91,33 @@ function Show-PSChiaPlotter {
     $UIRunspace.RunspacePool = $RunspacePool
     $DataHash.UIRunspace = $UIRunspace
     $DataHash.UIHandle = $UIRunspace.BeginInvoke()
+    $Date = Get-Date -Format "[yyyy-MM-dd.HH:mm:ss]"
+    Write-Host "[INFO]-$Date-Staring PSChiaPlotter GUI - PID = $($PID)"
 
     $UIHash.NewWindow = $true
     $UIHash.PowershellPID = $PID
 
     $RunspacePoolEvent = Register-ObjectEvent -InputObject $DataHash.UIRunspace -EventName InvocationStateChanged -Action {
         $NewState = $Event.Sender.InvocationStateInfo.State
+        #Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
+        #for some reason importing the private functions is not working...
+        $Date = Get-Date -Format "[yyyy-MM-dd.HH:mm:ss]"
         if ($NewState -eq "Completed"){
             try{
                 $ScriptsHash.RunspacePool.Close()
                 $ScriptsHash.RunspacePool.Dispose()
                 if ($UIHash.NewWindow){
-                    Write-Host "Test!"
+                    
+                    $Message = "PSChiaPlotter has been closed... Stopping Powershell process with PID of $($UIHash.PowershellPID)"
+                    Write-Host "[INFO]-$Date-$Message"
                     Stop-Process -Id $UIHash.PowershellPID -Force
                 }
             }
             catch{
-                #write log maybe
+                $Date = Get-Date -Format "[yyyy-MM-dd.HH:mm:ss]"
+                $Message = "PSChiaPlotter has been closed... unable to stop powershell process with PID of $($UIHash.PowershellPID)"
+                Write-Host "[WARNING]-$Date-$WARNING-$Message"
+                Write-Host "[ERROR]-$Date-$($_.InvocationInfo.ScriptLineNumber)-$($_.Exception.Message)"
             }
         }
         else{
