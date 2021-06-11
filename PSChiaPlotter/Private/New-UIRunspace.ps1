@@ -32,7 +32,7 @@ function New-UIRunspace{
             $DataHash.MainViewModel = [PSChiaPlotter.MainViewModel]::new()
             $DataHash.MainViewModel.Version = (Get-Module -Name PSChiaPlotter).Version.ToString()
             $DataHash.MainViewModel.LogPath = $DataHash.LogPath
-            $DataHash.MainViewModel.LogLevel = "Info"
+            $DataHash.MainViewModel.LogLevel = "Error"
             #$UIHash.LogLevel_Combobox.SelectedIndex = 0
             $UIHash.MainWindow.DataContext = $DataHash.MainViewModel
 
@@ -53,6 +53,19 @@ function New-UIRunspace{
                     $newJob.JobNumber = $jobNumber
                     $newJob.JobName = "Job $jobNumber"
                     $NewJobViewModel = [PSChiaPlotter.NewJobViewModel]::new($newJob)
+                    $DataHash.NewJobViewModel = $NewJobViewModel
+
+                    $KSize_ComboBox = $UIHash.NewJob_Window.FindName("KSize_ComboBox")
+                    $KSize_ComboBox.SelectedIndex = 1
+
+                    $KSize_ComboBox.Add_SelectionChanged({
+                        try{
+                            $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.RAM = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.MinRAM
+                        }
+                        catch{
+                            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+                        }
+                    })
 
                     #need to run get-chiavolume twice or the temp and final drives will be the same object in the application and will update each other...
                     Get-ChiaVolume | foreach {
@@ -60,6 +73,9 @@ function New-UIRunspace{
                     }
                     Get-ChiaVolume | foreach {
                         $NewJobViewModel.FinalAvailableVolumes.Add($_)
+                    }
+                    $NewJobViewModel.FinalAvailableVolumes | foreach {
+                        $NewJobViewModel.SecondTempVolumes.Add([PSChiaPlotter.ChiaVolume]::new($_))
                     }
 
                     $newJob.Status = "Waiting"
@@ -86,6 +102,7 @@ function New-UIRunspace{
                             $UIHash.NewJob_Window.Close()
                         }
                         catch{
+                            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
                             Show-Messagebox -Text $_.Exception.Message -Title "Create New Job Error" -Icon Error
                         }
                     })
@@ -99,10 +116,25 @@ function New-UIRunspace{
                             Show-Messagebox -Text $_.Exception.Message -Title "Exit New Job Window Error" -Icon Error
                         }
                     })
+
+                    $ClearTempVolume_Button = $UIHash.NewJob_Window.FindName("RemoveTempVolumeButton")
+                    $ClearTempVolume_Button.Add_Click({
+                        try{
+                            $tempVolume = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.SecondTempVolume
+                            if ($tempVolume -ne $Null){
+                                Write-PSChiaPlotterLog -LogType "INFO" -Message "Clearing Temp Volume Selection"
+                                $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.SecondTempVolume = $null
+                            }
+                        }
+                        catch{
+                            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+                        }
+                    })
     
                     $UIHash.NewJob_Window.ShowDialog()
                 }
                 catch{
+                    Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
                     Show-Messagebox -Text $_.Exception.Message -Title "Create New Job Error" -Icon Error
                 }
             })
