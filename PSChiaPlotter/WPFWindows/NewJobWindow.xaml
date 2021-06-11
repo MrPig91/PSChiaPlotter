@@ -111,7 +111,7 @@
 
                 <Label Content="Job Names:"/>
                 <TextBox Text="{Binding Path=NewChiaJob.JobName}" Grid.Column="1"/>
-                <Label Content="Saved Job: " Grid.Column="2"/>
+                <Label Content="Saved Jobs: " Grid.Column="2"/>
                 <ComboBox Name="SavedJobs_Combobox" Grid.Column="3" />
                 <Button x:Name="LoadJob_Button" Content="Load"  Margin="0,5,5,5" Padding="5,0,5,0" Grid.Column="4"/>
             </Grid>
@@ -187,7 +187,12 @@
                         <Label Content="Threads: " Grid.Column="1" Grid.Row="2" />
                         <Label Content="Buckets: " Grid.Column="3" Grid.Row="2" />
 
-                        <TextBox Name="KSize_TextBox" Grid.Column="2" Grid.Row="1" Margin="5" Text="{Binding Path=NewChiaJob.InitialChiaParameters.KSize}" IsReadOnly="True" VerticalAlignment="Top" />
+                        <ComboBox Name="KSize_TextBox"
+                                  SelectedItem="{Binding Path=NewChiaJob.InitialChiaParameters.KSize}"
+                                  DisplayMemberPath="{Binding Path=KSizeValue}"
+                                  ItemsSource="{Binding Path=AvailableKSizes}"
+                                  Grid.Column="2" Grid.Row="1" Margin="5"
+                                  VerticalAlignment="Top" />
                         <TextBox x:Name="RAM_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.InitialChiaParameters.RAM}" />
                         <TextBox x:Name="Threads_TextBox" Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Path=NewChiaJob.InitialChiaParameters.Threads}"/>
@@ -208,7 +213,14 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="Directories" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+                <GroupBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Directories" Margin="0" Padding="0"/>
+                            <Separator Width="5" Margin="5" VerticalAlignment="Center"/>
+                            <Button x:Name="Advanced_Checkbox" Content="Switch To Basic" FontSize="10" Margin="0" Padding="5,0,5,0" Background="Azure" VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                    </GroupBox.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5" />
@@ -221,7 +233,35 @@
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
+                        <Grid x:Name="BasicSettings" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+
+                            <Label Content="Temp Directory Path: " Grid.Row="1" Grid.Column="1"/>
+                            <Label Content="2nd Temp Directory Path: " Grid.Row="2" Grid.Column="1"/>
+                            <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
+                            <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
+
+                            <TextBox x:Name="TempDir_TextBox" Grid.Row="1" Grid.Column="2" />
+                            <TextBox x:Name="SecondTempDir_TextBox" Grid.Row="2" Grid.Column="2" />
+                            <TextBox x:Name="FinalDir_TextBox" Grid.Row="3" Grid.Column="2" />
+                            <TextBox x:Name="LoggingPath_TextBox" Grid.Row="4" Grid.Column="2" />
+                        </Grid>
+
                         <TabControl Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
+                                    Visibility="Visible"
                                     VerticalAlignment="Stretch">
                             <TabItem Header="Temp Drives">
                                 <Grid>
@@ -253,7 +293,7 @@
                                         </Grid.RowDefinitions>
 
                                         <Label Content="2nd Temp Drive:" Grid.Row="0" Grid.Column="0" ToolTip="This drive is for phase 3 only. If none selected, then it will default to the temporary directory."/>
-                                        <ComboBox Name="SecondTemp_ComboBox" Grid.Column="1" />
+                                        <ComboBox Name="SecondTemp_ComboBox" Grid.Column="1" ItemsSource="{Binding Path=SecondTempDrives}"/>
                                         <CheckBox IsChecked="{Binding Path=NewChiaJob.IgnoreMaxParallel}" IsThreeState="False"
                                             MaxWidth="160" VerticalContentAlignment="Center" Grid.Column="3"
                                             ToolTip="example - You will be able to plot 4 parallel plots on a 1 TB drive instead of 3 (do this at your own risk) - Applies to all temp drives">
