@@ -71,11 +71,12 @@ function New-ChiaQueueRunspace {
             $Queue.Status = "Finished"
         }
         catch{
-            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message
+            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
             Show-Messagebox -Text $_.Exception.Message -Title "Queue - $($Queue.QueueNumber)" | Out-Null
             if ($ChiaProcess){
                 Show-Messagebox -Text "The Following Chia Process may be running and might need to killed - PID $($ChiaProcess.Id)" -Title "Queue" | Out-Null
             }
+            $Queue.Status = "Failed"
         }
     }.AddParameters($PSBoundParameters)
 }
