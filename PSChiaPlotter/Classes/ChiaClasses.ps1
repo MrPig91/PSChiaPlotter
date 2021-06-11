@@ -689,8 +689,10 @@ namespace PSChiaPlotter
         private ChiaJob _newchiajob;
         public ObservableCollection<ChiaVolume> TempAvailableVolumes { get; set; }
         public ObservableCollection<ChiaVolume> FinalAvailableVolumes { get; set; }
+        public ObservableCollection<ChiaVolume> SecondTempVolumes { get; set; }
         public ObservableCollection<ChiaVolume> SelectedTempVolumes { get; set; }
         public ObservableCollection<ChiaVolume> SelectedFinalVolumes { get; set; }
+        public ObservableCollection<ChiaKSize> AvailableKSizes { get; set; }
         public ChiaJob NewChiaJob
         {
             get { return _newchiajob; }
@@ -718,6 +720,14 @@ namespace PSChiaPlotter
             NewChiaJob = newjob;
             TempAvailableVolumes = new ObservableCollection<ChiaVolume>();
             FinalAvailableVolumes = new ObservableCollection<ChiaVolume>();
+            SecondTempVolumes = new ObservableCollection<ChiaVolume>();
+
+            ObservableCollection<ChiaKSize>  availableksizes = new ObservableCollection<ChiaKSize>();
+            for (int i = 32; i <= 35; i++)
+            {
+                availableksizes.Add(new ChiaKSize(i));
+            }
+            AvailableKSizes = availableksizes;
         }
 
         public void AddTempVolume(ChiaVolume chiavolume)
