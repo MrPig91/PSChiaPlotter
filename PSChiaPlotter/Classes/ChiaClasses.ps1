@@ -1043,6 +1043,66 @@ namespace PSChiaPlotter
         }
 
     }
+
+    public class ChiaKSize : INotifyPropertyChanged
+    {
+        private int _ksizevalue;
+        public int KSizeValue
+        {
+            get { return _ksizevalue; }
+            set
+            {
+                _ksizevalue = value;
+                AdjustParameters(_ksizevalue);
+                OnPropertyChanged();
+            }
+        }
+        public int TempSize { get; private set; }
+        public int FinalSize { get; private set; }
+        public int MinRAM { get; private set; }
+        public ChiaKSize (int ksize)
+        {
+            KSizeValue = ksize;
+            AdjustParameters(_ksizevalue);
+        }
+        private void AdjustParameters (int ksizevalue)
+        {
+                            switch (ksizevalue)
+                {
+                    case 32:
+                        TempSize = 258;
+                        FinalSize = 101;
+                        MinRAM = 3390;
+                        break;
+                    case 33:
+                        TempSize = 258;
+                        FinalSize = 101;
+                        MinRAM = 3390;
+                        break;
+                    case 34:
+                        TempSize = 258;
+                        FinalSize = 101;
+                        MinRAM = 3390;
+                        break;
+                    case 35:
+                        TempSize = 258;
+                        FinalSize = 101;
+                        MinRAM = 3390;
+                        break;
+                }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string caller = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(caller));
+            }
+        }
+    }
 }
 "@ -ReferencedAssemblies PresentationFramework,PresentationCore,WindowsBase,"System.Xaml"
 
