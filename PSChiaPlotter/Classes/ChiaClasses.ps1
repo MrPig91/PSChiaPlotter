@@ -16,11 +16,12 @@ namespace PSChiaPlotter
 {
     public class ChiaParameters
     {
-        public int KSize { get; set; }
+        public ChiaKSize KSize { get; set; }
         public int RAM { get; set; }
         public int Threads { get; set; }
         public int Buckets { get; set; }
         public ChiaVolume TempVolume { get; set; }
+        public ChiaVolume SecondTempDrive { get; set; }
         public ChiaVolume FinalVolume { get; set; }
         public string LogDirectory { get; set; }
         public bool DisableBitField { get; set; }
@@ -31,13 +32,13 @@ namespace PSChiaPlotter
 
         public ChiaParameters()
         {
-            KSize = 32;
+            KSize = new ChiaKSize(32);
             RAM = 3390;
             Threads = 2;
             Buckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
         }
-        public ChiaParameters(int ksize,int ram,int threads,string logdir)
+        public ChiaParameters(ChiaKSize ksize,int ram,int threads,string logdir)
         {
             KSize = ksize;
             RAM = ram;
