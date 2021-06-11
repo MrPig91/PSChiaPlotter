@@ -7,7 +7,7 @@ function Start-GUIDebugRun{
     )
     try{
         $PlottingParameters = $ChiaRun.PlottingParameters
-        $KSize = $PlottingParameters.KSize
+        $KSize = $PlottingParameters.KSize.KSizeValue
         $Buffer = $PlottingParameters.RAM
         $Threads = $PlottingParameters.Threads
         $DisableBitfield = $PlottingParameters.DisableBitField

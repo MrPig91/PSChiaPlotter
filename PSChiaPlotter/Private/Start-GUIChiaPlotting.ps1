@@ -1,10 +1,6 @@
 function Start-GUIChiaPlotting {
     [CmdletBinding()]
     param(
-        #[string]$SecondTempDirecoryPath,
-        #$FarmerPublicKey,
-        #$PoolPublicKey,
-
         $ChiaRun,
         $ChiaQueue,
         $ChiaJob
@@ -12,7 +8,7 @@ function Start-GUIChiaPlotting {
 
     #not really needed, but just wanted to make each parameter its own variable
     $PlottingParameters = $ChiaRun.PlottingParameters
-    $KSize = $PlottingParameters.KSize
+    $KSize = $PlottingParameters.KSize.KSizeValue
     $Buffer = $PlottingParameters.RAM
     $Threads = $PlottingParameters.Threads
     $DisableBitfield = $PlottingParameters.DisableBitField
@@ -20,7 +16,7 @@ function Start-GUIChiaPlotting {
     $TempDirectoryPath = $PlottingParameters.TempVolume.DirectoryPath
     $FinalDirectoryPath = $PlottingParameters.FinalVolume.DirectoryPath
     $LogDirectoryPath = $PlottingParameters.LogDirectory
-    #$SecondTempDirecoryPath = $PlottingParameters.TempVolume.DirectoryPath
+    $SecondTempDirectoryPath = $PlottingParameters.TempVolume.DirectoryPath
     $PoolPublicKey = $PlottingParameters.PoolPublicKey
     $FarmerPublicKey = $PlottingParameters.FarmerPublicKey
     $Buckets = $PlottingParameters.Buckets
@@ -42,6 +38,12 @@ function Start-GUIChiaPlotting {
     if (-not[string]::IsNullOrWhiteSpace($FarmerPublicKey)){
         $ChiaArguments += " -f $FarmerPublicKey"
     }
+    if (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
+        $SecondTempDirectoryPath = $SecondTempDirecoryPath.TrimEnd('\')
+        $ChiaArguments += " -2 `"$SecondTempDirectoryPath`"" 
+    }
+    Show-Messagebox -Text $ChiaArguments
+    return
 
     if ($ChiaPath){
         Write-Information "Chia path exists, starting the plotting process"
