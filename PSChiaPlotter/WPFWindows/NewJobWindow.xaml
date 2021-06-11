@@ -1,10 +1,10 @@
-<Window 
+<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="New Job" Height="625" Width="575">
+        Title="New Job" Height="650" Width="600">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="Label">
@@ -187,7 +187,7 @@
                         <Label Content="Threads: " Grid.Column="1" Grid.Row="2" />
                         <Label Content="Buckets: " Grid.Column="3" Grid.Row="2" />
 
-                        <ComboBox Name="KSize_TextBox"
+                        <ComboBox Name="KSize_ComboBox"
                                   SelectedItem="{Binding Path=NewChiaJob.InitialChiaParameters.KSize}"
                                   ItemsSource="{Binding Path=AvailableKSizes}"
                                   Grid.Column="2" Grid.Row="1" Margin="5"
@@ -292,13 +292,46 @@
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
 
                                         <Label Content="2nd Temp Drive:" Grid.Row="0" Grid.Column="0" ToolTip="This drive is for phase 3 only. If none selected, then it will default to the temporary directory."/>
-                                        <ComboBox Name="SecondTemp_ComboBox" Grid.Column="1" ItemsSource="{Binding Path=SecondTempDrives}"/>
+                                        <ComboBox Name="SecondTemp_ComboBox" Grid.Column="1"
+                                                  SelectedItem="{Binding Path=NewChiaJob.InitialChiaParameters.SecondTempVolume}"
+                                                  ItemsSource="{Binding Path=SecondTempVolumes}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+
+                                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                                            <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                                            <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                            <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource TempMediaType}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                                                            <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                            <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource TempBusType}" />
+                                                        </StackPanel>
+                                                        <TextBox x:Name="Path_TextBox" Grid.Column="3" Text="{Binding Path=DirectoryPath}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <Button x:Name="RemoveTempVolumeButton" Content="Clear" Grid.Column="2" Margin="5" Padding="5,0,5,0"/>
                                         <CheckBox IsChecked="{Binding Path=NewChiaJob.IgnoreMaxParallel}" IsThreeState="False"
                                             MaxWidth="160" VerticalContentAlignment="Center" Grid.Column="3"
                                             ToolTip="example - You will be able to plot 4 parallel plots on a 1 TB drive instead of 3 (do this at your own risk) - Applies to all temp drives">
