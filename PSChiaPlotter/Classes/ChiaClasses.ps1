@@ -723,6 +723,7 @@ namespace PSChiaPlotter
             SecondTempVolumes = new ObservableCollection<ChiaVolume>();
 
             ObservableCollection<ChiaKSize>  availableksizes = new ObservableCollection<ChiaKSize>();
+            availableksizes.Add(new ChiaKSize(25));
             for (int i = 32; i <= 35; i++)
             {
                 availableksizes.Add(new ChiaKSize(i));
@@ -1068,8 +1069,8 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        public int TempSize { get; private set; }
-        public int FinalSize { get; private set; }
+        public long TempSize { get; private set; }
+        public long FinalSize { get; private set; }
         public int MinRAM { get; private set; }
         public ChiaKSize (int ksize)
         {
@@ -1078,29 +1079,34 @@ namespace PSChiaPlotter
         }
         private void AdjustParameters (int ksizevalue)
         {
-                            switch (ksizevalue)
+                switch (ksizevalue)
                 {
-                    case 32:
-                        TempSize = 258;
-                        FinalSize = 101;
-                        MinRAM = 3390;
-                        break;
-                    case 33:
-                        TempSize = 258;
-                        FinalSize = 101;
-                        MinRAM = 3390;
-                        break;
-                    case 34:
-                        TempSize = 258;
-                        FinalSize = 101;
-                        MinRAM = 3390;
-                        break;
-                    case 35:
-                        TempSize = 258;
-                        FinalSize = 101;
-                        MinRAM = 3390;
-                        break;
-                }
+                case 25:
+                    TempSize = 1932735284;
+                    FinalSize = 629145600;
+                    MinRAM = 512;
+                    break;
+                case 32:
+                    TempSize = 256624295936;
+                    FinalSize = 108877420954;
+                    MinRAM = 3390;
+                    break;
+                case 33:
+                    TempSize = 559419490304;
+                    FinalSize = 224197292851;
+                    MinRAM = 7400;
+                    break;
+                case 34:
+                    TempSize = 1117765238784;
+                    FinalSize = 461494235956;
+                    MinRAM = 14800;
+                    break;
+                case 35:
+                    TempSize = 2335388467200;
+                    FinalSize = 949295146599;
+                    MinRAM = 29600;
+                    break;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
