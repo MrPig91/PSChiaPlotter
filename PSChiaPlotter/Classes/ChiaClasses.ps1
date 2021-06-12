@@ -863,6 +863,8 @@ namespace PSChiaPlotter
         private double _freespaceingb;
         private double _percentfree;
         private int _potentialfinalplotsremaining;
+        private int _maxconcurrentchiaruns;
+
         public char DriveLetter { get; set; }
         public string Label { get; set; }
         public string UniqueId { get; set; }
@@ -915,7 +917,15 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        public int MaxConCurrentTempChiaRuns { get; set; }
+        public int MaxConCurrentTempChiaRuns
+        {
+            get { return _maxconcurrentchiaruns; }
+            set
+            {
+                _maxconcurrentchiaruns = value;
+                OnPropertyChanged();
+            }
+        }
         public ObservableCollection<ChiaRun> PendingFinalRuns { get; set; }
         public string DirectoryPath
         {
