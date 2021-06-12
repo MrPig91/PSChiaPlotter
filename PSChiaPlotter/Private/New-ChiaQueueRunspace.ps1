@@ -32,8 +32,8 @@ function New-ChiaQueueRunspace {
                 #grab a volume that has enough space
                 Do {
                     Try{
-                        $TempVolume = Get-BestChiaTempDrive -ChiaVolumes $Job.TempVolumes -ChiaJob $Job
-                        $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes
+                        $TempVolume = Get-BestChiaTempDrive -ChiaVolumes $Job.TempVolumes -ChiaJob $Job -ChiaQueue $Queue
+                        $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes -ChiaJob $Job -ChiaQueue $Queue
                         if ($TempVolume -eq $Null){
                             $Queue.Status = "Waiting on Temp Space"
                             Start-Sleep -Seconds 60
@@ -71,7 +71,7 @@ function New-ChiaQueueRunspace {
             $Queue.Status = "Finished"
         }
         catch{
-            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+            Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
             Show-Messagebox -Text $_.Exception.Message -Title "Queue - $($Queue.QueueNumber)" | Out-Null
             if ($ChiaProcess){
                 Show-Messagebox -Text "The Following Chia Process may be running and might need to killed - PID $($ChiaProcess.Id)" -Title "Queue" | Out-Null

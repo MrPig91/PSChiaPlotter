@@ -1,9 +1,11 @@
 function Get-BestChiaFinalDrive {
     [CmdletBinding()]
     param(
-        $ChiaVolumes
+        $ChiaVolumes,
+        $ChiaJob,
+        $ChiaQueue
     )
-    $finalplotsize = 101.4 * 1gb
+    $finalplotsize = $ChiaQueue.InitialChiaParameters.KSize.FinalSize
 
     $AllVolumes = Get-ChiaVolume
     foreach ($finalvol in $ChiaVolumes){
