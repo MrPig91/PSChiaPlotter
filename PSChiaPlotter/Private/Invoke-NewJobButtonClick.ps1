@@ -95,7 +95,31 @@ function Invoke-NewJobButtonClick {
 
        $KSize_ComboBox.Add_SelectionChanged({
             try{
+                $KSizeTempSize = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.TempSize
+                $KSizeFinalSize = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.FinalSize
                 $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.RAM = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.MinRAM
+                foreach ($volume in $DataHash.NewJobViewModel.TempAvailableVolumes){
+                    $max = [math]::Floor([decimal]($volume.size / $KSizeTempSize))
+                    $volume.MaxConCurrentTempChiaRuns = $max
+                }
+                foreach ($volume in $DataHash.NewJobViewModel.NewChiaJob.TempVolumes){
+                    $max = [math]::Floor([decimal]($volume.size / $KSizeTempSize))
+                    $volume.MaxConCurrentTempChiaRuns = $max
+                }
+
+                foreach ($volume in $DataHash.NewJobViewModel.FinalAvailableVolumes){
+                    $max = [math]::Floor([decimal]($volume.size / $KSizeFinalSize))
+                    $volume.PotentialFinalPlotsRemaining = $max
+                }
+                foreach ($volume in $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes){
+                    $max = [math]::Floor([decimal]($volume.size / $KSizeFinalSize))
+                    $volume.PotentialFinalPlotsRemaining = $max
+                }
+
+                foreach ($volume in $DataHash.NewJobViewModel.SecondTempVolumes){
+                    $max = [math]::Floor([decimal]($volume.size / $KSizeTempSize))
+                    $volume.MaxConCurrentTempChiaRuns = $max
+                }
             }
             catch{
                 Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
