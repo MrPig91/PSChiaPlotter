@@ -112,7 +112,7 @@
                 <Label Content="Job Names:"/>
                 <TextBox Text="{Binding Path=NewChiaJob.JobName}" Grid.Column="1"/>
                 <Label Content="Saved Jobs: " Grid.Column="2"/>
-                <ComboBox Name="SavedJobs_Combobox" Grid.Column="3" />
+                <ComboBox Name="SavedJobs_Combobox" Grid.Column="3" SelectedValuePath="FullName" DisplayMemberPath="Name" />
                 <Button x:Name="LoadJob_Button" Content="Load"  Margin="0,5,5,5" Padding="5,0,5,0" Grid.Column="4"/>
             </Grid>
         </Border>
@@ -190,13 +190,9 @@
                         <ComboBox Name="KSize_ComboBox"
                                   SelectedItem="{Binding Path=NewChiaJob.InitialChiaParameters.KSize}"
                                   ItemsSource="{Binding Path=AvailableKSizes}"
+                                  DisplayMemberPath="KSizeValue"
                                   Grid.Column="2" Grid.Row="1" Margin="5"
                                   VerticalAlignment="Top">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=KSizeValue}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
                         </ComboBox>
                         <TextBox x:Name="RAM_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.InitialChiaParameters.RAM}" />
                         <TextBox x:Name="Threads_TextBox" Grid.Row="2" Grid.Column="2"
@@ -223,7 +219,7 @@
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Directories" Margin="0" Padding="0"/>
                             <Separator Width="5" Margin="5" VerticalAlignment="Center"/>
-                            <Button x:Name="Advanced_Checkbox" Content="Switch To Basic" FontSize="10" Margin="0" Padding="5,0,5,0" Background="Azure" VerticalAlignment="Bottom"/>
+                            <Button x:Name="AdvancedBasic_Button" Content="Switch To Basic" FontSize="10" Margin="0" Padding="5,0,5,0" Background="Azure" VerticalAlignment="Bottom"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid>
@@ -238,7 +234,7 @@
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
-                        <Grid x:Name="BasicSettings" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
+                        <Grid x:Name="BasicPlotting_Grid" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5" />
                                 <ColumnDefinition Width="auto" />
@@ -259,13 +255,14 @@
                             <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
                             <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
 
-                            <TextBox x:Name="TempDir_TextBox" Grid.Row="1" Grid.Column="2" />
-                            <TextBox x:Name="SecondTempDir_TextBox" Grid.Row="2" Grid.Column="2" />
-                            <TextBox x:Name="FinalDir_TextBox" Grid.Row="3" Grid.Column="2" />
-                            <TextBox x:Name="LoggingPath_TextBox" Grid.Row="4" Grid.Column="2" />
+                            <TextBox x:Name="TempDir_TextBox" Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="SecondTempDir_TextBox" Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="FinalDir_TextBox" Grid.Row="3" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="LoggingPath_TextBox" Grid.Row="4" Grid.Column="2" HorizontalContentAlignment="Left"/>
                         </Grid>
 
-                        <TabControl Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
+                        <TabControl x:Name="AdvancedPlotting_TabControl"
+                                    Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
                                     Visibility="Visible"
                                     VerticalAlignment="Stretch">
                             <TabItem Header="Temp Drives">
