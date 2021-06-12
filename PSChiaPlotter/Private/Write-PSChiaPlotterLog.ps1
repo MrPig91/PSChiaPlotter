@@ -5,13 +5,17 @@ function Write-PSChiaPlotterLog {
         [string]$LogType,
         [string]$Message,
         [int]$LineNumber,
-        [string]$Line
+        [string]$Line,
+        $ErrorObject
     )
 
     try{
         $Date = Get-Date -Format "[yyyy-MM-dd.HH:mm:ss]"
         switch ($LogType){
             "ERROR" {
+                $Message = $ErrorObject.Exception.Message
+                $LineNumber = $ErrorObject.InvocationInfo.ScriptLineNumber
+                $Line = $ErrorObject.InvocationInfo.Line
                 Write-Host "[$LogType]$Date-$LineNumber-$Message`n  $Line"
                 break
             }
