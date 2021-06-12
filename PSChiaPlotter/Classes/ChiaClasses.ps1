@@ -14,14 +14,42 @@ using System.Text.RegularExpressions;
 
 namespace PSChiaPlotter
 {
-    public class ChiaParameters
+    public class ChiaParameters : INotifyPropertyChanged
     {
-        public ChiaKSize KSize { get; set; }
-        public int RAM { get; set; }
+        private int _ram;
+        private ChiaVolume _secondtempvolume;
+        private ChiaKSize _ksize;
+        public ChiaKSize KSize
+        {
+            get { return _ksize; }
+            set
+            {
+                _ksize = value;
+                OnPropertyChanged();
+            }
+        }
+        public int RAM
+        {
+            get { return _ram; }
+            set
+            {
+                _ram = value;
+                OnPropertyChanged();
+                
+            }
+        }
         public int Threads { get; set; }
         public int Buckets { get; set; }
         public ChiaVolume TempVolume { get; set; }
-        public ChiaVolume SecondTempDrive { get; set; }
+        public ChiaVolume SecondTempVolume
+        {
+            get { return _secondtempvolume; }
+            set
+            {
+                _secondtempvolume = value;
+                OnPropertyChanged();
+            }
+        }
         public ChiaVolume FinalVolume { get; set; }
         public string LogDirectory { get; set; }
         public bool DisableBitField { get; set; }
@@ -58,6 +86,17 @@ namespace PSChiaPlotter
             PoolPublicKey = chiaParameters.PoolPublicKey;
             FarmerPublicKey = chiaParameters.FarmerPublicKey;
             Buckets = chiaParameters.Buckets;
+            SecondTempVolume = chiaParameters.SecondTempVolume;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string caller = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(caller));
+            }
         }
     }
 
@@ -77,6 +116,7 @@ namespace PSChiaPlotter
         private ObservableCollection<ChiaVolume> _tempvolumes;
         private ObservableCollection<ChiaVolume> _finalvolumes;
         private bool _ignoremaxparallel;
+        private ChiaParameters _initialchiaparameters;
 
         public int JobNumber { get; set; }
         public string JobName
@@ -168,7 +208,17 @@ namespace PSChiaPlotter
             }
         }
 
-        public ChiaParameters InitialChiaParameters { get; set; }
+        public bool BasicPlotting { get; set; }
+
+        public ChiaParameters InitialChiaParameters
+        {
+            get { return _initialchiaparameters; }
+            set
+            {
+                _initialchiaparameters = value;
+                OnPropertyChanged();
+            }
+        }
         public ObservableCollection<ChiaVolume> TempVolumes
         {
             get { return _tempvolumes; }
@@ -220,6 +270,7 @@ namespace PSChiaPlotter
             TotalPlotCount = 1;
             FirstDelay = 0;
             DelayInMinutes = 60;
+            BasicPlotting = false;
             Queues = new ObservableCollection<ChiaQueue>();
             RunsInProgress = new ObservableCollection<ChiaRun>();
             TempVolumes = new ObservableCollection<ChiaVolume>();
@@ -902,6 +953,32 @@ namespace PSChiaPlotter
             double freespaceinGB = (double)freespace / 1073741824;
             double percentfree = (double)freespace / (double)size * 100;
             double sizeinGB = (double)size / 1073741824;
+            SizeInGB = Math.Round(sizeinGB, 2);
+            FreeSpaceInGB = Math.Round(freespaceinGB, 2);
+            PercentFree = Math.Round(percentfree, 2);
+            PotentialFinalPlotsRemaining = (int)Math.Floor((decimal)freespace / 108877420954);
+        }
+        public ChiaVolume(ChiaVolume chiavolume)
+        {
+            UniqueId = chiavolume.UniqueId;
+            Label = chiavolume.Label;
+            Size = chiavolume.Size;
+            DriveLetter = chiavolume.DriveLetter;
+            FreeSpace = chiavolume.FreeSpace;
+            CurrentChiaRuns = new ObservableCollection<ChiaRun>();
+            PendingFinalRuns = new ObservableCollection<ChiaRun>();
+            AccessPaths = chiavolume.AccessPaths;
+            SystemVolume = chiavolume.SystemVolume;
+            BusType = chiavolume.BusType;
+            MediaType = chiavolume.MediaType;
+            DirectoryPath = chiavolume.DirectoryPath;
+            MaxConCurrentTempChiaRuns = chiavolume.MaxConCurrentTempChiaRuns;
+
+            double freespace = chiavolume.FreeSpace;
+            double size = chiavolume.Size;
+            double freespaceinGB = freespace / 1073741824;
+            double percentfree = freespace / size * 100;
+            double sizeinGB = size / 1073741824;
             SizeInGB = Math.Round(sizeinGB, 2);
             FreeSpaceInGB = Math.Round(freespaceinGB, 2);
             PercentFree = Math.Round(percentfree, 2);
