@@ -45,97 +45,10 @@ function New-UIRunspace{
             #ButtonClick
             $UIHash.NewJob_Button.add_Click({
                 try{
-                    #Get-childItem -Path $DataHash.Classes -File | ForEach-Object {Import-Module $_.FullName}
-                    $XAMLPath = Join-Path -Path $DataHash.WPF -ChildPath NewJobWindow.xaml
-                    $UIHash.NewJob_Window = Import-Xaml -Path $XAMLPath
-                    $jobNumber = $DataHash.MainViewModel.AllJobs.Count + 1
-                    $newJob = [PSChiaPlotter.ChiaJob]::new()
-                    $newJob.JobNumber = $jobNumber
-                    $newJob.JobName = "Job $jobNumber"
-                    $NewJobViewModel = [PSChiaPlotter.NewJobViewModel]::new($newJob)
-                    $DataHash.NewJobViewModel = $NewJobViewModel
-
-                    $KSize_ComboBox = $UIHash.NewJob_Window.FindName("KSize_ComboBox")
-                    $KSize_ComboBox.SelectedIndex = 1
-
-                    $KSize_ComboBox.Add_SelectionChanged({
-                        try{
-                            $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.RAM = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.MinRAM
-                        }
-                        catch{
-                            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
-                        }
-                    })
-
-                    #need to run get-chiavolume twice or the temp and final drives will be the same object in the application and will update each other...
-                    Get-ChiaVolume | foreach {
-                        $NewJobViewModel.TempAvailableVolumes.Add($_)
-                    }
-                    Get-ChiaVolume | foreach {
-                        $NewJobViewModel.FinalAvailableVolumes.Add($_)
-                    }
-                    $NewJobViewModel.FinalAvailableVolumes | foreach {
-                        $NewJobViewModel.SecondTempVolumes.Add([PSChiaPlotter.ChiaVolume]::new($_))
-                    }
-
-                    $newJob.Status = "Waiting"
-                    $UIHash.NewJob_Window.DataContext = $NewJobViewModel
-                    $CreateJob_Button = $UIHash.NewJob_Window.FindName("CreateJob_Button")
-                    $CreateJob_Button.add_Click({
-                        try{
-                            $Results = Test-ChiaParameters $newJob
-                            if ($NewJob.DelayInMinutes -eq 60){
-                                $response = Show-Messagebox -Text "You left the default delay time of 60 Minutes, continue?" -Button YesNo
-                                if ($response -eq [System.Windows.MessageBoxResult]::No){
-                                    return
-                                }
-                            }
-                            if ($Results -ne $true){
-                                Show-Messagebox -Text $Results -Title "Invalid Parameters" -Icon Warning
-                                return
-                            }
-                            $DataHash.MainViewModel.AllJobs.Add($newJob)
-                            $newJobRunSpace = New-ChiaJobRunspace -Job $newJob
-                            $newJobRunSpace.Runspacepool = $ScriptsHash.RunspacePool
-                            [void]$newJobRunSpace.BeginInvoke()
-                            $DataHash.Runspaces.Add($newJobRunSpace)
-                            $UIHash.NewJob_Window.Close()
-                        }
-                        catch{
-                            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
-                            Show-Messagebox -Text $_.Exception.Message -Title "Create New Job Error" -Icon Error
-                        }
-                    })
-
-                    $CancelJobCreation_Button = $UIHash.NewJob_Window.FindName("CancelJobCreation_Button")
-                    $CancelJobCreation_Button.Add_Click({
-                        try{
-                            $UIHash.NewJob_Window.Close()
-                        }
-                        catch{
-                            Show-Messagebox -Text $_.Exception.Message -Title "Exit New Job Window Error" -Icon Error
-                        }
-                    })
-
-                    $ClearTempVolume_Button = $UIHash.NewJob_Window.FindName("RemoveTempVolumeButton")
-                    $ClearTempVolume_Button.Add_Click({
-                        try{
-                            $tempVolume = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.SecondTempVolume
-                            if ($tempVolume -ne $Null){
-                                Write-PSChiaPlotterLog -LogType "INFO" -Message "Clearing Temp Volume Selection"
-                                $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.SecondTempVolume = $null
-                            }
-                        }
-                        catch{
-                            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
-                        }
-                    })
-    
-                    $UIHash.NewJob_Window.ShowDialog()
+                    Invoke-NewJobButtonClick
                 }
                 catch{
                     Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
-                    Show-Messagebox -Text $_.Exception.Message -Title "Create New Job Error" -Icon Error
                 }
             })
 
