@@ -49,21 +49,27 @@ function New-ChiaQueueRunspace {
                             }
                             $TempVolume = Get-BestChiaTempDrive -ChiaVolumes $Job.TempVolumes -ChiaJob $Job -ChiaQueue $Queue
                             $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes -ChiaJob $Job -ChiaQueue $Queue
+                            $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
                             if ($TempVolume -eq $Null){
                                 $Queue.Status = "Waiting on Temp Space"
                                 Start-Sleep -Seconds 60
                             }
-                            elseif ($FinalVolume -eq $Null){
+                            if ($FinalVolume -eq $Null){
                                 $Queue.Status = "Waiting on Final Dir Space"
                                 Start-Sleep -Seconds 60
+                            }
+                            if (-not$PhaseOneIsOpen){
+                                $Queue.Status = "Waiting - Phase 1 Limit"
+                                Start-Sleep -Seconds 20
                             }
                         }
                         catch{
                             $Queue.Status = "Failed To Grab Volume Info"
+                            Write-Error -LogType "Error" -ErrorObject $_
                             Start-Sleep -Seconds 30
                         }
                     }
-                    while ($TempVolume -eq $null -or $FinalVolume -eq $null)
+                    while ($TempVolume -eq $null -or $FinalVolume -eq $null -or $PhaseOneIsOpen -eq $false)
                     if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                         break
                     }
