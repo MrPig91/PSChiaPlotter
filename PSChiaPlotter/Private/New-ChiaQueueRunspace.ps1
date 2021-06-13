@@ -25,17 +25,17 @@ function New-ChiaQueueRunspace {
                 if ($Queue.Pause){
                     $Queue.Status = "Paused"
                     while ($Queue.Pause){
+                        if ($Queue.Quit){
+                            break
+                        }
                         sleep 10
                     }
                     if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                         break
                     }
                 }
-                if ($Queue.Quit){
-                    break
-                }
 
-                if ($ChiaJob.BasicPlotting){
+                if ($Job.BasicPlotting){
                     $TempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicTempDirectory)
                     $FinalVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicFinalDirectory)
                     $SecondTempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicSecondTempDirectory)
@@ -44,6 +44,9 @@ function New-ChiaQueueRunspace {
                     #grab a volume that has enough space
                     Do {
                         Try{
+                            if ($Queue.Quit){
+                                break
+                            }
                             $TempVolume = Get-BestChiaTempDrive -ChiaVolumes $Job.TempVolumes -ChiaJob $Job -ChiaQueue $Queue
                             $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes -ChiaJob $Job -ChiaQueue $Queue
                             if ($TempVolume -eq $Null){
