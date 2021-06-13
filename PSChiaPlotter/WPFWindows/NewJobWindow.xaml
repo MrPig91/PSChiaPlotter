@@ -251,7 +251,12 @@
                             </Grid.RowDefinitions>
 
                             <Label Content="Temp Directory Path: " Grid.Row="1" Grid.Column="1"/>
-                            <Label Content="2nd Temp Directory Path: " Grid.Row="2" Grid.Column="1"/>
+                            <CheckBox Content="2nd Temp Directory Path: "
+                                      x:Name="SecondTempCheckBox"
+                                      IsThreeState="False"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.EnableBasicSecondTempDirectory}"
+                                      Grid.Row="2" Grid.Column="1"/>
                             <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
                             <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
 
@@ -259,6 +264,7 @@
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory}"
                                      Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left"/>
                             <TextBox x:Name="SecondTempDir_TextBox"
+                                     IsEnabled="{Binding ElementName=SecondTempCheckBox, Path=IsChecked}"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicSecondTempDirectory}"
                                      Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Left"/>
                             <TextBox x:Name="FinalDir_TextBox"
