@@ -134,6 +134,8 @@ namespace PSChiaPlotter
         private ObservableCollection<ChiaVolume> _finalvolumes;
         private bool _ignoremaxparallel;
         private ChiaParameters _initialchiaparameters;
+        private bool _enablephaseonelimitor;
+        private int _phaseonelimit;
 
         public int JobNumber { get; set; }
         public string JobName
@@ -170,6 +172,25 @@ namespace PSChiaPlotter
             set
             {
                 _runsinprogress = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int PhaseOneLimit
+        {
+            get { return _phaseonelimit; }
+            set
+            {
+                _phaseonelimit = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool EnablePhaseOneLimitor
+        {
+            get { return _enablephaseonelimitor; }
+            set
+            {
+                _enablephaseonelimitor = value;
                 OnPropertyChanged();
             }
         }
