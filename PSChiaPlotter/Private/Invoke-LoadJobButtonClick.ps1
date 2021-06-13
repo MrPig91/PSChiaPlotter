@@ -122,6 +122,12 @@ function Invoke-LoadJobButtonClick {
             }
             $KSize_ComboBox.SelectedIndex = $Index
             $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.RAM = $ImportedJob.NewChiaJob.InitialChiaParameters.RAM
+
+            if ($DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
+                $AdvancedBasic_Button.Content = "Switch To Advance"
+                $AdvancedPlotting_TabControl.Visibility = [System.Windows.Visibility]::Collapsed
+                $BasicPlotting_Grid.Visibility = [System.Windows.Visibility]::Visible
+            }
         }
     }
     catch{
