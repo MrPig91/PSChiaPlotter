@@ -6,8 +6,8 @@ function Get-BestChiaTempDrive {
         $ChiaQueue
     )
 
-    $requiredTempSize = $ChiaQueue.InitialChiaParameters.KSize.TempSize
-    $finalplotsize = $ChiaQueue.InitialChiaParameters.KSize.FinalSize
+    $requiredTempSize = $ChiaQueue.PlottingParameters.KSize.TempSize
+    $finalplotsize = $ChiaQueue.PlottingParameters.KSize.FinalSize
 
     $AllVolumes = Get-ChiaVolume
     foreach ($tempvol in $ChiaVolumes){
