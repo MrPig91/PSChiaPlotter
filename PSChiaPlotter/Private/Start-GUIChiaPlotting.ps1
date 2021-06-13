@@ -95,7 +95,7 @@ function Start-GUIChiaPlotting {
                         else{
                             $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
                         }
-                        switch ($ChiaRun.Phase) {
+                        switch ($progress.Phase) {
                             "Phase 1" {$ChiaRun.CurrentPhaseProgress = $progress.Phase1Progess}
                             "Phase 2" {$ChiaRun.CurrentPhaseProgress = $progress.Phase2Progess}
                             "Phase 3" {$ChiaRun.CurrentPhaseProgress = $progress.Phase3Progess}
@@ -189,7 +189,7 @@ function Start-GUIChiaPlotting {
         }
     }
     catch{
-        Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+        Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
         $PSCmdlet.WriteError($_)
     }
 }
