@@ -39,6 +39,18 @@ function New-ChiaQueueRunspace {
                     $TempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicTempDirectory)
                     $FinalVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicFinalDirectory)
                     $SecondTempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicSecondTempDirectory)
+                    $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
+                    while ($PhaseOneIsOpen -eq $false){
+                        $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
+                        $Queue.Status = "Waiting - Phase 1 Limit"
+                        if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                            break
+                        }
+                        if ($Queue.Quit){
+                            break
+                        }
+                        Start-Sleep -Seconds 15
+                    }
                 }
                 else{
                     #grab a volume that has enough space
@@ -62,6 +74,9 @@ function New-ChiaQueueRunspace {
                                 $Queue.Status = "Waiting - Phase 1 Limit"
                                 Start-Sleep -Seconds 20
                             }
+                            if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                                break
+                            }
                         }
                         catch{
                             $Queue.Status = "Failed To Grab Volume Info"
@@ -70,10 +85,10 @@ function New-ChiaQueueRunspace {
                         }
                     }
                     while ($TempVolume -eq $null -or $FinalVolume -eq $null -or $PhaseOneIsOpen -eq $false)
-                    if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
-                        break
-                    }
                 } #else
+                if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                    break
+                }
                 $Queue.Status = "Running"
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
