@@ -66,15 +66,13 @@ function Invoke-NewJobButtonClick {
             try{
                 if ($AdvancedBasic_Button.Content -eq "Switch To Basic"){
                     $AdvancedBasic_Button.Content = "Switch To Advance"
-                    $NewJobViewModel.NewChiaJob.BasicPlotting = $false
-                    $NewJobViewModel.NewChiaJob.IgnoreMaxParallel = $false
+                    $DataHash.NewJobViewModel.NewChiaJob.BasicPlotting = $true
                     $AdvancedPlotting_TabControl.Visibility = [System.Windows.Visibility]::Collapsed
                     $BasicPlotting_Grid.Visibility = [System.Windows.Visibility]::Visible
                 }
                 else{
                     $AdvancedBasic_Button.Content = "Switch To Basic"
-                    $NewJobViewModel.NewChiaJob.BasicPlotting = $true
-                    $NewJobViewModel.NewChiaJob.IgnoreMaxParallel = $true
+                    $DataHash.NewJobViewModel.NewChiaJob.BasicPlotting = $false
                     $BasicPlotting_Grid.Visibility = [System.Windows.Visibility]::Collapsed
                     $AdvancedPlotting_TabControl.Visibility = [System.Windows.Visibility]::Visible
                 }
@@ -108,11 +106,11 @@ function Invoke-NewJobButtonClick {
                 }
 
                 foreach ($volume in $DataHash.NewJobViewModel.FinalAvailableVolumes){
-                    $max = [math]::Floor([decimal]($volume.size / $KSizeFinalSize))
+                    $max = [math]::Floor([decimal]($volume.FreeSpace / $KSizeFinalSize))
                     $volume.PotentialFinalPlotsRemaining = $max
                 }
                 foreach ($volume in $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes){
-                    $max = [math]::Floor([decimal]($volume.size / $KSizeFinalSize))
+                    $max = [math]::Floor([decimal]($volume.FreeSpace / $KSizeFinalSize))
                     $volume.PotentialFinalPlotsRemaining = $max
                 }
 
@@ -128,8 +126,8 @@ function Invoke-NewJobButtonClick {
 
         $CreateJob_Button.add_Click({
             try{
-                $Results = Test-ChiaParameters $newJob
-                if ($NewJob.DelayInMinutes -eq 60){
+                $Results = Test-ChiaParameters $DataHash.NewJobViewModel.NewChiaJob
+                if ($DataHash.NewJobViewModel.NewChiaJob.DelayInMinutes -eq 60){
                     $response = Show-Messagebox -Text "You left the default delay time of 60 Minutes, continue?" -Button YesNo
                     if ($response -eq [System.Windows.MessageBoxResult]::No){
                         return
@@ -139,8 +137,8 @@ function Invoke-NewJobButtonClick {
                     Show-Messagebox -Text $Results -Title "Invalid Parameters" -Icon Warning
                     return
                 }
-                $DataHash.MainViewModel.AllJobs.Add($newJob)
-                $newJobRunSpace = New-ChiaJobRunspace -Job $newJob
+                $DataHash.MainViewModel.AllJobs.Add($DataHash.NewJobViewModel.NewChiaJob)
+                $newJobRunSpace = New-ChiaJobRunspace -Job $DataHash.NewJobViewModel.NewChiaJob
                 $newJobRunSpace.Runspacepool = $ScriptsHash.RunspacePool
                 [void]$newJobRunSpace.BeginInvoke()
                 $DataHash.Runspaces.Add($newJobRunSpace)
