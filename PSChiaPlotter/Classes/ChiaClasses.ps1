@@ -19,6 +19,8 @@ namespace PSChiaPlotter
         private int _ram;
         private ChiaVolume _secondtempvolume;
         private ChiaKSize _ksize;
+        private string _logdirectory;
+
         public ChiaKSize KSize
         {
             get { return _ksize; }
@@ -51,16 +53,25 @@ namespace PSChiaPlotter
             }
         }
         public ChiaVolume FinalVolume { get; set; }
-        public string LogDirectory { get; set; }
+        public string LogDirectory
+        {
+            get { return _logdirectory; }
+            set
+            {
+                _logdirectory = value;
+                OnPropertyChanged();
+            }
+        }
         public bool DisableBitField { get; set; }
         public bool ExcludeFinalDirectory { get; set; }
+
+        public string PoolPublicKey { get; set; }
+        public string FarmerPublicKey { get; set; }
 
         public string BasicTempDirectory { get; set; }
         public string BasicFinalDirectory { get; set; }
         public string BasicSecondTempDirectory { get; set; }
-
-        public string PoolPublicKey { get; set; }
-        public string FarmerPublicKey { get; set; }
+        public bool EnableBasicSecondTempDirectory { get; set; }
 
         public ChiaParameters()
         {
@@ -78,6 +89,7 @@ namespace PSChiaPlotter
             LogDirectory = logdir;
             DisableBitField = true;
             ExcludeFinalDirectory = true;
+            EnableBasicSecondTempDirectory = false;
         }
         public ChiaParameters(ChiaParameters chiaParameters)
         {
@@ -90,6 +102,7 @@ namespace PSChiaPlotter
             PoolPublicKey = chiaParameters.PoolPublicKey;
             FarmerPublicKey = chiaParameters.FarmerPublicKey;
             Buckets = chiaParameters.Buckets;
+            EnableBasicSecondTempDirectory = chiaParameters.EnableBasicSecondTempDirectory;
             SecondTempVolume = chiaParameters.SecondTempVolume;
         }
 
