@@ -67,10 +67,12 @@ function Start-GUIChiaPlotting {
                 $ChiaRun.ProcessId = $ChiaProcess.Id
                 $ChiaJob.RunsInProgress.Add($ChiaRun)
 
-                $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.TempVolume.UniqueId
-                $TempMasterVolume.CurrentChiaRuns.Add($ChiaRun)
-                $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.FinalVolume.UniqueId
-                $FinalMasterVolume.PendingFinalRuns.Add($ChiaRun)
+                if (-not$ChiaJob.BasicPlotting){
+                    $TempMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.TempVolume.UniqueId
+                    $TempMasterVolume.CurrentChiaRuns.Add($ChiaRun)
+                    $FinalMasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $ChiaRun.PlottingParameters.FinalVolume.UniqueId
+                    $FinalMasterVolume.PendingFinalRuns.Add($ChiaRun)
+                }
 
                 $ChiaQueue.CurrentRun = $ChiaRun
                 $DataHash.MainViewModel.CurrentRuns.Add($ChiaRun)
@@ -93,7 +95,13 @@ function Start-GUIChiaPlotting {
                         else{
                             $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
                         }
-                        $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
+                        switch ($ChiaRun.Phase) {
+                            "Phase 1" {$ChiaRun.CurrentPhaseProgress = $progress.Phase1Progess}
+                            "Phase 2" {$ChiaRun.CurrentPhaseProgress = $progress.Phase2Progess}
+                            "Phase 3" {$ChiaRun.CurrentPhaseProgress = $progress.Phase3Progess}
+                            "Phase 4" {$ChiaRun.CurrentPhaseProgress = $progress.Phase4Progess}
+                            "Copying" {$ChiaRun.CurrentPhaseProgress = $progress.CopyProgess}
+                        }
                         $ChiaRun.TempSize = Get-ChiaTempSize -DirectoryPath $TempDirectoryPath -PlotId $plotid
                         Start-Sleep (5 + $ChiaQueue.QueueNumber)
                     }
@@ -104,8 +112,11 @@ function Start-GUIChiaPlotting {
 
                 $ChiaJob.RunsInProgress.Remove($ChiaRun)
                 $ChiaJob.CompletedRunCount++
-                $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
-                $TempMasterVolume.CurrentChiaRuns.Remove($ChiaRun)
+
+                if (-not$ChiaJob.BasicPlotting){
+                    $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
+                    $TempMasterVolume.CurrentChiaRuns.Remove($ChiaRun)
+                }
                 $ChiaRun.ExitCode = $ChiaRun.ChiaPRocess.ExitCode
                 #if this is null then an error will occur if we try to set this property
                 if ($ChiaRun.ExitTime){
@@ -145,9 +156,11 @@ function Start-GUIChiaPlotting {
                 if ($ChiaJob.RunsInProgress.Contains($ChiaRun)){
                     $ChiaJob.RunsInProgress.Remove($ChiaRun)
                 }
-                if ($FinalMasterVolume){
-                    if ($FinalMasterVolume.PendingFinalRuns.Contains($ChiaRun)){
-                        $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
+                if (-not$ChiaJob.BasicPlotting){
+                    if ($FinalMasterVolume){
+                        if ($FinalMasterVolume.PendingFinalRuns.Contains($ChiaRun)){
+                            $FinalMasterVolume.PendingFinalRuns.Remove($ChiaRun)
+                        }
                     }
                 }
                 $PSCmdlet.WriteError($_)
