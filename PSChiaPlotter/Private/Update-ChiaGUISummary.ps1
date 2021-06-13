@@ -9,7 +9,11 @@ function Update-ChiaGUISummary{
         $OneDayAgo = (Get-Date).AddDays(-1)
         $PlotsIn24Hrs = ($DataHash.MainViewModel.CompletedRuns | where ExitTime -GT $OneDayAgo | Measure-Object).Count
         $DataHash.MainViewModel.PlotPlottedPerDay = $PlotsIn24Hrs
-        $DataHash.MainViewModel.TBPlottedPerDay = [math]::Round(($PlotsIn24Hrs * 101.4) / 1000,2)
+        $totalTBPlotted = 0
+        foreach ($plot in $PlotsIn24Hrs){
+            $totalTBPlotted += (($plot.PlottingParameters.KSize.FinalSize / 1gb) / 1000)
+        }
+        $DataHash.MainViewModel.TBPlottedPerDay = [math]::Round($totalTBPlotted / 1000,2)
 
         $SortedRuns = $DataHash.MainViewModel.CompletedRuns | Sort-Object -Property Runtime
         $Fastest = $SortedRuns | Select-Object -First 1
