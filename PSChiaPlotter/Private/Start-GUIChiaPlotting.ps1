@@ -136,6 +136,16 @@ function Start-GUIChiaPlotting {
                             Show-Messagebox -Text $_.Exception.Message | Out-Null
                         }
                     }
+                    if (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
+                        Get-ChildItem -Path $SecondTempDirectoryPath -Filter "*$plotid*.tmp" | foreach {
+                            try{
+                                Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+                            }
+                            catch{
+                                Show-Messagebox -Text $_.Exception.Message | Out-Null
+                            }
+                        } #foreach file
+                    }
                 }
                 else{
                     $ChiaRun.Status = "Completed"
