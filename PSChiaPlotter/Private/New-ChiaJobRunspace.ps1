@@ -23,6 +23,7 @@ function New-ChiaJobRunspace{
                 $Job.Queues.Add($newQueue)
             }
             catch{
+                Write-PSChiaPlotterLog -LogType "ERROR" -ErrorObject $_
                 Show-Messagebox -Text $_.Exception.Message -Title "Job $($Job.JobNumber) - Runspace"
             }
         }
@@ -46,6 +47,7 @@ function New-ChiaJobRunspace{
             }
         }
         catch{
+            Write-PSChiaPlotterLog -LogType "ERROR" -ErrorObject $_
             Show-Messagebox -Text $_.Exception.Message -Title "Job $($Job.JobNumber) - Runspace" | Out-Null
         }
     }.AddParameters($PSBoundParameters)

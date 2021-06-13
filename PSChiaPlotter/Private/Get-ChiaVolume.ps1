@@ -50,7 +50,7 @@ function Get-ChiaVolume {
         }
         catch{
             Write-PSChiaPlotterLog -LogType "Warning" -Message "Unable to create a ChiaVolume from driveletter $($DriveLetter.DriveLetter)"
-            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message
+            Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
         }
     } #volume
 
@@ -90,7 +90,7 @@ function Get-ChiaVolume {
         }
         catch{
             Write-PSChiaPlotterLog -LogType "Warning" -Message "Unable to create a ChiaVolume from driveletter $($DriveLetter.DriveLetter)"
-            Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message
+            Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
         }
     }
 }
