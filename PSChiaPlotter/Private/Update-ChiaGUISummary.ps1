@@ -13,7 +13,7 @@ function Update-ChiaGUISummary{
         foreach ($plot in $PlotsIn24Hrs){
             $totalTBPlotted += ($plot.PlottingParameters.KSize.FinalSize / 1gb)
         }
-        $DataHash.MainViewModel.TBPlottedPerDay = [math]::Round($totalTBPlotted / 1000,2)
+        $DataHash.MainViewModel.TBPlottedPerDay = [math]::Round($totalTBPlotted / 1000,4)
 
         $SortedRuns = $DataHash.MainViewModel.CompletedRuns | Sort-Object -Property Runtime
         $Fastest = $SortedRuns | Select-Object -First 1
