@@ -17,23 +17,27 @@ function New-UIRunspace{
 
             #Assign GUI Controls To Variables
             $UIHash.MainWindow = $MainWindow
+
+            #DataGrid
             $UIHash.Jobs_DataGrid = $MainWindow.FindName("Jobs_DataGrid")
             $UIHash.Queues_DataGrid = $MainWindow.FindName("Queues_DataGrid")
             $UIHash.Runs_DataGrid = $MainWindow.FindName("Runs_DataGrid")
             $UIHash.CompletedRuns_DataGrid = $MainWindow.FindName("CompletedRuns_DataGrid")
-            $UIHash.Refreshdrives_Button = $MainWindow.FindName("RefreshdrivesButton")
-            #$UIHash.LogLevel_Combobox = $MainWindow.FindName("LogLevelCombobox")
-            $UIHash.CheckForUpdate_Button = $MainWindow.FindName("CheckForUpateButton")
-            $UIHash.OpenLog_Button = $MainWindow.FindName("OpenLogButton")
-            $DataHash.RefreshingDrives = $false
 
+            #Buttons
             $UIHash.NewJob_Button = $MainWindow.FindName("AddJob_Button")
+            $UIHash.QuitJob_Button = $MainWindow.FindName("QuitJob_Button")
+            $UIHash.PauseAllQueues_Button = $MainWindow.FindName("PauseAllQueues_Button")
+            $UIHash.OpenLog_Button = $MainWindow.FindName("OpenLogButton")
+            $UIHash.Refreshdrives_Button = $MainWindow.FindName("RefreshdrivesButton")
+            $UIHash.CheckForUpdate_Button = $MainWindow.FindName("CheckForUpateButton")
+            $DataHash.RefreshingDrives = $false
 
             $DataHash.MainViewModel = [PSChiaPlotter.MainViewModel]::new()
             $DataHash.MainViewModel.Version = (Get-Module -Name PSChiaPlotter).Version.ToString()
             $DataHash.MainViewModel.LogPath = $DataHash.LogPath
             $DataHash.MainViewModel.LogLevel = "Error"
-            #$UIHash.LogLevel_Combobox.SelectedIndex = 0
+
             $UIHash.MainWindow.DataContext = $DataHash.MainViewModel
 
             #Add Master Copy of volumes to MainViewModel these are used to keep track of
@@ -48,7 +52,25 @@ function New-UIRunspace{
                     Invoke-NewJobButtonClick
                 }
                 catch{
-                    Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+                    Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
+                }
+            })
+
+            $UIHash.QuitJob_Button.Add_Click({
+                try{
+                    Invoke-QuitJobButtonClick
+                }
+                catch{
+                    Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
+                }
+            })
+
+            $UIHash.PauseAllQueues_Button.Add_Click({
+                try{
+                    Invoke-PauseAllQueuesButtonClick
+                }
+                catch{
+                    Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
                 }
             })
 
@@ -87,8 +109,6 @@ function New-UIRunspace{
                     Show-Messagebox "Unable to open log file, check the path '$($DataHash.MainViewModel.LogPath)'" | Out-Null
                 }
             })
-
-            #$ScriptsHash.QueueHandle = $ScriptsHash.QueueRunspace.BeginInvoke()
 
             $UIHash.MainWindow.add_Closing({
                 Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
