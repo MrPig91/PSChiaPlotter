@@ -153,7 +153,6 @@
                         <DataGridTextColumn Header="Job #" Binding="{Binding Path=JobNumber}"/>
                         <DataGridTextColumn Header="Job Name" Binding="{Binding Path=ParentJob.JobName}" Width="80"/>
                         <DataGridTextColumn Header="Queue #" Binding="{Binding Path=QueueNumber}" />
-                        <DataGridTextColumn Header="Current Run #" Binding="{Binding Path=CurrentRun.RunNumber}" />
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
                         <DataGridTextColumn Header="Plots Failed" Binding="{Binding Path=FailedPlotCount}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
@@ -162,6 +161,14 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding Path=ButtonContent}" Command="{Binding Path=PauseResumeCommand}" BorderThickness="0" IsEnabled="{Binding Path=ButtonEnabled}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Current Run #" Binding="{Binding Path=CurrentRun.RunNumber}" />
+                        <DataGridTemplateColumn Header="Quit">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding Path=QuitButtonContent}" Command="{Binding Path=QuitQueueCommand}" BorderThickness="0" IsEnabled="{Binding Path=QuitButtonEnabled}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -193,18 +200,41 @@
                                 <DataGridTextColumn Header="Job Name" Binding="{Binding Path=ParentQueue.ParentJob.JobName}" Width="80"/>
                                 <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
-                                <DataGridTextColumn Header="Phase" Binding="{Binding Path=Phase}" />
+                                <DataGridTemplateColumn Width="150" Header="Phase" SortMemberPath="Progress" CanUserSort="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <ProgressBar
+                                                    x:Name="PhaseProgressBar"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Foreground="LightGreen"
+                                                    Value="{Binding CurrentPhaseProgress}"/>
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} - {1}%">
+                                                            <Binding Path="Phase" />
+                                                            <Binding ElementName="PhaseProgressBar" Path="Value" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTemplateColumn Width="150" Header="Progress" SortMemberPath="Progress" CanUserSort="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
                                                 <ProgressBar
-                                        x:Name="ProgressBar"
-                                        Value="{Binding Progress}"/>
-                                                <TextBlock
-                                        Text="{Binding ElementName=ProgressBar, Path=Value, StringFormat={}{0:0}%}"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"/>
+                                                    x:Name="ProgressBar"
+                                                    Value="{Binding Progress}"/>
+                                                            <TextBlock
+                                                    Text="{Binding ElementName=ProgressBar, Path=Value, StringFormat={}{0:0}%}"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"/>
                                             </Grid>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
