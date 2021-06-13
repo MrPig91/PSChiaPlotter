@@ -78,6 +78,8 @@ The following is a list of things I want to add or improve on in the module. Not
   - [ ] Add Madmax Alternative Plot Option (User can use a textbox to provide a path to the .exe)
   - [ ] Add the ability to add and remove columns on datagrids  
   - [ ] Update module when pool plotting comes out
+  - [ ] Added Button column on Completed Runs tab for checking finished plot
+  - [ ] Add Dark Mode
   
 - [ ] 3. Get-ChiaKPlotCombination
   - [ ] Add which KSize parameter to filter out which KSizes you want
