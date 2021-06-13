@@ -22,7 +22,7 @@ function Update-PSChiaPlotter {
                     Show-Messagebox -Text $message | Out-Null
                 }
                 catch{
-                    Write-PSChiaPlotterLog -LogType ERROR -Message $_.Exception.Message -LineNumber $_.InvocationInfo.ScriptLineNumber
+                    Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
                     Show-Messagebox -Text "Unable to update to the latest version. Check logs more info" | Out-Null
                 }
             }
@@ -32,7 +32,7 @@ function Update-PSChiaPlotter {
                 Show-Messagebox -Text "Your PSChiaPlotter is up to date!" | Out-Null
             }
             catch{
-                Write-PSChiaPlotterLog -LogType ERROR -Message $_.Exception.Message -LineNumber $_.InvocationInfo.ScriptLineNumber
+                Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
             }
         }
     }

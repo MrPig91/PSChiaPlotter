@@ -95,7 +95,7 @@ function New-UIRunspace{
                     Update-PSChiaPlotter
                 }
                 catch{
-                    Write-PSChiaPlotterLog -LogType ERROR -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message
+                    Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
                     Show-Messagebox "Unable to check for updates... check logs for more info" | Out-Null
                 }
             })
@@ -105,7 +105,7 @@ function New-UIRunspace{
                     Invoke-Item -Path $DataHash.MainViewModel.LogPath -ErrorAction Stop
                 }
                 catch{
-                    Write-PSChiaPlotterLog -LogType ERROR -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message
+                    Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
                     Show-Messagebox "Unable to open log file, check the path '$($DataHash.MainViewModel.LogPath)'" | Out-Null
                 }
             })
