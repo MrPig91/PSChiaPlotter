@@ -16,6 +16,11 @@ function Test-ChiaParameters {
     if ($ChiaParameters.Buckets -le 0){
         return "Buckets cannot be less than 1"
     }
+    if ($NewJob.EnablePhaseOneLimitor){
+        if ($NewJob.PhaseOneLimit -lt 1){
+            return "Phase one limit cannot be less than 1... that doesn't make sense."
+        }
+    }
     if ($NewJob.BasicPlotting){
         if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicTempDirectory)){
             return "Temp Directory `"$($ChiaParameters.BasicTempDirectory)`" does not exists"
