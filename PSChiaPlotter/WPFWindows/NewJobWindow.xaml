@@ -255,10 +255,18 @@
                             <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
                             <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
 
-                            <TextBox x:Name="TempDir_TextBox" Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left"/>
-                            <TextBox x:Name="SecondTempDir_TextBox" Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Left"/>
-                            <TextBox x:Name="FinalDir_TextBox" Grid.Row="3" Grid.Column="2" HorizontalContentAlignment="Left"/>
-                            <TextBox x:Name="LoggingPath_TextBox" Grid.Row="4" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="TempDir_TextBox"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory}"
+                                     Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="SecondTempDir_TextBox"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicSecondTempDirectory}"
+                                     Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="FinalDir_TextBox"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory}"
+                                     Grid.Row="3" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="LoggingPath_TextBox"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
+                                     Grid.Row="4" Grid.Column="2" HorizontalContentAlignment="Left"/>
                         </Grid>
 
                         <TabControl x:Name="AdvancedPlotting_TabControl"
