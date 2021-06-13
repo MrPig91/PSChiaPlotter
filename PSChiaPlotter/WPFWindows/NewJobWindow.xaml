@@ -117,7 +117,9 @@
             </Grid>
         </Border>
 
-        <ScrollViewer x:Name="Form_ScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3">
+        <ScrollViewer x:Name="Form_ScrollViewer"
+                      VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -163,14 +165,14 @@
                                   x:Name="PhaseOneLimitor_CheckBox"
                                   ToolTip="This will enable the Phase 1 Limit Property below"
                                   Content="Enable Phase 1 Limit" VerticalAlignment="Center"
-                                  IsThreeState="False" IsChecked="{Binding Path=PhaseOneLimitorEnabled}" />
+                                  IsThreeState="False" IsChecked="{Binding Path=NewChiaJob.EnablePhaseOneLimitor}" />
 
                         <TextBox x:Name="TotalPlots_TextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.TotalPlotCount}" />
                         <TextBox x:Name="Parallel_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.QueueCount}"/>
                         <TextBox x:Name="Delay_TextBox" Grid.Row="2" Grid.Column="4"  Text="{Binding Path=NewChiaJob.DelayInMinutes}" />
                         <TextBox x:Name="FirstDelay_TextBox" Grid.Row="2" Grid.Column="2"  Text="{Binding Path=NewChiaJob.FirstDelay}" />
                         <TextBox x:Name="PhaseOneLimit_TextBox"
-                                 IsEnabled="{Binding ElementName=PhaseOneLimitor_CheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 IsEnabled="{Binding ElementName=PhaseOneLimitor_CheckBox, Path=IsChecked}"
                                  Grid.Row="2" Grid.Column="6"
                                  ToolTip="This will limit the total number of chia processes that can be in phase 1 at one time."
                                  Text="{Binding Path=NewChiaJob.PhaseOneLimit}" />
@@ -261,6 +263,7 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
                                 <RowDefinition Height="5" />
                             </Grid.RowDefinitions>
 
@@ -273,6 +276,7 @@
                                       Grid.Row="2" Grid.Column="1"/>
                             <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
                             <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
+                            <Label Content="Note: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Top"/>
 
                             <TextBox x:Name="TempDir_TextBox"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory}"
@@ -287,6 +291,12 @@
                             <TextBox x:Name="LoggingPath_TextBox"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
                                      Grid.Row="4" Grid.Column="2" HorizontalContentAlignment="Left"/>
+
+                            <TextBox Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" HorizontalContentAlignment="Left"
+                                     IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                Text="When using Basic Directory plotting, no checks are performed to make sure there is enough space to plot. All volumes selected in advanced directories settings are ignored. MaxParallel is also ignored since disk size is not calculated. Use these basic setting at your own discretion!
+                                     Also changing the log directory in this setting will change the log directory in the advanced setting."
+                                       />
                         </Grid>
 
                         <TabControl x:Name="AdvancedPlotting_TabControl"
