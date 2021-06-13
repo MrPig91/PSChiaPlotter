@@ -55,6 +55,10 @@ namespace PSChiaPlotter
         public bool DisableBitField { get; set; }
         public bool ExcludeFinalDirectory { get; set; }
 
+        public string BasicTempDirectory { get; set; }
+        public string BasicFinalDirectory { get; set; }
+        public string BasicSecondTempDirectory { get; set; }
+
         public string PoolPublicKey { get; set; }
         public string FarmerPublicKey { get; set; }
 
@@ -298,6 +302,9 @@ namespace PSChiaPlotter
         private bool _buttonenabled;
         private DateTime _currenttime;
         private TimeSpan _runtime;
+        private bool _quitbuttonenabled;
+        private string _quitbuttoncontent;
+        private bool _quit;
 
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -342,6 +349,9 @@ namespace PSChiaPlotter
                 {
                     ButtonContent = "n/a";
                     ButtonEnabled = false;
+                    QuitButtonContent = "n/a";
+                    QuitButtonEnabled = false;
+                    CurrentRun = null;
                 }
                 else
                 {
@@ -383,6 +393,35 @@ namespace PSChiaPlotter
 
         public ChiaJob ParentJob { get; set; }
 
+        public bool QuitButtonEnabled
+        {
+            get { return _quitbuttonenabled; }
+            set
+            {
+                _quitbuttonenabled = value;
+                OnPropertyChanged();
+            }
+        }
+        public string QuitButtonContent
+        {
+            get { return _quitbuttoncontent; }
+            set
+            {
+                _quitbuttoncontent = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Quit
+        {
+            get { return _quit; }
+            set
+            {
+                _quit = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ChiaQueue (int queueNum, ChiaParameters parameters, ChiaJob chiajob)
         {
             ParentJob = chiajob;
@@ -395,6 +434,9 @@ namespace PSChiaPlotter
             Runs = new ObservableCollection<ChiaRun>();
             ButtonContent = "Pause";
             ButtonEnabled = false;
+            Quit = false;
+            QuitButtonEnabled = true;
+            QuitButtonContent = "Quit";
             PlottingParameters = parameters;
         }
 
@@ -445,6 +487,52 @@ namespace PSChiaPlotter
             }
         }
 
+        public void QuitQueue()
+        {
+            try
+            {
+                if (Quit)
+                {
+                    Status = "Running";
+                    ButtonEnabled = true;
+                    QuitButtonContent = "Quit";
+                    Quit = false;
+                }
+                else
+                {
+                    System.Windows.MessageBoxButton buttons = System.Windows.MessageBoxButton.YesNoCancel;
+                    System.Windows.MessageBoxResult response = System.Windows.MessageBox.Show("Would you like to quit the current running job?\nClick yes to quit the current job and end queue.\nClick No to let the job finish then end queue.", "Quit Queue", buttons);
+                    if (System.Windows.MessageBoxResult.Yes == response)
+                    {
+                        Quit = true;
+                        Status = "Quit";
+                        if (CurrentRun != null)
+                        {
+                            QuitButtonEnabled = false;
+                            ButtonEnabled = false;
+                            QuitButtonContent = "n/a";
+                            CurrentRun.ChiaProcess.Kill();
+                        }
+                    }
+                    else if (System.Windows.MessageBoxResult.No == response)
+                    {
+                        Quit = true;
+                        ButtonEnabled = false;
+                        Status = "Last run - Pending Quit";
+                        QuitButtonContent = "Don't Quit";
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Unable To Quit Queue");
+            }
+        }
+
         private ICommand _pauseresumecommand;
         public ICommand PauseResumeCommand
         {
@@ -453,6 +541,17 @@ namespace PSChiaPlotter
                 if (_pauseresumecommand == null)
                     _pauseresumecommand = new RelayCommand(param => PauseResumeQueue());
                 return _pauseresumecommand;
+            }
+        }
+
+        private ICommand _quitqueuecommand;
+        public ICommand QuitQueueCommand
+        {
+            get
+            {
+                if (_quitqueuecommand == null)
+                    _quitqueuecommand = new RelayCommand(param => QuitQueue());
+                return _quitqueuecommand;
             }
         }
     }
@@ -470,6 +569,7 @@ namespace PSChiaPlotter
         private string _phasse;
         private int _exitcode;
         private DateTime _exittime;
+        private double _currentphaseprogress;
     
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -480,6 +580,16 @@ namespace PSChiaPlotter
             set
             {
                 _phasse = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double CurrentPhaseProgress
+        {
+            get { return _currentphaseprogress; }
+            set
+            {
+                _currentphaseprogress = value;
                 OnPropertyChanged();
             }
         }
@@ -993,6 +1103,11 @@ namespace PSChiaPlotter
             FreeSpaceInGB = Math.Round(freespaceinGB, 2);
             PercentFree = Math.Round(percentfree, 2);
             PotentialFinalPlotsRemaining = (int)Math.Floor((decimal)freespace / 108877420954);
+        }
+
+        public ChiaVolume(string dirpath)
+        {
+            DirectoryPath = dirpath;
         }
 
     }
