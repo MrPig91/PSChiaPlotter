@@ -68,6 +68,79 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="JobGroupBox" TargetType="GroupBox">
+            <Setter Property="BorderBrush" Value="ForestGreen" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=JobsCheckBox, Path=IsChecked}" Value="False">
+                    <Setter Property="BorderThickness" Value="0" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=JobsCheckBox, Path=IsChecked}" Value="True">
+                    <Setter Property="BorderThickness" Value="2" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="JobsGridRow" TargetType="RowDefinition">
+            <Setter Property="Height" Value=".6*" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=JobsCheckBox, Path=IsChecked}" Value="False">
+                    <Setter Property="Height" Value="auto" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=JobsCheckBox, Path=IsChecked}" Value="True">
+                    <Setter Property="Height" Value=".6*" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="QueueGroupBox" TargetType="GroupBox">
+            <Setter Property="BorderBrush" Value="ForestGreen" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=JobQueue_Checkbox, Path=IsChecked}" Value="False">
+                    <Setter Property="BorderThickness" Value="0" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=JobQueue_Checkbox, Path=IsChecked}" Value="True">
+                    <Setter Property="BorderThickness" Value="2" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="QueuesGridRow" TargetType="RowDefinition">
+            <Setter Property="Height" Value=".8*" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=JobQueue_Checkbox, Path=IsChecked}" Value="False">
+                    <Setter Property="Height" Value="auto" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=JobQueue_Checkbox, Path=IsChecked}" Value="True">
+                    <Setter Property="Height" Value=".8*" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PlotsGroupBox" TargetType="GroupBox">
+            <Setter Property="BorderBrush" Value="ForestGreen" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=Plots_Checkbox, Path=IsChecked}" Value="False">
+                    <Setter Property="BorderThickness" Value="0" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=Plots_Checkbox, Path=IsChecked}" Value="True">
+                    <Setter Property="BorderThickness" Value="2" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PlotsGridRow" TargetType="RowDefinition">
+            <Setter Property="Height" Value="1.2*" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=Plots_Checkbox, Path=IsChecked}" Value="False">
+                    <Setter Property="Height" Value="auto" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=Plots_Checkbox, Path=IsChecked}" Value="True">
+                    <Setter Property="Height" Value="1.2*" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -78,15 +151,18 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="5" />
-            <RowDefinition Height="auto" MaxHeight="200"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="1.25*" MinHeight="125"/>
-            <RowDefinition Height="*" />
+            <RowDefinition Style="{StaticResource JobsGridRow}"/>
+            <RowDefinition Style="{StaticResource QueuesGridRow}"/>
+            <RowDefinition Style="{StaticResource PlotsGridRow}"/>
+            <RowDefinition Height="1.30*" MaxHeight="220"/>
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
-        <GroupBox Header="Jobs" Name="Jobs_GroupBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" MaxHeight="200">
-            <Grid>
+        <GroupBox Name="Jobs_GroupBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource JobGroupBox}">
+            <GroupBox.Header>
+                <CheckBox x:Name="JobsCheckBox" Content="Jobs" IsThreeState="False" IsChecked="True" />
+            </GroupBox.Header>
+            <Grid Visibility="{Binding ElementName=JobsCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="*" />
@@ -95,12 +171,12 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="5" />
                 </Grid.RowDefinitions>
 
                 <DataGrid x:Name="Jobs_DataGrid"
+                          SelectionMode="Single"
                           Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="5"
                           AutoGenerateColumns="False" MinHeight="50" IsReadOnly="True"
                           ItemsSource="{Binding Path=AllJobs}">
@@ -119,15 +195,22 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <Button x:Name="AddJob_Button" Content="New Job" Grid.Row="1" Grid.Column="2" Margin="5" VerticalAlignment="Top"/>
+                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2">
+                    <Button x:Name="AddJob_Button" Content="New Job" Margin="5" VerticalAlignment="Top"/>
+                    <Button x:Name="QuitJob_Button" Content="Quit Job" Margin="5" VerticalAlignment="Top"/>
+                </StackPanel>
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="Job Queues" x:Name="JobQueues_GroupBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
-            <Grid>
+        <GroupBox x:Name="JobQueues_GroupBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource QueueGroupBox}">
+            <GroupBox.Header>
+                <CheckBox x:Name="JobQueue_Checkbox" Content="Job Queues" IsChecked="True" IsThreeState="False" />
+            </GroupBox.Header>
+            <Grid Visibility="{Binding ElementName=JobQueue_Checkbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="5" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -137,8 +220,7 @@
                 </Grid.RowDefinitions>
 
                 <DataGrid x:Name="Queues_DataGrid" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=AllQueues}"
-                          AutoGenerateColumns="False" IsReadOnly="True" RowStyle="{StaticResource HighlightRow}"
-                          MaxHeight="100">
+                          AutoGenerateColumns="False" IsReadOnly="True" RowStyle="{StaticResource HighlightRow}">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="LightGray" Opacity=".2"/>
@@ -153,7 +235,6 @@
                         <DataGridTextColumn Header="Job #" Binding="{Binding Path=JobNumber}"/>
                         <DataGridTextColumn Header="Job Name" Binding="{Binding Path=ParentJob.JobName}" Width="80"/>
                         <DataGridTextColumn Header="Queue #" Binding="{Binding Path=QueueNumber}" />
-                        <DataGridTextColumn Header="Current Run #" Binding="{Binding Path=CurrentRun.RunNumber}" />
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
                         <DataGridTextColumn Header="Plots Failed" Binding="{Binding Path=FailedPlotCount}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
@@ -165,12 +246,27 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Current Run #" Binding="{Binding Path=CurrentRun.RunNumber}" />
+                        <DataGridTemplateColumn Header="Quit">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding Path=QuitButtonContent}" Command="{Binding Path=QuitQueueCommand}" BorderThickness="0" IsEnabled="{Binding Path=QuitButtonEnabled}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
+
+                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2">
+                    <Button x:Name="PauseAllQueues_Button" Content="Pause All" Margin="5" />
+                </StackPanel>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Queued Plots" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3">
-            <Grid>
+        <GroupBox Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Style="{StaticResource PlotsGroupBox}">
+            <GroupBox.Header>
+                <CheckBox x:Name="Plots_Checkbox" Content="Queued Plots" IsChecked="True" IsThreeState="False" />
+            </GroupBox.Header>
+            <Grid Visibility="{Binding ElementName=Plots_Checkbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="*" />
@@ -193,18 +289,41 @@
                                 <DataGridTextColumn Header="Job Name" Binding="{Binding Path=ParentQueue.ParentJob.JobName}" Width="80"/>
                                 <DataGridTextColumn Header="Queue" Binding="{Binding Path=QueueNumber}" />
                                 <DataGridTextColumn Header="Run" Binding="{Binding Path=RunNumber}" />
-                                <DataGridTextColumn Header="Phase" Binding="{Binding Path=Phase}" />
+                                <DataGridTemplateColumn Width="150" Header="Phase" SortMemberPath="Progress" CanUserSort="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <ProgressBar
+                                                    x:Name="PhaseProgressBar"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Foreground="LightGreen"
+                                                    Value="{Binding CurrentPhaseProgress}"/>
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} - {1}%">
+                                                            <Binding Path="Phase" />
+                                                            <Binding ElementName="PhaseProgressBar" Path="Value" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTemplateColumn Width="150" Header="Progress" SortMemberPath="Progress" CanUserSort="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
                                                 <ProgressBar
-                                        x:Name="ProgressBar"
-                                        Value="{Binding Progress}"/>
+                                                    x:Name="ProgressBar"
+                                                    Value="{Binding Progress}"/>
                                                 <TextBlock
-                                        Text="{Binding ElementName=ProgressBar, Path=Value, StringFormat={}{0:0}%}"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"/>
+                                                    Text="{Binding ElementName=ProgressBar, Path=Value, StringFormat={}{0:0}%}"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"/>
                                             </Grid>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
@@ -236,6 +355,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="KSize" Binding="{Binding Path=PlottingParameters.KSize.KSizeValue}" />
                                 <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
                                 <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
                             </DataGrid.Columns>

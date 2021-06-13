@@ -13,13 +13,7 @@ function Stop-PSChiaPlotter{
             Stop-Process $run.ProcessID
         }
         catch{
-            $logParam = @{
-                LogType = "Error"
-                Message = $_.Exception.Message
-                LineNumber = $_.InvocationInfo.ScriptLineNumber
-                DebugLogPath = $DataHash.LogPath
-            }
-            Write-PSChiaPlotterLog @logParam
+            Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
         }
     }
     $RunningRunspaces = $DataHash.Runspaces
@@ -28,13 +22,7 @@ function Stop-PSChiaPlotter{
             $runspace.Stop()
         }
         catch{
-            $logParam = @{
-                LogType = "Error"
-                Message = $_.Exception.Message
-                LineNumber = $_.InvocationInfo.ScriptLineNumber
-                DebugLogPath = $DataHash.LogPath
-            }
-            Write-PSChiaPlotterLog @logParam
+            Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
         }
     }
 }

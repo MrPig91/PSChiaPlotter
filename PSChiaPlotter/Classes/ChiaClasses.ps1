@@ -14,30 +14,74 @@ using System.Text.RegularExpressions;
 
 namespace PSChiaPlotter
 {
-    public class ChiaParameters
+    public class ChiaParameters : INotifyPropertyChanged
     {
-        public int KSize { get; set; }
-        public int RAM { get; set; }
+        private int _ram;
+        private ChiaVolume _secondtempvolume;
+        private ChiaKSize _ksize;
+        private string _logdirectory;
+
+        public ChiaKSize KSize
+        {
+            get { return _ksize; }
+            set
+            {
+                _ksize = value;
+                OnPropertyChanged();
+            }
+        }
+        public int RAM
+        {
+            get { return _ram; }
+            set
+            {
+                _ram = value;
+                OnPropertyChanged();
+                
+            }
+        }
         public int Threads { get; set; }
         public int Buckets { get; set; }
         public ChiaVolume TempVolume { get; set; }
+        public ChiaVolume SecondTempVolume
+        {
+            get { return _secondtempvolume; }
+            set
+            {
+                _secondtempvolume = value;
+                OnPropertyChanged();
+            }
+        }
         public ChiaVolume FinalVolume { get; set; }
-        public string LogDirectory { get; set; }
+        public string LogDirectory
+        {
+            get { return _logdirectory; }
+            set
+            {
+                _logdirectory = value;
+                OnPropertyChanged();
+            }
+        }
         public bool DisableBitField { get; set; }
         public bool ExcludeFinalDirectory { get; set; }
 
         public string PoolPublicKey { get; set; }
         public string FarmerPublicKey { get; set; }
 
+        public string BasicTempDirectory { get; set; }
+        public string BasicFinalDirectory { get; set; }
+        public string BasicSecondTempDirectory { get; set; }
+        public bool EnableBasicSecondTempDirectory { get; set; }
+
         public ChiaParameters()
         {
-            KSize = 32;
+            KSize = new ChiaKSize(32);
             RAM = 3390;
             Threads = 2;
             Buckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
         }
-        public ChiaParameters(int ksize,int ram,int threads,string logdir)
+        public ChiaParameters(ChiaKSize ksize,int ram,int threads,string logdir)
         {
             KSize = ksize;
             RAM = ram;
@@ -45,6 +89,7 @@ namespace PSChiaPlotter
             LogDirectory = logdir;
             DisableBitField = true;
             ExcludeFinalDirectory = true;
+            EnableBasicSecondTempDirectory = false;
         }
         public ChiaParameters(ChiaParameters chiaParameters)
         {
@@ -57,6 +102,18 @@ namespace PSChiaPlotter
             PoolPublicKey = chiaParameters.PoolPublicKey;
             FarmerPublicKey = chiaParameters.FarmerPublicKey;
             Buckets = chiaParameters.Buckets;
+            EnableBasicSecondTempDirectory = chiaParameters.EnableBasicSecondTempDirectory;
+            SecondTempVolume = chiaParameters.SecondTempVolume;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string caller = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(caller));
+            }
         }
     }
 
@@ -76,6 +133,9 @@ namespace PSChiaPlotter
         private ObservableCollection<ChiaVolume> _tempvolumes;
         private ObservableCollection<ChiaVolume> _finalvolumes;
         private bool _ignoremaxparallel;
+        private ChiaParameters _initialchiaparameters;
+        private bool _enablephaseonelimitor;
+        private int _phaseonelimit;
 
         public int JobNumber { get; set; }
         public string JobName
@@ -112,6 +172,25 @@ namespace PSChiaPlotter
             set
             {
                 _runsinprogress = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int PhaseOneLimit
+        {
+            get { return _phaseonelimit; }
+            set
+            {
+                _phaseonelimit = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool EnablePhaseOneLimitor
+        {
+            get { return _enablephaseonelimitor; }
+            set
+            {
+                _enablephaseonelimitor = value;
                 OnPropertyChanged();
             }
         }
@@ -167,7 +246,17 @@ namespace PSChiaPlotter
             }
         }
 
-        public ChiaParameters InitialChiaParameters { get; set; }
+        public bool BasicPlotting { get; set; }
+
+        public ChiaParameters InitialChiaParameters
+        {
+            get { return _initialchiaparameters; }
+            set
+            {
+                _initialchiaparameters = value;
+                OnPropertyChanged();
+            }
+        }
         public ObservableCollection<ChiaVolume> TempVolumes
         {
             get { return _tempvolumes; }
@@ -219,6 +308,7 @@ namespace PSChiaPlotter
             TotalPlotCount = 1;
             FirstDelay = 0;
             DelayInMinutes = 60;
+            BasicPlotting = false;
             Queues = new ObservableCollection<ChiaQueue>();
             RunsInProgress = new ObservableCollection<ChiaRun>();
             TempVolumes = new ObservableCollection<ChiaVolume>();
@@ -246,6 +336,9 @@ namespace PSChiaPlotter
         private bool _buttonenabled;
         private DateTime _currenttime;
         private TimeSpan _runtime;
+        private bool _quitbuttonenabled;
+        private string _quitbuttoncontent;
+        private bool _quit;
 
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -290,6 +383,9 @@ namespace PSChiaPlotter
                 {
                     ButtonContent = "n/a";
                     ButtonEnabled = false;
+                    QuitButtonContent = "n/a";
+                    QuitButtonEnabled = false;
+                    CurrentRun = null;
                 }
                 else
                 {
@@ -331,6 +427,35 @@ namespace PSChiaPlotter
 
         public ChiaJob ParentJob { get; set; }
 
+        public bool QuitButtonEnabled
+        {
+            get { return _quitbuttonenabled; }
+            set
+            {
+                _quitbuttonenabled = value;
+                OnPropertyChanged();
+            }
+        }
+        public string QuitButtonContent
+        {
+            get { return _quitbuttoncontent; }
+            set
+            {
+                _quitbuttoncontent = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Quit
+        {
+            get { return _quit; }
+            set
+            {
+                _quit = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ChiaQueue (int queueNum, ChiaParameters parameters, ChiaJob chiajob)
         {
             ParentJob = chiajob;
@@ -343,6 +468,9 @@ namespace PSChiaPlotter
             Runs = new ObservableCollection<ChiaRun>();
             ButtonContent = "Pause";
             ButtonEnabled = false;
+            Quit = false;
+            QuitButtonEnabled = true;
+            QuitButtonContent = "Quit";
             PlottingParameters = parameters;
         }
 
@@ -393,6 +521,52 @@ namespace PSChiaPlotter
             }
         }
 
+        public void QuitQueue()
+        {
+            try
+            {
+                if (Quit)
+                {
+                    Status = "Running";
+                    ButtonEnabled = true;
+                    QuitButtonContent = "Quit";
+                    Quit = false;
+                }
+                else
+                {
+                    System.Windows.MessageBoxButton buttons = System.Windows.MessageBoxButton.YesNoCancel;
+                    System.Windows.MessageBoxResult response = System.Windows.MessageBox.Show("Would you like to quit the current running job?\nClick yes to quit the current job and end queue.\nClick No to let the job finish then end queue.", "Quit Queue", buttons);
+                    if (System.Windows.MessageBoxResult.Yes == response)
+                    {
+                        Quit = true;
+                        Status = "Quit";
+                        if (CurrentRun != null)
+                        {
+                            QuitButtonEnabled = false;
+                            ButtonEnabled = false;
+                            QuitButtonContent = "n/a";
+                            CurrentRun.ChiaProcess.Kill();
+                        }
+                    }
+                    else if (System.Windows.MessageBoxResult.No == response)
+                    {
+                        Quit = true;
+                        ButtonEnabled = false;
+                        Status = "Last run - Pending Quit";
+                        QuitButtonContent = "Don't Quit";
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Unable To Quit Queue");
+            }
+        }
+
         private ICommand _pauseresumecommand;
         public ICommand PauseResumeCommand
         {
@@ -401,6 +575,17 @@ namespace PSChiaPlotter
                 if (_pauseresumecommand == null)
                     _pauseresumecommand = new RelayCommand(param => PauseResumeQueue());
                 return _pauseresumecommand;
+            }
+        }
+
+        private ICommand _quitqueuecommand;
+        public ICommand QuitQueueCommand
+        {
+            get
+            {
+                if (_quitqueuecommand == null)
+                    _quitqueuecommand = new RelayCommand(param => QuitQueue());
+                return _quitqueuecommand;
             }
         }
     }
@@ -418,6 +603,7 @@ namespace PSChiaPlotter
         private string _phasse;
         private int _exitcode;
         private DateTime _exittime;
+        private double _currentphaseprogress;
     
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -428,6 +614,16 @@ namespace PSChiaPlotter
             set
             {
                 _phasse = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double CurrentPhaseProgress
+        {
+            get { return _currentphaseprogress; }
+            set
+            {
+                _currentphaseprogress = value;
                 OnPropertyChanged();
             }
         }
@@ -688,8 +884,10 @@ namespace PSChiaPlotter
         private ChiaJob _newchiajob;
         public ObservableCollection<ChiaVolume> TempAvailableVolumes { get; set; }
         public ObservableCollection<ChiaVolume> FinalAvailableVolumes { get; set; }
+        public ObservableCollection<ChiaVolume> SecondTempVolumes { get; set; }
         public ObservableCollection<ChiaVolume> SelectedTempVolumes { get; set; }
         public ObservableCollection<ChiaVolume> SelectedFinalVolumes { get; set; }
+        public ObservableCollection<ChiaKSize> AvailableKSizes { get; set; }
         public ChiaJob NewChiaJob
         {
             get { return _newchiajob; }
@@ -717,6 +915,15 @@ namespace PSChiaPlotter
             NewChiaJob = newjob;
             TempAvailableVolumes = new ObservableCollection<ChiaVolume>();
             FinalAvailableVolumes = new ObservableCollection<ChiaVolume>();
+            SecondTempVolumes = new ObservableCollection<ChiaVolume>();
+
+            ObservableCollection<ChiaKSize>  availableksizes = new ObservableCollection<ChiaKSize>();
+            availableksizes.Add(new ChiaKSize(25));
+            for (int i = 32; i <= 35; i++)
+            {
+                availableksizes.Add(new ChiaKSize(i));
+            }
+            AvailableKSizes = availableksizes;
         }
 
         public void AddTempVolume(ChiaVolume chiavolume)
@@ -800,6 +1007,8 @@ namespace PSChiaPlotter
         private double _freespaceingb;
         private double _percentfree;
         private int _potentialfinalplotsremaining;
+        private int _maxconcurrentchiaruns;
+
         public char DriveLetter { get; set; }
         public string Label { get; set; }
         public string UniqueId { get; set; }
@@ -852,7 +1061,15 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        public int MaxConCurrentTempChiaRuns { get; set; }
+        public int MaxConCurrentTempChiaRuns
+        {
+            get { return _maxconcurrentchiaruns; }
+            set
+            {
+                _maxconcurrentchiaruns = value;
+                OnPropertyChanged();
+            }
+        }
         public ObservableCollection<ChiaRun> PendingFinalRuns { get; set; }
         public string DirectoryPath
         {
@@ -894,6 +1111,37 @@ namespace PSChiaPlotter
             FreeSpaceInGB = Math.Round(freespaceinGB, 2);
             PercentFree = Math.Round(percentfree, 2);
             PotentialFinalPlotsRemaining = (int)Math.Floor((decimal)freespace / 108877420954);
+        }
+        public ChiaVolume(ChiaVolume chiavolume)
+        {
+            UniqueId = chiavolume.UniqueId;
+            Label = chiavolume.Label;
+            Size = chiavolume.Size;
+            DriveLetter = chiavolume.DriveLetter;
+            FreeSpace = chiavolume.FreeSpace;
+            CurrentChiaRuns = new ObservableCollection<ChiaRun>();
+            PendingFinalRuns = new ObservableCollection<ChiaRun>();
+            AccessPaths = chiavolume.AccessPaths;
+            SystemVolume = chiavolume.SystemVolume;
+            BusType = chiavolume.BusType;
+            MediaType = chiavolume.MediaType;
+            DirectoryPath = chiavolume.DirectoryPath;
+            MaxConCurrentTempChiaRuns = chiavolume.MaxConCurrentTempChiaRuns;
+
+            double freespace = chiavolume.FreeSpace;
+            double size = chiavolume.Size;
+            double freespaceinGB = freespace / 1073741824;
+            double percentfree = freespace / size * 100;
+            double sizeinGB = size / 1073741824;
+            SizeInGB = Math.Round(sizeinGB, 2);
+            FreeSpaceInGB = Math.Round(freespaceinGB, 2);
+            PercentFree = Math.Round(percentfree, 2);
+            PotentialFinalPlotsRemaining = (int)Math.Floor((decimal)freespace / 108877420954);
+        }
+
+        public ChiaVolume(string dirpath)
+        {
+            DirectoryPath = dirpath;
         }
 
     }
@@ -1042,6 +1290,71 @@ namespace PSChiaPlotter
             }
         }
 
+    }
+
+    public class ChiaKSize : INotifyPropertyChanged
+    {
+        private int _ksizevalue;
+        public int KSizeValue
+        {
+            get { return _ksizevalue; }
+            set
+            {
+                _ksizevalue = value;
+                AdjustParameters(_ksizevalue);
+                OnPropertyChanged();
+            }
+        }
+        public long TempSize { get; private set; }
+        public long FinalSize { get; private set; }
+        public int MinRAM { get; private set; }
+        public ChiaKSize (int ksize)
+        {
+            KSizeValue = ksize;
+            AdjustParameters(_ksizevalue);
+        }
+        private void AdjustParameters (int ksizevalue)
+        {
+                switch (ksizevalue)
+                {
+                case 25:
+                    TempSize = 1932735284;
+                    FinalSize = 629145600;
+                    MinRAM = 512;
+                    break;
+                case 32:
+                    TempSize = 256624295936;
+                    FinalSize = 108877420954;
+                    MinRAM = 3390;
+                    break;
+                case 33:
+                    TempSize = 559419490304;
+                    FinalSize = 224197292851;
+                    MinRAM = 7400;
+                    break;
+                case 34:
+                    TempSize = 1117765238784;
+                    FinalSize = 461494235956;
+                    MinRAM = 14800;
+                    break;
+                case 35:
+                    TempSize = 2335388467200;
+                    FinalSize = 949295146599;
+                    MinRAM = 29600;
+                    break;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string caller = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(caller));
+            }
+        }
     }
 }
 "@ -ReferencedAssemblies PresentationFramework,PresentationCore,WindowsBase,"System.Xaml"
