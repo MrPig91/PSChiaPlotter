@@ -126,13 +126,19 @@ function Invoke-NewJobButtonClick {
 
         $CreateJob_Button.add_Click({
             try{
-                $Results = Test-ChiaParameters $DataHash.NewJobViewModel.NewChiaJob
                 if ($DataHash.NewJobViewModel.NewChiaJob.DelayInMinutes -eq 60){
                     $response = Show-Messagebox -Text "You left the default delay time of 60 Minutes, continue?" -Button YesNo
                     if ($response -eq [System.Windows.MessageBoxResult]::No){
                         return
                     }
                 }
+                if ($DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.KSizeValue -eq 25){
+                    $response = Show-Messagebox -Text "KSize 25 is only for testing and cannot farm XCH, continue?" -Button YesNo -Icon Warning
+                    if ($response -eq [System.Windows.MessageBoxResult]::No){
+                        return
+                    }
+                }
+                $Results = Test-ChiaParameters $DataHash.NewJobViewModel.NewChiaJob
                 if ($Results -ne $true){
                     Show-Messagebox -Text $Results -Title "Invalid Parameters" -Icon Warning
                     return
@@ -145,7 +151,7 @@ function Invoke-NewJobButtonClick {
                 $UIHash.NewJob_Window.Close()
             }
             catch{
-                Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+                Write-PSChiaPlotterLog -LogType "ERROR" -ErrorObject $_
                 Show-Messagebox -Text $_.Exception.Message -Title "Create New Job Error" -Icon Error
             }
         })
@@ -195,14 +201,14 @@ function Invoke-NewJobButtonClick {
                 }
             }
             catch{
-                Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+                Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
             }
         })
 
         $UIHash.NewJob_Window.ShowDialog()
     }
     catch{
-        Write-PSChiaPlotterLog -LogType "Error" -LineNumber $_.InvocationInfo.ScriptLineNumber -Message $_.Exception.Message -Line $_.InvocationInfo.Line
+        Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
         Show-Messagebox -Text $_.Exception.Message -Title "Create New Job Error" -Icon Error
     }
 }
