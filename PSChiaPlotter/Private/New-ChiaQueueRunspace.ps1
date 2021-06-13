@@ -41,7 +41,6 @@ function New-ChiaQueueRunspace {
                     $SecondTempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicSecondTempDirectory)
                     $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
                     while ($PhaseOneIsOpen -eq $false){
-                        $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
                         $Queue.Status = "Waiting - Phase 1 Limit"
                         if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                             break
@@ -50,6 +49,7 @@ function New-ChiaQueueRunspace {
                             break
                         }
                         Start-Sleep -Seconds 15
+                        $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
                     }
                 }
                 else{
