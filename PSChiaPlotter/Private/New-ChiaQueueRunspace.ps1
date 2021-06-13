@@ -19,6 +19,9 @@ function New-ChiaQueueRunspace {
         try{
             for ($runNumber = 1;($Job.CompletedRunCount + $Job.RunsInProgress.Count) -lt $Job.TotalPlotCount;$runNumber++){
                 $ChiaProcess = $Null
+                if ($Queue.Quit){
+                    break
+                }
                 if ($Queue.Pause){
                     $Queue.Status = "Paused"
                     while ($Queue.Pause){
@@ -28,36 +31,52 @@ function New-ChiaQueueRunspace {
                         break
                     }
                 }
-
-                #grab a volume that has enough space
-                Do {
-                    Try{
-                        $TempVolume = Get-BestChiaTempDrive -ChiaVolumes $Job.TempVolumes -ChiaJob $Job -ChiaQueue $Queue
-                        $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes -ChiaJob $Job -ChiaQueue $Queue
-                        if ($TempVolume -eq $Null){
-                            $Queue.Status = "Waiting on Temp Space"
-                            Start-Sleep -Seconds 60
-                        }
-                        elseif ($FinalVolume -eq $Null){
-                            $Queue.Status = "Waiting on Final Dir Space"
-                            Start-Sleep -Seconds 60
-                        }
-                    }
-                    catch{
-                        $Queue.Status = "Failed To Grab Volume Info"
-                        Start-Sleep -Seconds 30
-                    }
-                }
-                while ($TempVolume -eq $null -or $FinalVolume -eq $null)
-                if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                if ($Queue.Quit){
                     break
                 }
+
+                if ($ChiaJob.BasicPlotting){
+                    $TempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicTempDirectory)
+                    $FinalVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicFinalDirectory)
+                    $SecondTempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicSecondTempDirectory)
+                }
+                else{
+                    #grab a volume that has enough space
+                    Do {
+                        Try{
+                            $TempVolume = Get-BestChiaTempDrive -ChiaVolumes $Job.TempVolumes -ChiaJob $Job -ChiaQueue $Queue
+                            $FinalVolume = Get-BestChiaFinalDrive $Job.FinalVolumes -ChiaJob $Job -ChiaQueue $Queue
+                            if ($TempVolume -eq $Null){
+                                $Queue.Status = "Waiting on Temp Space"
+                                Start-Sleep -Seconds 60
+                            }
+                            elseif ($FinalVolume -eq $Null){
+                                $Queue.Status = "Waiting on Final Dir Space"
+                                Start-Sleep -Seconds 60
+                            }
+                        }
+                        catch{
+                            $Queue.Status = "Failed To Grab Volume Info"
+                            Start-Sleep -Seconds 30
+                        }
+                    }
+                    while ($TempVolume -eq $null -or $FinalVolume -eq $null)
+                    if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                        break
+                    }
+                } #else
                 $Queue.Status = "Running"
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume
+                if ($Job.BasicPlotting){
+                    $plottingParameters.SecondTempVolume = $SecondTempVolume
+                }
                 $newRun = [PSChiaPlotter.ChiaRun]::new($Queue,$runNumber,$plottingParameters)
                 
+                if ($Queue.Quit){
+                    break
+                }
                 if ($DataHash.Debug){
                     Start-GUIDebugRun -ChiaRun $newRun -ChiaQueue $Queue -ChiaJob $Job
                 }
@@ -67,7 +86,8 @@ function New-ChiaQueueRunspace {
                 }
                 #sleep to give some time for updating
                 sleep 2
-            }
+            } #for
+
             $Queue.Status = "Finished"
         }
         catch{
