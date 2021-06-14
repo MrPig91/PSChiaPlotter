@@ -35,7 +35,7 @@ function Get-ChiaPlotProgress {
         Progress = 0
         Phase = "Phase 1"
         ElaspedTime = $ElaspedTime
-        EST_TimeReamining = New-TimeSpan
+        EST_TimeRemaining = New-TimeSpan
         PlotId = $plotId
         Phase1Progess = 0
         Phase2Progess = 0
@@ -54,7 +54,7 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Progress += $phase1_weight * $Phase1Progess
         $plotProgressObject.Phase = "Phase 1"
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeReamining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+        $plotProgressObject.EST_TimeRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
 
         return $plotProgressObject
     }
@@ -69,7 +69,7 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Phase = "Phase 2"
 
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeReamining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+        $plotProgressObject.EST_TimeRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
 
         return $plotProgressObject
     }
@@ -84,7 +84,7 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Phase = "Phase 3"
 
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeReamining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+        $plotProgressObject.EST_TimeRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
         return $plotProgressObject
     }
     if ($line_count -ge $phase4_line_end){
@@ -98,13 +98,13 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Phase = "Phase 4"
         
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeReamining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+        $plotProgressObject.EST_TimeRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
 
         return $plotProgressObject
     }
     if ($line_count -lt $copyfile_line_end){
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeReamining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+        $plotProgressObject.EST_TimeRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
         $plotProgressObject.Phase = "Copying"
 
         return $plotProgressObject
@@ -113,6 +113,6 @@ function Get-ChiaPlotProgress {
     $plotProgressObject.CopyProgess = 100
     $plotProgressObject.Phase = "Complete"
     $plotProgressObject.ElaspedTime = New-TimeSpan -Start $StartTime -End $LogItem.LastWriteTime
-    $plotProgressObject.EST_TimeReamining = 0
+    $plotProgressObject.EST_TimeRemaining = 0
     return $plotProgressObject
 }

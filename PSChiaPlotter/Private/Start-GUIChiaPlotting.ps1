@@ -89,11 +89,11 @@ function Start-GUIChiaPlotting {
                         $ChiaQueue.CurrentTime = [DateTime]::Now
                         $ChiaRun.CurrentTime = [DateTime]::Now
                         $ChiaRun.Phase = $progress.Phase
-                        if ($progress.EST_TimeReamining.TotalSeconds -le 0){
+                        if ($progress.EST_TimeRemaining.TotalSeconds -le 0){
                             $ChiaRun.EstTimeRemaining = New-TimeSpan -Seconds 0
                         }
                         else{
-                            $ChiaRun.EstTimeRemaining = $progress.EST_TimeReamining
+                            $ChiaRun.EstTimeRemaining = $progress.EST_TimeRemaining
                         }
                         switch ($progress.Phase) {
                             "Phase 1" {$ChiaRun.CurrentPhaseProgress = $progress.Phase1Progess}
