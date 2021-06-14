@@ -54,7 +54,7 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Progress += $phase1_weight * $Phase1Progess
         $plotProgressObject.Phase = "Phase 1"
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds EST_TimeRemaining
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
 
         return $plotProgressObject
     }
@@ -69,7 +69,7 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Phase = "Phase 2"
 
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds EST_TimeRemaining
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
 
         return $plotProgressObject
     }
@@ -84,7 +84,7 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Phase = "Phase 3"
 
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds EST_TimeRemaining
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
         return $plotProgressObject
     }
     if ($line_count -ge $phase4_line_end){
@@ -98,13 +98,13 @@ function Get-ChiaPlotProgress {
         $plotProgressObject.Phase = "Phase 4"
         
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds EST_TimeRemaining
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
 
         return $plotProgressObject
     }
     if ($line_count -lt $copyfile_line_end){
         $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
-        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds EST_TimeRemaining
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
         $plotProgressObject.Phase = "Copying"
 
         return $plotProgressObject
