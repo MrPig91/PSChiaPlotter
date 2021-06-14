@@ -112,8 +112,8 @@ function Start-ChiaPlotting {
                             $progress = Get-ChiaPlotProgress -LogPath $LogPath -ErrorAction Stop
                             $plotid = $progress.PlotId
                             #write-progress will fail if secondsremaining is less than 0...
-                            $secondsRemaining = $progress.EST_TimeReamining.TotalSeconds
-                            if ($progress.EST_TimeReamining.TotalSeconds -le 0){
+                            $secondsRemaining = $progress.EST_TimeRemaining.TotalSeconds
+                            if ($progress.EST_TimeRemaining.TotalSeconds -le 0){
                                 $secondsRemaining = 0
                             }
                             Write-Progress -Activity "Queue $($QueueName): Plot $plotNumber out of $TotalPlots" -Status "$($progress.phase) - $($progress.Progress)%" -PercentComplete $progress.progress -SecondsRemaining $secondsRemaining
