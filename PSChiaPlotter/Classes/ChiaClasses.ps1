@@ -136,6 +136,7 @@ namespace PSChiaPlotter
         private ChiaParameters _initialchiaparameters;
         private bool _enablephaseonelimitor;
         private int _phaseonelimit;
+        private bool _queuelooping;
 
         public int JobNumber { get; set; }
         public string JobName
@@ -172,6 +173,19 @@ namespace PSChiaPlotter
             set
             {
                 _runsinprogress = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool QueueLooping
+        {
+            get
+            {
+                return _queuelooping;
+            }
+            set
+            {
+                _queuelooping = value;
                 OnPropertyChanged();
             }
         }
@@ -313,6 +327,7 @@ namespace PSChiaPlotter
             RunsInProgress = new ObservableCollection<ChiaRun>();
             TempVolumes = new ObservableCollection<ChiaVolume>();
             FinalVolumes = new ObservableCollection<ChiaVolume>();
+            QueueLooping = false;
         }
 
         public void OnPropertyChanged([CallerMemberName] string caller = null)
@@ -339,6 +354,7 @@ namespace PSChiaPlotter
         private bool _quitbuttonenabled;
         private string _quitbuttoncontent;
         private bool _quit;
+        private bool _isblocked;
 
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -391,6 +407,16 @@ namespace PSChiaPlotter
                 {
                     ButtonEnabled = true;
                 }
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsBlocked
+        {
+            get { return _isblocked; }
+            set
+            {
+                _isblocked = value;
                 OnPropertyChanged();
             }
         }
@@ -472,6 +498,7 @@ namespace PSChiaPlotter
             QuitButtonEnabled = true;
             QuitButtonContent = "Quit";
             PlottingParameters = parameters;
+            IsBlocked = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
