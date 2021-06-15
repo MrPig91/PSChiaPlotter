@@ -31,6 +31,11 @@ function New-UIRunspace{
             $UIHash.OpenLog_Button = $MainWindow.FindName("OpenLogButton")
             $UIHash.Refreshdrives_Button = $MainWindow.FindName("RefreshdrivesButton")
             $UIHash.CheckForUpdate_Button = $MainWindow.FindName("CheckForUpateButton")
+            $UIHash.PauseQueue_Button = $MainWindow.FindName("PauseQueue_Button")
+            $UIHash.QuitQueue_Button = $MainWindow.FindName("QuitQueue_Button")
+            $UIHash.CurrentRunOpenLog_Button = $MainWindow.FindName("CurrentRunOpenLog_Button")
+            $UIHash.CurrentRunOpenStats_Button = $MainWindow.FindName("CurrentRunOpenStats_Button")
+            $UIHash.CurrentRunKillRun_Button = $MainWindow.FindName("CurrentRunKillRun_Button")
             $DataHash.RefreshingDrives = $false
 
             $DataHash.MainViewModel = [PSChiaPlotter.MainViewModel]::new()
