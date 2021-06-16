@@ -14,39 +14,30 @@ function New-ChiaQueueRunspace {
         Add-Type -AssemblyName System.Windows.Forms
 
         #Import required assemblies and private functions
-        Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
+        Get-childItem -Path $DataHash.PrivateFunctions -File -Recurse | ForEach-Object {Import-Module $_.FullName}
         Get-childItem -Path $DataHash.Classes -File | ForEach-Object {Import-Module $_.FullName}
         try{
             for ($runNumber = 1;($Job.CompletedRunCount + $Job.RunsInProgress.Count) -lt $Job.TotalPlotCount;$runNumber++){
                 $ChiaProcess = $Null
-                while ($Queue.IsBlocked){
+
+                while ($Queue.IsBlocked -or $Queue.Pause){
                     if ($Queue.Quit){
                         break
                     }
                     if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                         break
                     }
-                    $Queue.Status = "Waiting"
+                    if ($Queue.Pause){
+                        $Queue.Status = "Paused"
+                    }
+                    else{
+                        $Queue.Status = "Waiting"
+                    }
                     Start-Sleep -Seconds 10
                 }
-                $Queue.IsBlocked = $false
-                if ($Queue.Quit){
-                    break
-                }
-                if ($Queue.Pause){
-                    $Queue.Status = "Paused"
-                    while ($Queue.Pause){
-                        if ($Queue.Quit){
-                            break
-                        }
-                        if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
-                            break
-                        }
-                        sleep 10
-                    }
-                }
-
                 $Job.QueueLooping = $true;
+                $Queue.IsBlocked = $false
+
                 if ($Job.BasicPlotting){
                     $TempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicTempDirectory)
                     $FinalVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicFinalDirectory)
@@ -74,6 +65,7 @@ function New-ChiaQueueRunspace {
                             if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
                                 break
                             }
+                            Start-Sleep -Seconds 6
                             $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
                             if (-not$PhaseOneIsOpen){
                                 $Queue.Status = "Waiting - Phase 1 Limit"
@@ -101,15 +93,20 @@ function New-ChiaQueueRunspace {
                     }
                     while ($TempVolume -eq $null -or $FinalVolume -eq $null -or $PhaseOneIsOpen -eq $false)
                 } #else
-                if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
-                    break
-                }
+
                 $Job.QueueLooping = $false
-                $BlockedQueue = $Job.Queues | where {$_.IsBlocked} | sort QueueNumber | select -First 1
+                $BlockedQueue = $Job.Queues | where {$_.IsBlocked -and !$_.Pause} | sort QueueNumber | select -First 1
                 if ($BlockedQueue -ne $Null){
                     $BlockedQueue.IsBlocked = $false
                     $BlockedQueue = $null
                 }
+                if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                    break
+                }
+                if ($Queue.Quit){
+                    break
+                }
+
                 $Queue.Status = "Running"
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
@@ -118,20 +115,22 @@ function New-ChiaQueueRunspace {
                     $plottingParameters.SecondTempVolume = $SecondTempVolume
                 }
                 $newRun = [PSChiaPlotter.ChiaRun]::new($Queue,$runNumber,$plottingParameters)
-                
-                if ($Queue.Quit){
-                    break
-                }
                 if ($DataHash.Debug){
                     Start-GUIDebugRun -ChiaRun $newRun -ChiaQueue $Queue -ChiaJob $Job
                 }
                 else{
-                    #Show-Object $newRun
                     Start-GUIChiaPlotting -ChiaRun $newRun -ChiaQueue $Queue -ChiaJob $Job
+                }
+
+                $QueuesBlocked = ($Job.Queues | where {$_.IsBlocked -and !$_.pause} | Measure-Object).Count
+                if ($QueuesBlocked -eq 0 -and $Job.QueueLooping -eq $false -and !$Queue.Pause){
+                    $Queue.IsBlocked = $false
+                }
+                else{
+                    $Queue.IsBlocked = $true
                 }
                 #sleep to give some time for updating
                 sleep 2
-                $Queue.IsBlocked = $true
             } #for
             $Queue.IsBlocked = $false
 
