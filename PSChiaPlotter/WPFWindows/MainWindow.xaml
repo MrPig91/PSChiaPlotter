@@ -188,7 +188,7 @@
                         <DataGridTextColumn Header="Plots in Progress" Binding="{Binding Path=RunsInProgress.Count}" />
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
                         <DataGridTextColumn Header="Plots Failed" Binding="{Binding Path=FailedPlotCount}" />
-                        <DataGridTextColumn Header="QueueLooping" Binding="{Binding Path=QueueLooping}" />
+                        <DataGridTextColumn Header="BasicPlotting" Binding="{Binding Path=BasicPlotting}" />
                         <DataGridTextColumn Header="Ignore Max Parallel" Binding="{Binding Path=IgnoreMaxParallel}" />
                         <DataGridTextColumn Header="Queue Delay" Binding="{Binding Path=DelayInMinutes}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
@@ -197,8 +197,12 @@
                 </DataGrid>
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2">
-                    <Button x:Name="AddJob_Button" Content="New Job" Margin="5,0,0,5" VerticalAlignment="Top"/>
-                    <Button x:Name="QuitJob_Button" Content="Quit Job" Margin="5,0,0,5" VerticalAlignment="Top" IsEnabled="False"/>
+                    <Button x:Name="AddJob_Button" Content="New Job" Margin="5,0,0,5"
+                            BorderBrush="Green"
+                            VerticalAlignment="Top"/>
+                    <Button x:Name="QuitJob_Button" Content="Quit Job" Margin="5,0,0,5"
+                            BorderBrush="Red"
+                            VerticalAlignment="Top"/>
                 </StackPanel>
             </Grid>
         </GroupBox>
@@ -239,30 +243,23 @@
                         <DataGridTextColumn Header="Plots Completed" Binding="{Binding Path=CompletedPlotCount}" />
                         <DataGridTextColumn Header="Plots Failed" Binding="{Binding Path=FailedPlotCount}" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" />
-                        <DataGridTextColumn Header="IsBlocked" Binding="{Binding Path=IsBlocked}" />
                         <DataGridTextColumn Header="Run Time" Binding="{Binding Path=RunTime, StringFormat={}{0:hh} hrs {0:mm} mins}" />
-                        <DataGridTemplateColumn Header="Pause/Resume">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="{Binding Path=ButtonContent}" Command="{Binding Path=PauseResumeCommand}" BorderThickness="0" IsEnabled="{Binding Path=ButtonEnabled}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Current Run #" Binding="{Binding Path=CurrentRun.RunNumber}" />
-                        <DataGridTemplateColumn Header="Quit">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="{Binding Path=QuitButtonContent}" Command="{Binding Path=QuitQueueCommand}" BorderThickness="0" IsEnabled="{Binding Path=QuitButtonEnabled}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="K-Size" Binding="{Binding Path=PlottingParameters.KSize.KSizeValue}" />
+                        <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
+                        <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
                     </DataGrid.Columns>
                 </DataGrid>
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2">
-                    <Button x:Name="PauseQueue_Button" Content="Pause" Margin="5,0,0,5" ToolTip="Pause selected queue. This will only prevent new chia runs from starting, not pause the actual chia plotting process."  IsEnabled="False"/>
-                    <Button x:Name="PauseAllQueues_Button" Content="Pause All" ToolTip="This will pause all queues" Margin="5,0,0,5" IsEnabled="False"/>
-                    <Button x:Name="QuitQueue_Button" Content="Quit Queue" ToolTip="This will quit the currently selected queue. Quitting the queue will prevent new chia processes from starting" Margin="5,0,0,5" IsEnabled="False" />
+                    <Button x:Name="PauseQueue_Button" Content="Pause" Margin="5,0,0,5"
+                            BorderBrush="DarkKhaki"
+                            ToolTip="Pause selected queue. This will only prevent new chia runs from starting, not pause the actual chia plotting process." />
+                    <Button x:Name="PauseAllQueues_Button" Content="Pause All" ToolTip="This will pause all queues"
+                            BorderBrush="DarkGoldenrod" Margin="5,0,0,5"/>
+                    <Button x:Name="QuitQueue_Button" Content="Quit Queue"
+                            BorderBrush="Red"
+                            ToolTip="This will quit the currently selected queue. Quitting the queue will prevent new chia processes from starting" Margin="5,0,0,5"/>
                 </StackPanel>
             </Grid>
         </GroupBox>
@@ -286,7 +283,6 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5" />
@@ -374,11 +370,6 @@
                                     <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
                                 </DataGrid.Columns>
                             </DataGrid>
-                            <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
-                                <Button x:Name="CurrentRunOpenLog_Button" Content="Open Log" Margin="5,0,5,5" IsEnabled="False"/>
-                                <Button x:Name="CurrentRunOpenStats_ButtoN" Content="Open Stats" Margin="5,0,5,5" IsEnabled="False" />
-                                <Button x:Name="CurrentRunKillRun_Button" Content="Kill" Margin="5,0,5,5" IsEnabled="False" />
-                            </StackPanel>
                         </Grid>
                     </TabItem>
                     <TabItem Header="All Runs">
@@ -451,6 +442,13 @@
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
                                 <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
+                                <DataGridTemplateColumn Header="Check Plot">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Check Plot" Command="{Binding Path=CheckPlotCommand}" ToolTip="Uses chia.exe plots check command" BorderBrush="DarkSlateBlue" BorderThickness="1"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
