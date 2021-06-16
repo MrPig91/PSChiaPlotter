@@ -7,7 +7,7 @@ function New-UIRunspace{
         #Import required assemblies and private functions
         
         Try{
-            Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
+            Get-childItem -Path $DataHash.PrivateFunctions -File -Recurse | ForEach-Object {Import-Module $_.FullName}
             Get-childItem -Path $DataHash.Classes -File | ForEach-Object {Import-Module $_.FullName}
 
             Import-Module -Name PSChiaPLotter
@@ -33,9 +33,6 @@ function New-UIRunspace{
             $UIHash.CheckForUpdate_Button = $MainWindow.FindName("CheckForUpateButton")
             $UIHash.PauseQueue_Button = $MainWindow.FindName("PauseQueue_Button")
             $UIHash.QuitQueue_Button = $MainWindow.FindName("QuitQueue_Button")
-            $UIHash.CurrentRunOpenLog_Button = $MainWindow.FindName("CurrentRunOpenLog_Button")
-            $UIHash.CurrentRunOpenStats_Button = $MainWindow.FindName("CurrentRunOpenStats_Button")
-            $UIHash.CurrentRunKillRun_Button = $MainWindow.FindName("CurrentRunKillRun_Button")
             $DataHash.RefreshingDrives = $false
 
             $DataHash.MainViewModel = [PSChiaPlotter.MainViewModel]::new()
@@ -64,6 +61,24 @@ function New-UIRunspace{
             $UIHash.QuitJob_Button.Add_Click({
                 try{
                     Invoke-QuitJobButtonClick
+                }
+                catch{
+                    Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
+                }
+            })
+
+            $UIHash.QuitQueue_Button.Add_Click({
+                try{
+                    Invoke-QuitQueueButtonClick
+                }
+                catch{
+                    Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
+                }
+            })
+
+            $UIHash.PauseQueue_Button.Add_Click({
+                try{
+                    Invoke-PauseQueueButtonClick
                 }
                 catch{
                     Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
@@ -112,6 +127,16 @@ function New-UIRunspace{
                 catch{
                     Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
                     Show-Messagebox "Unable to open log file, check the path '$($DataHash.MainViewModel.LogPath)'" | Out-Null
+                }
+            })
+
+            #Datagrid Selection Change
+            $UIHash.Queues_DataGrid.Add_SelectionChanged({
+                try{
+                    Invoke-QueueSelectionChange
+                }
+                catch{
+                    Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
                 }
             })
 
