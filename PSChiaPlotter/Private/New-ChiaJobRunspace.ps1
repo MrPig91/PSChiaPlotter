@@ -12,7 +12,7 @@ function New-ChiaJobRunspace{
         Add-Type -AssemblyName System.Windows.Forms
 
         #Import required assemblies and private functions
-        Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
+        Get-childItem -Path $DataHash.PrivateFunctions -File -Recurse | ForEach-Object {Import-Module $_.FullName}
         Get-childItem -Path $DataHash.Classes -File | ForEach-Object {Import-Module $_.FullName}
 
         for ($queue = 1; $queue -le $Job.QueueCount; $queue++){
