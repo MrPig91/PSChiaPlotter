@@ -352,7 +352,6 @@ namespace PSChiaPlotter
         private DateTime _currenttime;
         private TimeSpan _runtime;
         private bool _quitbuttonenabled;
-        private string _quitbuttoncontent;
         private bool _quit;
         private bool _isblocked;
 
@@ -395,11 +394,9 @@ namespace PSChiaPlotter
             set
             {
                 _status = value;
-                if (_status == "Finished")
+                if (_status == "Finished" || _status == "Failed")
                 {
-                    ButtonContent = "n/a";
                     ButtonEnabled = false;
-                    QuitButtonContent = "n/a";
                     QuitButtonEnabled = false;
                     CurrentRun = null;
                 }
@@ -462,15 +459,6 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-        public string QuitButtonContent
-        {
-            get { return _quitbuttoncontent; }
-            set
-            {
-                _quitbuttoncontent = value;
-                OnPropertyChanged();
-            }
-        }
 
         public bool Quit
         {
@@ -496,7 +484,6 @@ namespace PSChiaPlotter
             ButtonEnabled = false;
             Quit = false;
             QuitButtonEnabled = true;
-            QuitButtonContent = "Quit";
             PlottingParameters = parameters;
             IsBlocked = true;
         }
@@ -532,18 +519,24 @@ namespace PSChiaPlotter
             }
         }
 
-        private void PauseResumeQueue()
+
+        public void PauseResumeQueue()
         {
             if (Pause)
             {
                 ButtonContent = "Pause";
                 Status = Status.Replace(" - Pending Pause","");
+                if (ParentJob.QueueLooping == false)
+                {
+                    IsBlocked = false;
+                }
                 Pause = false;
             }
             else
             {
                 ButtonContent = "Resume";
                 Status = Status + " - Pending Pause";
+                IsBlocked = true;
                 Pause = true;
             }
         }
@@ -552,67 +545,49 @@ namespace PSChiaPlotter
         {
             try
             {
-                if (Quit)
+                System.Windows.MessageBoxButton buttons = System.Windows.MessageBoxButton.YesNoCancel;
+                System.Windows.MessageBoxButton buttons2 = System.Windows.MessageBoxButton.YesNo;
+                System.Windows.MessageBoxImage icon = System.Windows.MessageBoxImage.Information;
+                if (CurrentRun != null)
                 {
-                    Status = "Running";
-                    ButtonEnabled = true;
-                    QuitButtonContent = "Quit";
-                    Quit = false;
-                }
-                else
-                {
-                    System.Windows.MessageBoxButton buttons = System.Windows.MessageBoxButton.YesNoCancel;
-                    System.Windows.MessageBoxResult response = System.Windows.MessageBox.Show("Would you like to quit the current running job?\nClick yes to quit the current job and end queue.\nClick No to let the job finish then end queue.", "Quit Queue", buttons);
+                    System.Windows.MessageBoxResult response = System.Windows.MessageBox.Show("Would you like to quit the current running chia process?\nClick yes to quit the current chia process and end queue.\nClick No to let the chia process finish then end queue.", "Quit Queue", buttons, icon);
                     if (System.Windows.MessageBoxResult.Yes == response)
                     {
                         Quit = true;
-                        Status = "Quit";
+                        Status = "Quitting";
+                        QuitButtonEnabled = false;
+                        ButtonEnabled = false;
+                        IsBlocked = false;
                         if (CurrentRun != null)
                         {
-                            QuitButtonEnabled = false;
-                            ButtonEnabled = false;
-                            QuitButtonContent = "n/a";
                             CurrentRun.ChiaProcess.Kill();
                         }
                     }
                     else if (System.Windows.MessageBoxResult.No == response)
                     {
                         Quit = true;
+                        QuitButtonEnabled = false;
                         ButtonEnabled = false;
+                        IsBlocked = false;
                         Status = "Last run - Pending Quit";
-                        QuitButtonContent = "Don't Quit";
                     }
-                    else
+                }
+                else
+                {
+                    System.Windows.MessageBoxResult response = System.Windows.MessageBox.Show("No chia processes running under this queue, so it will be ended right away. Continue?", "Quit Queue", buttons2, icon);
+                    if (System.Windows.MessageBoxResult.Yes == response)
                     {
-                        return;
+                        Quit = true;
+                        IsBlocked = false;
+                        Status = "Quitting";
+                        ButtonEnabled = false;
+                        QuitButtonEnabled = false;
                     }
                 }
             }
             catch
             {
                 System.Windows.MessageBox.Show("Unable To Quit Queue");
-            }
-        }
-
-        private ICommand _pauseresumecommand;
-        public ICommand PauseResumeCommand
-        {
-            get
-            {
-                if (_pauseresumecommand == null)
-                    _pauseresumecommand = new RelayCommand(param => PauseResumeQueue());
-                return _pauseresumecommand;
-            }
-        }
-
-        private ICommand _quitqueuecommand;
-        public ICommand QuitQueueCommand
-        {
-            get
-            {
-                if (_quitqueuecommand == null)
-                    _quitqueuecommand = new RelayCommand(param => QuitQueue());
-                return _quitqueuecommand;
             }
         }
     }
@@ -635,6 +610,8 @@ namespace PSChiaPlotter
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
         public int RunNumber { get; set; }
+    
+        public string PlotId { get; set; }
         public string Phase
         {
             get { return _phasse; }
@@ -644,7 +621,7 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
-
+    
         public double CurrentPhaseProgress
         {
             get { return _currentphaseprogress; }
@@ -669,6 +646,9 @@ namespace PSChiaPlotter
         public string LogPath { get; set; }
         public int ProcessID { get; set; }
         public ChiaParameters PlottingParameters { get; set; }
+    
+        public string CheckPlotPowershellCommand { get; set; }
+    
         public string Status
         {
             get { return _status; }
@@ -815,6 +795,19 @@ namespace PSChiaPlotter
             }
         }
     
+        public void CheckPlot()
+        {
+            try
+            {
+                string command = "-noexit -noprofile -command " + CheckPlotPowershellCommand;
+                Process.Start("powershell.exe",command);
+            }
+            catch
+            {
+                MessageBox.Show("Unable To Check Log File :(");
+            }
+        }
+    
         private ICommand _killprocesscommand;
         public ICommand KillProcessCommand
         {
@@ -845,6 +838,17 @@ namespace PSChiaPlotter
                 if (_openlogstatscommand == null)
                     _openlogstatscommand = new RelayCommand(param => this.OpenLogStats());
                 return _openlogstatscommand;
+            }
+        }
+    
+        private ICommand _checkplotcommand;
+        public ICommand CheckPlotCommand
+        {
+            get
+            {
+                if (_checkplotcommand == null)
+                   _checkplotcommand = new RelayCommand(param => this.CheckPlot());
+                return _checkplotcommand;
             }
         }
         public ChiaQueue ParentQueue { get; set; }
