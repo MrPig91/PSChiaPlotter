@@ -14,7 +14,8 @@ function Invoke-QuitJobButtonClick{
             $Message += "`nAll running chia processes under this job will be cancelled!"
             $Response = Show-MessageBox -Text $Message -Buttons YesNo
             if ($Response -eq [System.Windows.MessageBoxResult]::Yes){
-                foreach ($queue in $SelectedJob.Queues){
+                $runningQueues = $SelectedJob.Queues | where Status -ne "Finished" | where Status -ne "Failed"
+                foreach ($queue in $runningQueues){
                     $queue.Quit = $true
                     $queue.Status = "Quitting"
                 }

@@ -8,10 +8,9 @@ function Invoke-PauseAllQueuesButtonClick {
         $message += "`n`nAre you sure you want to pause all queues?"
         $Response = Show-MessageBox -Text $message -Buttons YesNo -Icon Information
         if ($Response -eq [System.Windows.MessageBoxResult]::Yes){
-            $AllCurrentQueues = $DataHash.MainViewModel.AllQueues | where Status -ne "Finished"
+            $AllCurrentQueues = $DataHash.MainViewModel.AllQueues | where {$_.Status -eq "Running" -or $_.Status -eq "Waiting"}
             foreach ($queue in $AllCurrentQueues){
-                $queue.Pause = $true
-                $queue.Status = "Pending Pause"
+                $Queue.PauseResumeQueue()
             }
         }
     }

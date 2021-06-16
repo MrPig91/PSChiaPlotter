@@ -86,6 +86,7 @@ function Start-GUIChiaPlotting {
                         $progress = Get-ChiaPlotProgress -LogPath $LogPath -ErrorAction Stop
                         $plotid = $progress.PlotId
                         $ChiaRun.Progress = $progress.progress
+                        $ChiaRun.PlotId = $plotid
                         $ChiaQueue.CurrentTime = [DateTime]::Now
                         $ChiaRun.CurrentTime = [DateTime]::Now
                         $ChiaRun.Phase = $progress.Phase
@@ -128,6 +129,7 @@ function Start-GUIChiaPlotting {
                     $ChiaQueue.FailedPlotCount++
                     $ChiaJob.FailedPlotCount++
                     $DataHash.MainViewModel.FailedRuns.Add($ChiaRun)
+                    sleep -Seconds 1
                     Get-ChildItem -Path $TempDirectoryPath -Filter "*$plotid*.tmp" | foreach {
                         try{
                             Remove-Item -Path $_.FullName -Force -ErrorAction Stop
@@ -152,8 +154,10 @@ function Start-GUIChiaPlotting {
                     $ChiaJob.CompletedPlotCount++
                     $ChiaQueue.CompletedPlotCount++
                     $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
+                    $ChiaRun.CheckPlotPowershellCommand = "&'$ChiaPath' plots check -g $plotid"
                     Update-ChiaGUISummary -Success
                 }
+                $ChiaQueue.CurrentRun = $null
                 $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)
             }
             catch{
