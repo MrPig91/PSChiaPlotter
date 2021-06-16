@@ -41,7 +41,9 @@ function New-ChiaQueueRunspace {
                 if ($Job.BasicPlotting){
                     $TempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicTempDirectory)
                     $FinalVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicFinalDirectory)
-                    $SecondTempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicSecondTempDirectory)
+                    if ($Queue.PlottingParameters.EnableBasicSecondTempDirectory){
+                        $SecondTempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicSecondTempDirectory)
+                    }
                     $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
                     while ($PhaseOneIsOpen -eq $false){
                         $Queue.Status = "Waiting - Phase 1 Limit"
