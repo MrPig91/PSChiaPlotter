@@ -39,9 +39,20 @@ function Start-GUIChiaPlotting {
         if (-not[string]::IsNullOrWhiteSpace($FarmerPublicKey)){
             $ChiaArguments += " -f $FarmerPublicKey"
         }
-        if (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
-            $SecondTempDirectoryPath = $SecondTempDirectoryPath.TrimEnd('\')
-            $ChiaArguments += " -2 `"$SecondTempDirectoryPath`"" 
+
+        if ($ChiaJob.BasicPlotting){
+            if ($ChiaRun.PlottingParameters.EnableBasicSecondTempDirectory){
+                if (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
+                    $SecondTempDirectoryPath = $SecondTempDirectoryPath.TrimEnd('\')
+                    $ChiaArguments += " -2 `"$SecondTempDirectoryPath`"" 
+                }
+            }
+        }
+        else{
+            if (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
+                $SecondTempDirectoryPath = $SecondTempDirectoryPath.TrimEnd('\')
+                $ChiaArguments += " -2 `"$SecondTempDirectoryPath`"" 
+            }
         }
         if ($KSize -eq 25){
             $ChiaArguments += " --override-k"
