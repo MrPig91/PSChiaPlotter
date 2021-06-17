@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="PSChiaPlotter" Height="675" Width="825">
+        Title="PSChiaPlotter" Height="675" Width="850">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="JobQueueTB" TargetType="TextBlock">
@@ -248,6 +248,7 @@
                         <DataGridTextColumn Header="K-Size" Binding="{Binding Path=PlottingParameters.KSize.KSizeValue}" />
                         <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
                         <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
+                        <DataGridTextColumn Header="Pool Plot" Binding="{Binding Path=PlottingParameters.PoolContractEnabled}" />
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -368,6 +369,7 @@
                                     <DataGridTextColumn Header="KSize" Binding="{Binding Path=PlottingParameters.KSize.KSizeValue}" />
                                     <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
                                     <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
+                                    <DataGridTextColumn Header="Pool Plot" Binding="{Binding Path=PlottingParameters.PoolContractEnabled}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
@@ -406,6 +408,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Pool Plot" Binding="{Binding Path=PlottingParameters.PoolContractEnabled}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
@@ -449,6 +452,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Pool Plot" Binding="{Binding Path=PlottingParameters.PoolContractEnabled}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
