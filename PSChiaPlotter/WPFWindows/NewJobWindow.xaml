@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="New Job" Height="650" Width="600">
+        Title="New Job" Height="700" Width="650">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="Label">
@@ -556,9 +556,22 @@
                 </GroupBox>
                 <GroupBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource AddParamGroupbox}">
                     <GroupBox.Header>
-                        <CheckBox x:Name="AdditionalParametersCheckBox" Content="Additional Parameters" IsChecked="False" IsThreeState="False" />
+                        <CheckBox x:Name="AdditionalParametersCheckBox" Content="Additional Parameters" IsChecked="True" IsThreeState="False" />
                     </GroupBox.Header>
                     <Grid IsEnabled="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked}" Visibility="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.Resources>
+                            <Style x:Key="PoolKey" TargetType="TextBox">
+                                <Setter Property="Margin" Value="5" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressCheckbox, Path=Ischecked}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressCheckbox, Path=Ischecked}" Value="False">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Resources>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="auto" />
@@ -569,15 +582,17 @@
                             <RowDefinition Height="5" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
-                        <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="1" />
+                        <CheckBox x:Name="PoolContractAddressCheckbox" Content="Pool Contract Address:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.PoolContractEnabled}" IsThreeState="False"/>
                         <Label Content="Farmer Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="2" />
+                        <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="3" />
 
-                        <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
+                        <TextBox x:Name="PoolContractAddressTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolContractAddress}" VerticalAlignment="Center" HorizontalContentAlignment="Left" IsEnabled="{Binding ElementName=PoolContractAddressCheckbox, Path=IsChecked}"/>
                         <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
-
+                        <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="3" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left" Style="{StaticResource PoolKey}"/>
                     </Grid>
                 </GroupBox>
             </Grid>
