@@ -138,6 +138,13 @@ function Invoke-NewJobButtonClick {
                         return
                     }
                 }
+                if ($DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.PoolContractEnabled){
+                    $response = Show-MessageBox -Text "Portable plots are not currently supported on mainnet! This plot is not guranteed to work in the future, continue?" -Button YesNo -Icon Warning
+                    if ($response -eq [System.Windows.MessageBoxResult]::No){
+                        return
+                    }
+                }
+
                 $Results = Test-ChiaParameters $DataHash.NewJobViewModel.NewChiaJob
                 if ($Results -ne $true){
                     Show-Messagebox -Text $Results -Title "Invalid Parameters" -Icon Warning
