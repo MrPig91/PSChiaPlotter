@@ -1043,6 +1043,7 @@ namespace PSChiaPlotter
         private double _percentfree;
         private int _potentialfinalplotsremaining;
         private int _maxconcurrentchiaruns;
+        private bool _replotenabled;
 
         public char DriveLetter { get; set; }
         public string Label { get; set; }
@@ -1115,6 +1116,18 @@ namespace PSChiaPlotter
                 OnPropertyChanged();
             }
         }
+
+        public bool ReplotEnabled
+        {
+            get { return _replotenabled; }
+            set
+            {
+                _replotenabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<System.Object> OldPlotDirectories { get; set; }
         public ObservableCollection<ChiaRun> CurrentChiaRuns { get; set; }
 
 
@@ -1156,12 +1169,15 @@ namespace PSChiaPlotter
             FreeSpace = chiavolume.FreeSpace;
             CurrentChiaRuns = new ObservableCollection<ChiaRun>();
             PendingFinalRuns = new ObservableCollection<ChiaRun>();
+            OldPlotDirectories = new ObservableCollection<object>();
             AccessPaths = chiavolume.AccessPaths;
             SystemVolume = chiavolume.SystemVolume;
             BusType = chiavolume.BusType;
             MediaType = chiavolume.MediaType;
             DirectoryPath = chiavolume.DirectoryPath;
             MaxConCurrentTempChiaRuns = chiavolume.MaxConCurrentTempChiaRuns;
+            ReplotEnabled = chiavolume.ReplotEnabled;
+
 
             double freespace = chiavolume.FreeSpace;
             double size = chiavolume.Size;
@@ -1178,7 +1194,6 @@ namespace PSChiaPlotter
         {
             DirectoryPath = dirpath;
         }
-
     }
 
     public class MainViewModel : INotifyPropertyChanged
