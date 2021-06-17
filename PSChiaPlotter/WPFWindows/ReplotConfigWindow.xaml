@@ -21,8 +21,9 @@
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
-                      VerticalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="Replot_ScrollViewer"
+            Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+            VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -39,10 +40,25 @@
 
                 <DataGrid x:Name="FinalVolume_DataGrid" IsReadOnly="False"
                   CanUserAddRows="False" CanUserDeleteRows="False"
-                  Grid.Row="1" Grid.Column="1" />
+                  SelectionMode="Single" AutoGenerateColumns="False"
+                  Grid.Row="1" Grid.Column="1">
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="Replot Enabled" Binding="{Binding ReplotEnabled}" />
+                        <DataGridTextColumn Header="Letter" Binding="{Binding DriveLetter}" />
+                        <DataGridTextColumn Header="Label" Binding="{Binding Label}" />
+                        <DataGridTextColumn Header="Directory Path" Binding="{Binding DirectoryPath}" />
+                        <DataGridTextColumn Header="Size (GB)" Binding="{Binding SizeInGB}" />
+                        <DataGridTextColumn Header="Free Space (GB)" Binding="{Binding FreeSpaceInGB}" />
+                        <DataGridTextColumn Header="% Free" Binding="{Binding PercentFree}" />
+                        <DataGridTextColumn Header="BusType" Binding="{Binding BusType}" />
+                        <DataGridTextColumn Header="MediaType" Binding="{Binding MediaType}" />
+                    </DataGrid.Columns>
+                </DataGrid>
                 <Separator Grid.Column="1" Grid.Row="2" Margin="5" />
 
-                <Grid Grid.Row="3" Grid.Column="1">
+                <Grid x:Name="AddOldPlot_Grid"
+                      Grid.Row="3" Grid.Column="1"
+                      IsEnabled="{Binding ReplotEnabled}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0" />
                         <ColumnDefinition Width="auto" />
@@ -79,12 +95,12 @@
         <Separator Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Margin="5" />
         <Button x:Name="ConfirmReplot_Button" Content="Confirm Changes"
                 Grid.Row="3" Grid.Column="3"
-                Padding="5" Margin="5"/>
+                 Margin="5"/>
         <Button x:Name="CancelReplot_Button" Content="Cancel"
                 Grid.Row="3" Grid.Column="2"
-                Padding="5" Margin="5"/>
+                 Margin="5"/>
         <Button x:Name="HelpReplot_Button" Content="Help"
                 Grid.Row="3" Grid.Column="1"
-                Padding="5" Margin="5"/>
+                Margin="5"/>
     </Grid>
 </Window>
