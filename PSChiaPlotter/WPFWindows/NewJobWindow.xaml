@@ -563,10 +563,10 @@
                             <Style x:Key="PoolKey" TargetType="TextBox">
                                 <Setter Property="Margin" Value="5" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressCheckbox, Path=Ischecked}" Value="True">
+                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressTextBox, Path=IsEnabled}" Value="True">
                                         <Setter Property="IsEnabled" Value="False" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressCheckbox, Path=Ischecked}" Value="False">
+                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressTextBox, Path=IsEnabled}" Value="False">
                                         <Setter Property="IsEnabled" Value="True" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -586,7 +586,11 @@
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
-                        <CheckBox x:Name="PoolContractAddressCheckbox" Content="Pool Contract Address:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.PoolContractEnabled}" IsThreeState="False"/>
+                        <CheckBox x:Name="PoolContractAddressCheckbox" Content="Pool Contract Address:"
+                                  ToolTip="Used to make portable plots to join pools. Cannot use Pool Public Key when using this parameter."
+                                  HorizontalAlignment="Right" VerticalAlignment="Center"
+                                  Grid.Column="1" Grid.Row="1" 
+                                  IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.PoolContractEnabled}" IsThreeState="False"/>
                         <Label Content="Farmer Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="2" />
                         <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="3" />
 
