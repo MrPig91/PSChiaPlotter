@@ -80,5 +80,10 @@ function Test-ChiaParameters {
     if ($NewJob.FirstDelay -gt 35791){
         return "First delay time is greater than 35791 minutes, which is the max"
     }
+    if ($ChiaParameters.PoolContractEnabled){
+        if ([string]::IsNullOrEmpty($ChiaParameters.PoolContractAddress)){
+            return "Pool contract address is enabled, but no address was provided!"
+        }
+    }
     return $true
 }
