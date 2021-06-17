@@ -67,6 +67,8 @@ namespace PSChiaPlotter
 
         public string PoolPublicKey { get; set; }
         public string FarmerPublicKey { get; set; }
+        public string PoolContractAddress { get; set; }
+        public bool PoolContractEnabled { get; set; }
 
         public string BasicTempDirectory { get; set; }
         public string BasicFinalDirectory { get; set; }
@@ -104,6 +106,8 @@ namespace PSChiaPlotter
             Buckets = chiaParameters.Buckets;
             EnableBasicSecondTempDirectory = chiaParameters.EnableBasicSecondTempDirectory;
             SecondTempVolume = chiaParameters.SecondTempVolume;
+            PoolContractAddress = chiaParameters.PoolContractAddress;
+            PoolContractEnabled = chiaParameters.PoolContractEnabled;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
