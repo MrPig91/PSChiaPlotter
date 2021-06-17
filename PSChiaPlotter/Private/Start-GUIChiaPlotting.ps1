@@ -21,6 +21,8 @@ function Start-GUIChiaPlotting {
         $PoolPublicKey = $PlottingParameters.PoolPublicKey
         $FarmerPublicKey = $PlottingParameters.FarmerPublicKey
         $Buckets = $PlottingParameters.Buckets
+        $PoolContractEnabled = $PlottingParameters.PoolContractEnabled
+        $PoolContractAddress = $PlottingParameters.PoolContractAddress
 
         $E = if ($DisableBitfield){"-e"}
         $X = if ($ExcludeFinalDirectory){"-x"}
@@ -33,9 +35,15 @@ function Start-GUIChiaPlotting {
         $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
         $ChiaArguments = "plots create -k $KSize -b $Buffer -u $Buckets -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
 
-        if (-not[string]::IsNullOrWhiteSpace($PoolPublicKey)){
+        if ($PoolContractEnabled){
+            if (-not[string]::IsNullOrEmpty($PoolContractAddress)){
+                $ChiaArguments += " -c $PoolContractAddress"
+            }
+        }
+        elseif (-not[string]::IsNullOrWhiteSpace($PoolPublicKey)){
             $ChiaArguments += " -p $PoolPublicKey"
         }
+        
         if (-not[string]::IsNullOrWhiteSpace($FarmerPublicKey)){
             $ChiaArguments += " -f $FarmerPublicKey"
         }
