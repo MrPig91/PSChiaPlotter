@@ -28,7 +28,7 @@ function Get-BestChiaFinalDrive {
             }
             $replotVolume.TotalReplotCount = ($replotVolume.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
         }
-        $AvailableVolumes = $ChiaVolumes | where TotalReplotCount -ne 0 | sort -Property @{Expression = {$_.PendingFinalRuns.Count}; Descending = $false},@{Expression = "TotalReplotCount"; Descending = $True}
+        $AvailableVolumes = $ChiaVolumes | where TotalReplotCount -gt 0 | sort -Property @{Expression = {$_.PendingFinalRuns.Count}; Descending = $false},@{Expression = "TotalReplotCount"; Descending = $True}
         return ($AvailableVolumes | select -First 1)
     }
     else{
