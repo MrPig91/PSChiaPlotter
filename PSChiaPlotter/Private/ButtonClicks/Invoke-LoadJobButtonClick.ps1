@@ -87,6 +87,41 @@ function Invoke-LoadJobButtonClick {
                 $FoundVolume = $Null
             }
 
+            if ($ImportedJob.NewChiaJob.InitialChiaParameters.ReplotEnabled){
+                foreach ($replotVolume in $ImportedJob.NewChiaJob.FinalVolumes){
+                    $FoundFinalVolume = $NewSavedJobViewModel.FinalAvailableVolumes | where UniqueId -eq $replotVolume.UniqueId
+                    if ($FoundFinalVolume){
+                        foreach ($oldplotdirectory in $replotVolume.OldPlotDirectories){
+                            try{
+                                $totaloldplots = (Get-ChildItem -Path $oldplotdirectory.Path -Filter "plot-k$($oldplotdirectory.KSizeValue)*.plot" | Measure-Object).Count
+                                $oldplot = [PSChiaPlotter.OldPlotDirectory]::New($oldplotdirectory.Path,$totaloldplots,$oldplotdirectory.KSizeValue)
+                                $FoundFinalVolume.OldPlotDirectories.Add($oldplot)
+                            }
+                            catch{
+                                Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
+                            }
+                        }
+                    }
+                    else{
+                        $FoundFinalVolume = $NewSavedJobViewModel.FinalVolumes | where UniqueId -eq $replotVolume.UniqueId
+                        if ($FoundFinalVolume){
+                            foreach ($oldplotdirectory in $replotVolume.OldPlotDirectories){
+                                try{
+                                    $totaloldplots = (Get-ChildItem -Path $oldplotdirectory.Path -Filter "plot-k$($oldplotdirectory.KSizeValue)*.plot" | Measure-Object).Count
+                                    $oldplot = [PSChiaPlotter.OldPlotDirectory]::New($oldplotdirectory.Path,$totaloldplots,$oldplotdirectory.KSizeValue)
+                                    $FoundFinalVolume.OldPlotDirectories.Add($oldplot)
+                                }
+                                catch{
+                                    Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
+                                }
+                            }
+                        }
+                    }
+                    $FoundFinalVolume.TotalReplotCount = ($FoundFinalVolume.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
+                    $FoundFinalVolume = $null
+                }
+            }
+
             $NewSavedJobViewModel.AvailableKSizes = $NewJobViewModel.AvailableKSizes
 
             $SecondTempVolume = $NewSavedJobViewModel.SecondTempVolumes | where UniqueId -eq $ImportedJob.NewChiaJob.InitialChiaParameters.SecondTempVolume.UniqueId
@@ -101,11 +136,14 @@ function Invoke-LoadJobButtonClick {
             }
             $Volume = $null
             foreach ($Volume in $ImportedJob.NewChiaJob.FinalVolumes){
-                $FoundTempVolume = $NewSavedJobViewModel.FinalAvailableVolumes | where UniqueId -eq $Volume.UniqueId
-                if ($FoundTempVolume){
-                    $NewSavedJobViewModel.AddFinalVolume($FoundTempVolume)
+                $FoundFinalVolume = $NewSavedJobViewModel.FinalAvailableVolumes | where UniqueId -eq $Volume.UniqueId
+                if ($FoundFinalVolume){
+                    $NewSavedJobViewModel.AddFinalVolume($FoundFinalVolume)
+                    if ($volume.ReplotEnabled){
+                        $FoundFinalVolume.ReplotEnabled = $true
+                    }
                 }
-                $FoundTempVolume = $null
+                $FoundFinalVolume = $null
             }
 
             $DataHash.NewJobViewModel = $NewSavedJobViewModel
@@ -132,6 +170,6 @@ function Invoke-LoadJobButtonClick {
     }
     catch{
         Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
-        Show-MessageBox -Message "Unable to laod previous job :( Check logs for more info"
+        Show-MessageBox -Text "Unable to laod previous job :( Check logs for more info"
     }
 }
