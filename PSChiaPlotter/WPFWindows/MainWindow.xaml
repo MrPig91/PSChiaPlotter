@@ -370,6 +370,7 @@
                                     <DataGridTextColumn Header="Threads" Binding="{Binding Path=PlottingParameters.Threads}" />
                                     <DataGridTextColumn Header="RAM" Binding="{Binding Path=PlottingParameters.RAM}" />
                                     <DataGridTextColumn Header="Pool Plot" Binding="{Binding Path=PlottingParameters.PoolContractEnabled}" />
+                                    <DataGridTextColumn Header="Replot" Binding="{Binding Path=PlottingParameters.ReplotEnabled}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
@@ -453,6 +454,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Pool Plot" Binding="{Binding Path=PlottingParameters.PoolContractEnabled}" />
+                                <DataGridTextColumn Header="Replot" Binding="{Binding Path=PlottingParameters.ReplotEnabled}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
