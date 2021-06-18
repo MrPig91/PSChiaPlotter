@@ -151,6 +151,13 @@ function Invoke-NewJobButtonClick {
                     Show-Messagebox -Text $Results -Title "Invalid Parameters" -Icon Warning
                     return
                 }
+
+                $Results = Test-ReplotParameters
+                if ($Results -ne $true){
+                    Show-Messagebox -Text $Results -Title "Invalid Replot Parameters" -Icon Warning
+                    return
+                }
+
                 $DataHash.MainViewModel.AllJobs.Add($DataHash.NewJobViewModel.NewChiaJob)
                 $newJobRunSpace = New-ChiaJobRunspace -Job $DataHash.NewJobViewModel.NewChiaJob
                 $newJobRunSpace.Runspacepool = $ScriptsHash.RunspacePool
