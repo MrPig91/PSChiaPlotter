@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="Replot Configuration Window" Height="450" Width="600">
+        Title="Replot Configuration Window" Height="450" Width="625">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5" />
@@ -38,7 +38,8 @@
                     <RowDefinition Height="5" />
                 </Grid.RowDefinitions>
 
-                <DataGrid x:Name="FinalVolume_DataGrid" IsReadOnly="False"
+                <DataGrid x:Name="FinalVolume_DataGrid" IsReadOnly="True"
+                  RowBackground="LightSlateGray" AlternatingRowBackground="CadetBlue"
                   CanUserAddRows="False" CanUserDeleteRows="False"
                   SelectionMode="Single" AutoGenerateColumns="False"
                   Grid.Row="1" Grid.Column="1">
@@ -50,6 +51,7 @@
                         <DataGridTextColumn Header="Size (GB)" Binding="{Binding SizeInGB}" />
                         <DataGridTextColumn Header="Free Space (GB)" Binding="{Binding FreeSpaceInGB}" />
                         <DataGridTextColumn Header="% Free" Binding="{Binding PercentFree}" />
+                        <DataGridTextColumn Header="Replot Count" Binding="{Binding TotalReplotCount}" />
                         <DataGridTextColumn Header="BusType" Binding="{Binding BusType}" />
                         <DataGridTextColumn Header="MediaType" Binding="{Binding MediaType}" />
                     </DataGrid.Columns>
@@ -58,7 +60,7 @@
 
                 <Grid x:Name="AddOldPlot_Grid"
                       Grid.Row="3" Grid.Column="1"
-                      IsEnabled="{Binding ReplotEnabled}">
+                      IsEnabled="False">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0" />
                         <ColumnDefinition Width="auto" />
@@ -74,8 +76,16 @@
                         <RowDefinition Height="0" />
                     </Grid.RowDefinitions>
 
-                    <Label Content="New Plots Final Directory" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"/>
-                    <Label Content="Old Plots Directories" Grid.Row="2" Grid.Column="1"  HorizontalAlignment="Right"/>
+                    <Label Content="New Plots Final Directory:" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"/>
+                    <Label Content="Old Plots Directories:" Grid.Row="2" Grid.Column="1"  HorizontalAlignment="Right"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="5,0,5,0" VerticalAlignment="Bottom"
+                                Grid.Column="1" Grid.Row="3" >
+                        <Label Content="Total Replot Count:" FontWeight="Bold" HorizontalAlignment="Left"/>
+                        <TextBox Text="{Binding TotalReplotCount}" Foreground="OrangeRed"
+                                 HorizontalContentAlignment="Center" IsReadOnly="True"
+                                 Margin="0,0,0,5" MinWidth="25"/>
+                    </StackPanel>
 
                     <TextBox x:Name="NewPlotsFinalDirectory_Textbox"
                      Margin="5" Grid.ColumnSpan="2"
@@ -87,8 +97,35 @@
                     Grid.Column="3" Grid.Row="2" Margin="5" Padding="5,0,5,0"/>
                     <ListBox x:Name="OldDirectories_ListBox"
                      Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" MinHeight="75"
-                     Margin="5"
-                     ItemsSource="{Binding Path=OldPlotDirectories}" />
+                     Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     HorizontalContentAlignment="Stretch"
+                     ItemsSource="{Binding Path=OldPlotDirectories}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="SlateGray" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label Content="Path:" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Path}" Grid.Column="1" IsReadOnly="True" Margin="5" HorizontalAlignment="Stretch"/>
+                                        <Separator Grid.Column="2"  Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="5"/>
+                                        <Label Content="Old Plot Count:" Grid.Column="3" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <Label Content="{Binding PlotCount}" Grid.Column="4" VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Black"/>
+                                        <Button Content="Remove"
+                                                BorderBrush="Pink" Background="Transparent" Foreground="Red"
+                                                Grid.Column="5" Margin="5"
+                                                CommandParameter="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.RemoveOldPlotPathCommand}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Grid>
             </Grid>
         </ScrollViewer>
