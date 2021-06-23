@@ -1,7 +1,7 @@
 function Start-ChiaPlotting {
     [CmdletBinding()]
     param(
-        [ValidateRange(32,35)]
+        [ValidateSet(25,32,33,34,35)]
         [int]$KSize = 32,
     
         [ValidateRange(1,5000)]
@@ -44,7 +44,9 @@ function Start-ChiaPlotting {
 
         [string]$QueueName = "Default_Queue",
 
-        [string]$WindowTitle
+        [string]$WindowTitle,
+
+        [switch]$ValidatePlot
     )
 
     if (-not$PSBoundParameters.ContainsKey("Buffer")){
@@ -71,6 +73,10 @@ function Start-ChiaPlotting {
     #path to chia.exe
     $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
     $ChiaArguments = "plots create -k $KSize -b $Buffer -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
+
+    if ($KSize -eq 25){
+        $ChiaArguments += " --override-k"
+    }
 
 
     if ($PSBoundParameters.ContainsKey("SecondTempDirectoryPath")){
@@ -126,6 +132,9 @@ function Start-ChiaPlotting {
                     } #while
                     if ($chiaProcess.ExitCode -ne 0){
                         Get-ChildItem -Path $TempDirectoryPath -Filter "*$plotid*.tmp" | Remove-Item -Force
+                    }
+                    if ($ValidatePlot){
+                        Test-ChiaPlot -Filter $plotid
                     }
                 }
                 catch{
