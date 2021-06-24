@@ -8,7 +8,7 @@ function Invoke-AddOldPlotDirectoryButtonClick {
         if (-not$DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
             $ValidPath = $false
             foreach ($path in $OldDirectories_ListBox.DataContext.AccessPaths){
-                if ($OldDirectories_ListBox.DataContext.DirectoryPath.StartsWith($path)){
+                if ($OldDirectories_ListBox.DataContext.DirectoryPath.StartsWith($path,[System.StringComparison]::CurrentCultureIgnoreCase)){
                     $ValidPath = $true
                 }
             } #foreach

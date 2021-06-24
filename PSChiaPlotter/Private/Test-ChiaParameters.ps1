@@ -44,7 +44,7 @@ function Test-ChiaParameters {
             }
             $ValidPath = $false
             foreach ($path in $tempvol.AccessPaths){
-                if ($tempvol.DirectoryPath.StartsWith($path)){
+                if ($tempvol.DirectoryPath.StartsWith($path,[System.StringComparison]::CurrentCultureIgnoreCase)){
                     $ValidPath = $true
                 }
             } #foreach
@@ -61,7 +61,7 @@ function Test-ChiaParameters {
             }
             $ValidPath = $false
             foreach ($path in $finalvol.AccessPaths){
-                if ($finalvol.DirectoryPath.StartsWith($path)){
+                if ($finalvol.DirectoryPath.StartsWith($path,[System.StringComparison]::CurrentCultureIgnoreCase)){
                     $ValidPath = $true
                 }
             } #foreach
