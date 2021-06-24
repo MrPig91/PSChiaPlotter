@@ -31,83 +31,88 @@ function Get-ChiaPlotProgress {
     $plotId = $LogFile | Select-String -SimpleMatch "ID: " | foreach {$_.ToString().Split(" ")[1]}
     $line_count = $LogFile.Count
 
+    $plotProgressObject = [PSCustomObject]@{
+        Progress = 0
+        Phase = "Phase 1"
+        ElaspedTime = $ElaspedTime
+        EST_TimeRemaining = New-TimeSpan
+        PlotId = $plotId
+        Phase1Progess = 0
+        Phase2Progess = 0
+        Phase3Progess = 0
+        Phase4Progess = 0
+        CopyProgess = 0
+    }
+
     if ($line_count -ge $phase1_line_end){
-        $progress += $phase1_weight
+        $plotProgressObject.Phase1Progess = 100
+        $plotProgressObject.Progress += $phase1_weight
     }
     else{
-        $progress += $phase1_weight * ($line_count / $phase1_line_end)
-        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $progress
-        $secondsRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
-        return [PSCustomObject]@{
-            Progress = [math]::Round($progress,2)
-            Phase = "Phase 1"
-            ElaspedTime = $ElaspedTime
-            EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
-            PlotId = $plotId
-        }
+        $Phase1Progess = ($line_count / $phase1_line_end)
+        $plotProgressObject.Phase1Progess = [math]::Round(($Phase1Progess * 100),2)
+        $plotProgressObject.Progress += $phase1_weight * $Phase1Progess
+        $plotProgressObject.Phase = "Phase 1"
+        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+
+        return $plotProgressObject
     }
     if ($line_count -ge $phase2_line_end){
-        $progress += $phase2_weight
+        $plotProgressObject.Phase2Progess = 100
+        $plotProgressObject.Progress += $phase2_weight
     }
     else{
-        $progress += $phase2_weight * (($line_count - $phase1_line_end) / ($phase2_line_end - $phase1_line_end))
-        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $progress
-        $secondsRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
-        return [PSCustomObject]@{
-            Progress = [math]::Round($progress,2)
-            Phase = "Phase 2"
-            ElaspedTime = $ElaspedTime
-            EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining   
-            PlotId = $plotId
-        }
+        $phase2Progress = ($line_count - $phase1_line_end) / ($phase2_line_end - $phase1_line_end)
+        $plotProgressObject.Phase2Progess = [math]::Round(($phase2Progress * 100),2)
+        $plotProgressObject.Progress += $phase2_weight * $phase2Progress
+        $plotProgressObject.Phase = "Phase 2"
+
+        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+
+        return $plotProgressObject
     }
     if ($line_count -ge $phase3_line_end){
-        $progress += $phase3_weight
+        $plotProgressObject.Phase3Progess = 100
+        $plotProgressObject.Progress += $phase3_weight
     }
     else{
-        $progress += $phase3_weight * (($line_count - $phase2_line_end) / ($phase3_line_end - $phase2_line_end))
-        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $progress
-        $secondsRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
-        return [PSCustomObject]@{
-            Progress = [math]::Round($progress,2)
-            Phase = "Phase 3"
-            ElaspedTime = $ElaspedTime
-            EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
-            PlotId = $plotId
-        }
+        $phase3Progess = ($line_count - $phase2_line_end) / ($phase3_line_end - $phase2_line_end)
+        $plotProgressObject.Phase3Progess = [math]::Round(($phase3Progess * 100),2)
+        $plotProgressObject.Progress += $phase3_weight * $phase3Progess
+        $plotProgressObject.Phase = "Phase 3"
+
+        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+        return $plotProgressObject
     }
     if ($line_count -ge $phase4_line_end){
-        $progress += $phase4_weight
+        $plotProgressObject.Phase4Progess = 100
+        $plotProgressObject.Progress += $phase4_weight
     }
     else{
-        $progress += $phase4_weight * (($line_count - $phase3_line_end) / ($phase4_line_end - $phase3_line_end))
-        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $progress
-        $secondsRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
-        return [PSCustomObject]@{
-            Progress = [math]::Round($progress,2)
-            Phase = "Phase 4"
-            ElaspedTime = $ElaspedTime
-            EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
-            PlotId = $plotId
-        }
+        $phase4Progess = ($line_count - $phase3_line_end) / ($phase4_line_end - $phase3_line_end)
+        $plotProgressObject.Phase4Progess = [math]::Round(($phase4Progess * 100),2)
+        $plotProgressObject.Progress += $phase4_weight * $phase4Progess
+        $plotProgressObject.Phase = "Phase 4"
+        
+        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+
+        return $plotProgressObject
     }
     if ($line_count -lt $copyfile_line_end){
-        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $progress
-        $secondsRemaining = [int]($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
-        return [PSCustomObject]@{
-            Progress = [math]::Round($progress,2)
-            Phase = "Copying"
-            ElaspedTime = $ElaspedTime
-            EST_TimeReamining = New-TimeSpan -Seconds $secondsRemaining
-            PlotId = $plotId
-        }
+        $Est_TimeRemaining = ($ElaspedTime.TotalSeconds * 100) / $plotProgressObject.Progress
+        $plotProgressObject.EST_TimeRemaining = New-TimeSpan -Seconds ($Est_TimeRemaining - $ElaspedTime.TotalSeconds)
+        $plotProgressObject.Phase = "Copying"
+
+        return $plotProgressObject
     }
-    $progress += $copyphase_weight
-    return [PSCustomObject]@{
-        Progress = [math]::Round($progress,2)
-        Phase = "Completed"
-        ElaspedTime = New-TimeSpan -Start $StartTime -End $LogItem.LastWriteTime
-        EST_TimeReamining = 0
-        PlotId = $plotId
-    }
+    $plotProgressObject.Progress += $copyphase_weight
+    $plotProgressObject.CopyProgess = 100
+    $plotProgressObject.Phase = "Complete"
+    $plotProgressObject.ElaspedTime = New-TimeSpan -Start $StartTime -End $LogItem.LastWriteTime
+    $plotProgressObject.EST_TimeRemaining = 0
+    return $plotProgressObject
 }

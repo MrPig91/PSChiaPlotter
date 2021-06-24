@@ -4,14 +4,19 @@ function Write-PSChiaPlotterLog {
         [ValidateSet("INFO","WARNING","ERROR")]
         [string]$LogType,
         [string]$Message,
-        [int]$LineNumber
+        [int]$LineNumber,
+        [string]$Line,
+        $ErrorObject
     )
 
     try{
         $Date = Get-Date -Format "[yyyy-MM-dd.HH:mm:ss]"
         switch ($LogType){
             "ERROR" {
-                Write-Host "[$LogType]$Date-$LineNumber-$Message"
+                $Message = $ErrorObject.Exception.Message
+                $LineNumber = $ErrorObject.InvocationInfo.ScriptLineNumber
+                $Line = $ErrorObject.InvocationInfo.Line
+                Write-Host "[$LogType]$Date-$LineNumber-$Message`n  $Line"
                 break
             }
             "WARNING" {

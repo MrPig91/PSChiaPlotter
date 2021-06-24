@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>PSChiaPlotter.PlotTest</Name>
+      <ViewSelectedBy>
+        <TypeName>PSChiaPlotter.PlotTest</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+            <TableColumnHeader>
+                <Label>Path</Label>
+                <Width>15</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>PlotId</Label>
+                <Width>12</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Proofs/Challenges</Label>
+                <Width>20</Width>
+                <Alignment>Center</Alignment>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>Ratio</Label>
+                <Width>8</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>KSize</Label>
+                <Width>8</Width>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>ErrorCount</Label>
+                <Width>12</Width>
+            </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+            <TableColumnItem>
+                <ScriptBlock>
+                    Split-Path $_.Path -Parent
+                </ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+                <PropertyName>PlotId</PropertyName>
+            </TableColumnItem>
+            <TableColumnItem>
+                <ScriptBlock>
+                    "$($_.ProofsFound) / $($_.Challenges)"
+                </ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+                <ScriptBlock>
+                    $Esc = [char]27
+                    $color = switch ($_.Ratio){
+                        {$_ -le .7} {"93"}
+                        {$_ -gt .7} {"32"}
+                    }
+                    "$($Esc)[$($color)m$($_.Ratio)$($Esc)[39m"
+                </ScriptBlock>
+            </TableColumnItem> 
+            <TableColumnItem>
+                <PropertyName>KSize</PropertyName>
+            </TableColumnItem>
+            <TableColumnItem>
+                <ScriptBlock>
+                    $Esc = [char]27
+                    $color = switch ($_.Errors.Count){
+                        {$_ -eq 0} {"32"}
+                        {$_ -ge 1} {"91"}
+                    }
+                    "$($Esc)[$($color)m$($_.Errors.Count)$($Esc)[39m"
+                </ScriptBlock>
+            </TableColumnItem>  
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>

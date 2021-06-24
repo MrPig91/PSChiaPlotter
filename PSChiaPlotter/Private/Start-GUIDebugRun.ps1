@@ -7,7 +7,7 @@ function Start-GUIDebugRun{
     )
     try{
         $PlottingParameters = $ChiaRun.PlottingParameters
-        $KSize = $PlottingParameters.KSize
+        $KSize = $PlottingParameters.KSize.KSizeValue
         $Buffer = $PlottingParameters.RAM
         $Threads = $PlottingParameters.Threads
         $DisableBitfield = $PlottingParameters.DisableBitField
@@ -15,7 +15,7 @@ function Start-GUIDebugRun{
         $TempDirectoryPath = $PlottingParameters.TempVolume.DirectoryPath
         $FinalDirectoryPath = $PlottingParameters.FinalVolume.DirectoryPath
         $LogDirectoryPath = $PlottingParameters.LogDirectory
-        $SecondTempDirecoryPath = $PlottingParameters.TempVolume.DirectoryPath
+        $SecondTempDirecoryPath = $PlottingParameters.SecondTempVolume.DirectoryPath
     
         $E = if ($DisableBitfield){"-e"}
         $X = if ($ExcludeFinalDirectory){"-x"}

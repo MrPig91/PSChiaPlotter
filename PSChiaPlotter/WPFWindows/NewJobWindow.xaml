@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="New Job" Height="625" Width="575">
+        Title="New Job" Height="650" Width="600">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="Label">
@@ -88,6 +88,7 @@
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="5" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -98,14 +99,27 @@
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                    Orientation="Horizontal" HorizontalAlignment="Center"
-                    Margin="0">
-            <Label Content="Job Name:" />
-            <TextBox Text="{Binding Path=NewChiaJob.JobName}" MinWidth="125" />
-        </StackPanel>
+        <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1" Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
 
-        <ScrollViewer x:Name="Form_ScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
+                <Label Content="Job Names:"/>
+                <TextBox Text="{Binding Path=NewChiaJob.JobName}" Grid.Column="1"/>
+                <Label Content="Saved Jobs: " Grid.Column="2"/>
+                <ComboBox Name="SavedJobs_Combobox" Grid.Column="3" SelectedValuePath="FullName" DisplayMemberPath="Name" />
+                <Button x:Name="LoadJob_Button" Content="Load"  Margin="0,5,5,5" Padding="5,0,5,0" Grid.Column="4"/>
+            </Grid>
+        </Border>
+
+        <ScrollViewer x:Name="Form_ScrollViewer"
+                      VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -130,6 +144,8 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="5" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -138,16 +154,28 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
-                        
+
                         <Label Content="Total Plots:" Grid.Row="1" Grid.Column="1" />
                         <Label Content="Parallel Count:" Grid.Column="3" Grid.Row="1" />
                         <Label Content="Delay (minutes):" Grid.Column="3" Grid.Row="2" />
                         <Label Content="First Delay (min):" Grid.Row="2" Grid.Column="1" />
+                        <Label Content="Phase 1 Limit" Grid.Row="2" Grid.Column="5"/>
+
+                        <CheckBox Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" Margin="5"
+                                  x:Name="PhaseOneLimitor_CheckBox"
+                                  ToolTip="This will enable the Phase 1 Limit Property below"
+                                  Content="Enable Phase 1 Limit" VerticalAlignment="Center"
+                                  IsThreeState="False" IsChecked="{Binding Path=NewChiaJob.EnablePhaseOneLimitor}" />
 
                         <TextBox x:Name="TotalPlots_TextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.TotalPlotCount}" />
                         <TextBox x:Name="Parallel_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.QueueCount}"/>
-                        <TextBox x:Name="Delay_TextBox" Grid.Row="2" Grid.Column="4" Text="{Binding Path=NewChiaJob.DelayInMinutes}" />
-                        <TextBox x:Name="FirstDelay_TextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.FirstDelay}" />
+                        <TextBox x:Name="Delay_TextBox" Grid.Row="2" Grid.Column="4"  Text="{Binding Path=NewChiaJob.DelayInMinutes}" />
+                        <TextBox x:Name="FirstDelay_TextBox" Grid.Row="2" Grid.Column="2"  Text="{Binding Path=NewChiaJob.FirstDelay}" />
+                        <TextBox x:Name="PhaseOneLimit_TextBox"
+                                 IsEnabled="{Binding ElementName=PhaseOneLimitor_CheckBox, Path=IsChecked}"
+                                 Grid.Row="2" Grid.Column="6"
+                                 ToolTip="This will limit the total number of chia processes that can be in phase 1 at one time."
+                                 Text="{Binding Path=NewChiaJob.PhaseOneLimit}" />
                     </Grid>
                 </GroupBox>
 
@@ -175,7 +203,13 @@
                         <Label Content="Threads: " Grid.Column="1" Grid.Row="2" />
                         <Label Content="Buckets: " Grid.Column="3" Grid.Row="2" />
 
-                        <TextBox Name="KSize_TextBox" Grid.Column="2" Grid.Row="1" Margin="5" Text="{Binding Path=NewChiaJob.InitialChiaParameters.KSize}" IsReadOnly="True" VerticalAlignment="Top" />
+                        <ComboBox Name="KSize_ComboBox"
+                                  SelectedItem="{Binding Path=NewChiaJob.InitialChiaParameters.KSize}"
+                                  ItemsSource="{Binding Path=AvailableKSizes}"
+                                  DisplayMemberPath="KSizeValue"
+                                  Grid.Column="2" Grid.Row="1" Margin="5"
+                                  VerticalAlignment="Top">
+                        </ComboBox>
                         <TextBox x:Name="RAM_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.InitialChiaParameters.RAM}" />
                         <TextBox x:Name="Threads_TextBox" Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Path=NewChiaJob.InitialChiaParameters.Threads}"/>
@@ -196,196 +230,328 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="Directories" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+                <GroupBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Directories" Margin="0" Padding="0"/>
+                            <Separator Width="5" Margin="5" VerticalAlignment="Center"/>
+                            <Button x:Name="AdvancedBasic_Button" Content="Switch To Basic" FontSize="10" Margin="0" Padding="5,0,5,0" Background="Azure" VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                    </GroupBox.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5" />
-                            <ColumnDefinition Width="auto" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="auto" />
                             <ColumnDefinition Width="5" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5" />
-                            <RowDefinition Height="auto" />
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
-                        <Label Content="Temp Drives: " Grid.Column="1" Grid.Row="1" />
-                        <Label Content="Final Drives: " Grid.Column="1" Grid.Row="4" />
-                        <Label Content="Log Directory: " Grid.Column="1" Grid.Row="7" />
-                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
-                            <Label Content="Added Temp Drives: " Grid.Column="1" Grid.Row="2" VerticalAlignment="Top"/>
-                            <Separator Height="1" VerticalAlignment="Center" Margin="5"/>
-                            <CheckBox IsChecked="{Binding Path=NewChiaJob.IgnoreMaxParallel}" IsThreeState="False"
-                                      MaxWidth="125" VerticalContentAlignment="Center"
-                                      ToolTip="example - You will be able to plot 4 parallel plots on a 1 TB drive instead of 3 (do this at your own risk)">
-                                <TextBox Text="Ignore MaxParallel" IsReadOnly="True" TextAlignment="Center" BorderThickness="0" TextWrapping="Wrap" />
-                            </CheckBox>
-                        </StackPanel>
+                        <Grid x:Name="BasicPlotting_Grid" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
 
-                        <Label Content="Added Final Drives: " Grid.Column="1" Grid.Row="5" VerticalAlignment="Top"/>
+                            <Label Content="Temp Directory Path: " Grid.Row="1" Grid.Column="1"/>
+                            <CheckBox Content="2nd Temp Directory Path: "
+                                      x:Name="SecondTempCheckBox"
+                                      IsThreeState="False"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.EnableBasicSecondTempDirectory}"
+                                      Grid.Row="2" Grid.Column="1"/>
+                            <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
+                            <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
+                            <Label Content="Note: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Top"/>
 
+                            <TextBox x:Name="TempDir_TextBox"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory}"
+                                     Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="SecondTempDir_TextBox"
+                                     IsEnabled="{Binding ElementName=SecondTempCheckBox, Path=IsChecked}"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicSecondTempDirectory}"
+                                     Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="FinalDir_TextBox"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory}"
+                                     Grid.Row="3" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBox x:Name="LoggingPath_TextBox"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
+                                     Grid.Row="4" Grid.Column="2" HorizontalContentAlignment="Left"/>
 
-                        <Separator Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="6" Height="2" VerticalAlignment="Center" Margin="5"/>
-                        <Separator Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3" Height="2" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" HorizontalContentAlignment="Left"
+                                     IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                Text="When using Basic Directory plotting, no checks are performed to make sure there is enough space to plot. All volumes selected in advanced directories settings are ignored. MaxParallel is also ignored since disk size is not calculated. Use these basic setting at your own discretion!
+                                     Also changing the log directory in this setting will change the log directory in the advanced setting."
+                                       />
+                        </Grid>
 
-                        <ComboBox x:Name="TempDir_ComboBox" Grid.Row="1" Grid.Column="2" 
-                                  ItemsSource="{Binding Path=TempAvailableVolumes}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
+                        <TabControl x:Name="AdvancedPlotting_TabControl"
+                                    Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
+                                    Visibility="Visible"
+                                    VerticalAlignment="Stretch">
+                            <TabItem Header="Temp Drives">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition  Width="5" />
+                                        <ColumnDefinition  Width="auto" />
+                                        <ColumnDefinition  Width="*" />
+                                        <ColumnDefinition  Width="auto" />
+                                        <ColumnDefinition  Width="5" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Label Content="Temp Drives: " ToolTip="These drive are for phase 1 and 2 (and 3 if no 2nd temp drive is selected)"
+                                           Grid.Column="1" Grid.Row="1" Margin="5" HorizontalAlignment="Left"/>
+
+                                    <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
 
-                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                                            <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                                            <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
-                                            <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource TempMediaType}"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
-                                            <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
-                                            <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource TempBusType}" />
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3">
-                                            <Label Content="Max Parallel: " VerticalAlignment="Center" FontWeight="Normal"/>
-                                            <TextBlock Text="{Binding Path=MaxConCurrentTempChiaRuns}" VerticalAlignment="Center"/>
-                                        </StackPanel>
+                                        <Label Content="2nd Temp Drive:" Grid.Row="0" Grid.Column="0" ToolTip="This drive is for phase 3 only. If none selected, then it will default to the temporary directory."/>
+                                        <ComboBox Name="SecondTemp_ComboBox" Grid.Column="1"
+                                                  SelectedItem="{Binding Path=NewChiaJob.InitialChiaParameters.SecondTempVolume}"
+                                                  ItemsSource="{Binding Path=SecondTempVolumes}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+
+                                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                                            <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                                            <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                            <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource TempMediaType}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                                                            <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                            <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource TempBusType}" />
+                                                        </StackPanel>
+                                                        <TextBox x:Name="Path_TextBox" Grid.Column="3" Text="{Binding Path=DirectoryPath}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <Button x:Name="RemoveTempVolumeButton" Content="Clear" Grid.Column="2" Margin="5" Padding="5,0,5,0"/>
+                                        <CheckBox IsChecked="{Binding Path=NewChiaJob.IgnoreMaxParallel}" IsThreeState="False"
+                                            MaxWidth="160" VerticalContentAlignment="Center" Grid.Column="3"
+                                            ToolTip="example - You will be able to plot 4 parallel plots on a 1 TB drive instead of 3 (do this at your own risk) - Applies to all temp drives">
+                                            <TextBox Text="Ignore MaxParallel" IsReadOnly="True" TextAlignment="Center" BorderThickness="0" TextWrapping="Wrap"/>
+                                        </CheckBox>
                                     </Grid>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <ComboBox x:Name="FinalDir_ComboBox" Grid.Row="4" Grid.Column="2"
-                                  ItemsSource="{Binding Path=FinalAvailableVolumes}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
 
-                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                                            <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                                            <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
-                                            <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource FinalMediaType}"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
-                                            <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
-                                            <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource FinalBusType}" />
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3">
-                                            <Label Content="Potential Plots: " VerticalAlignment="Center" FontWeight="Normal"/>
-                                            <TextBlock Text="{Binding Path=PotentialFinalPlotsRemaining}" VerticalAlignment="Center"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <TextBox x:Name="LogDir_TextBox" Grid.Row="7" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}" HorizontalContentAlignment="Left"/>
+                                    <ComboBox x:Name="TempDir_ComboBox" Grid.Row="1" Grid.Column="2"
+                                        ItemsSource="{Binding Path=TempAvailableVolumes}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
 
-                        <Button x:Name="TempDriveAdd_Button" Content="Add"
-                                Grid.Column="3" Grid.Row="1" VerticalAlignment="Center"
-                                Padding="5,2,5,2" Margin="0,0,0,0"
-                                CommandParameter="{Binding ElementName=TempDir_ComboBox, Path=SelectedItem}"
-                                Command="{Binding Path=AddTempVolumeCommand}"/>
-                        <Button x:Name="FinalDir_Button" Content="Add" Grid.Column="3" Grid.Row="4"
-                                Padding="5,2,5,2" Margin="0,0,5,0" VerticalAlignment="Center"
-                                CommandParameter="{Binding ElementName=FinalDir_ComboBox, Path=SelectedItem}"
-                                Command="{Binding Path=AddFinalVolumeCommand}"/>
-                        <Button x:Name="LogDir_Button" Content="..." Grid.Column="3" Grid.Row="7"  Padding="2,0,2,0" Margin="0,5,0,5" VerticalAlignment="Center"/>
+                                                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                                        <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                                        <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                        <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource TempMediaType}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                                                        <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                        <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource TempBusType}" />
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3">
+                                                        <Label Content="Max Parallel: " VerticalAlignment="Center" FontWeight="Normal"/>
+                                                        <TextBlock Text="{Binding Path=MaxConCurrentTempChiaRuns}" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
 
-                        <ListBox x:Name="TempVolume_ListBox"
-                                 Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" ItemsSource="{Binding Path=NewChiaJob.TempVolumes}"
-                                 Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="SlateGray" BorderThickness="1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition  Width="1" />
-                                                <ColumnDefinition  Width="auto" />
-                                                <ColumnDefinition  Width="auto" />
-                                                <ColumnDefinition  Width="*" />
-                                                <ColumnDefinition  Width="auto" />
-                                                <ColumnDefinition  Width="1" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="1" />
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="1" />
-                                            </Grid.RowDefinitions>
-                                            <Label Content="{Binding Path=DriveLetter}"
-                                                   Grid.Row="1" Grid.Column="1"
-                                                   Margin="5" FontSize="11" FontWeight="Bold"
-                                                   VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="1"
-                                                   BorderBrush="Black" Foreground="DarkBlue" ToolTip="Drive Letter"/>
-                                            <Label Content="Path: " Grid.Row="1" Grid.Column="2" />
-                                            <TextBox x:Name="Path_TextBox" Grid.Row="1" Grid.Column="3" Text="{Binding Path=DirectoryPath}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
-                                            <Button Content="Remove" Grid.Column="4" Grid.Row="1" BorderThickness="1" Background="Transparent" BorderBrush="Pink" Foreground="Red" Margin="5"
-                                                CommandParameter="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.RemoveTempVolumeCommand}"/>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                                    <Button x:Name="TempDriveAdd_Button" Content="Add"
+                                        Grid.Column="3" Grid.Row="1" VerticalAlignment="Center"
+                                        Padding="5,5,5,5" Margin="0,5,5,5"
+                                        CommandParameter="{Binding ElementName=TempDir_ComboBox, Path=SelectedItem}"
+                                        Command="{Binding Path=AddTempVolumeCommand}"/>
 
-                        <ListBox x:Name="FinalVolume_ListBox"
-                                 Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" ItemsSource="{Binding Path=NewChiaJob.FinalVolumes}"
-                                 Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="SlateGray" BorderThickness="1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition  Width="1" />
-                                                <ColumnDefinition  Width="auto" />
-                                                <ColumnDefinition  Width="auto" />
-                                                <ColumnDefinition  Width="*" />
-                                                <ColumnDefinition  Width="auto" />
-                                                <ColumnDefinition  Width="1" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="1" />
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="1" />
-                                            </Grid.RowDefinitions>
-                                            <Label Content="{Binding Path=DriveLetter}"
+                                    <ListBox x:Name="TempVolume_ListBox"
+                                         Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" ItemsSource="{Binding Path=NewChiaJob.TempVolumes}"
+                                         Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="SlateGray" BorderThickness="1">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition  Width="1" />
+                                                            <ColumnDefinition  Width="auto" />
+                                                            <ColumnDefinition  Width="auto" />
+                                                            <ColumnDefinition  Width="*" />
+                                                            <ColumnDefinition  Width="auto" />
+                                                            <ColumnDefinition  Width="1" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="1" />
+                                                            <RowDefinition Height="*" />
+                                                            <RowDefinition Height="1" />
+                                                        </Grid.RowDefinitions>
+                                                        <Label Content="{Binding Path=DriveLetter}"
+                                                           Grid.Row="1" Grid.Column="1"
+                                                           Margin="5" FontSize="11" FontWeight="Bold"
+                                                           VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="1"
+                                                           BorderBrush="Black" Foreground="DarkBlue" ToolTip="Drive Letter"/>
+                                                        <Label Content="Path: " Grid.Row="1" Grid.Column="2" />
+                                                        <TextBox x:Name="Path_TextBox" Grid.Row="1" Grid.Column="3" Text="{Binding Path=DirectoryPath}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                                        <Button Content="Remove" Grid.Column="4" Grid.Row="1" BorderThickness="1" Background="Transparent" BorderBrush="Pink" Foreground="Red" Margin="5"
+                                                        CommandParameter="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.RemoveTempVolumeCommand}"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Final Drives / Logging">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition  Width="5" />
+                                        <ColumnDefinition  Width="auto" />
+                                        <ColumnDefinition  Width="*" />
+                                        <ColumnDefinition  Width="auto" />
+                                        <ColumnDefinition  Width="5" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Label Content="Final Drives: " Grid.Column="1" Grid.Row="1"  Margin="5"/>
+
+                                    <ComboBox x:Name="FinalDir_ComboBox" Grid.Row="1" Grid.Column="2"
+                                      ItemsSource="{Binding Path=FinalAvailableVolumes}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                                                        <TextBlock Text="{Binding Path=DriveLetter, StringFormat={}{0} - }" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,0"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                                        <Label Content="MediaType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                        <TextBlock Text="{Binding Path=MediaType}" Style="{StaticResource FinalMediaType}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                                                        <Label Content="BuyType:" VerticalAlignment="Center" FontWeight="Normal"/>
+                                                        <TextBlock Text="{Binding Path=BusType}"  Style="{StaticResource FinalBusType}" />
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3">
+                                                        <Label Content="Potential Plots: " VerticalAlignment="Center" FontWeight="Normal"/>
+                                                        <TextBlock Text="{Binding Path=PotentialFinalPlotsRemaining}" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+                                    <Button x:Name="FinalDir_Button" Content="Add" Grid.Column="3" Grid.Row="1"
+                                                                                Padding="5,5,5,5" Margin="0,5,5,5" VerticalAlignment="Center"
+                                        CommandParameter="{Binding ElementName=FinalDir_ComboBox, Path=SelectedItem}"
+                                        Command="{Binding Path=AddFinalVolumeCommand}"/>
+
+                                    <ListBox x:Name="FinalVolume_ListBox"
+                                        Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" ItemsSource="{Binding Path=NewChiaJob.FinalVolumes}"
+                                        Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="SlateGray" BorderThickness="1">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition  Width="1" />
+                                                            <ColumnDefinition  Width="auto" />
+                                                            <ColumnDefinition  Width="auto" />
+                                                            <ColumnDefinition  Width="*" />
+                                                            <ColumnDefinition  Width="auto" />
+                                                            <ColumnDefinition  Width="1" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="1" />
+                                                            <RowDefinition Height="*" />
+                                                            <RowDefinition Height="1" />
+                                                        </Grid.RowDefinitions>
+                                                        <Label Content="{Binding Path=DriveLetter}"
                                                    Grid.Row="1" Grid.Column="1"
                                                    Margin="5" FontSize="10" FontWeight="Bold"
                                                    VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="1"
                                                    BorderBrush="Black" Foreground="DarkBlue" ToolTip="Drive Letter"/>
-                                            <Label Content="Path: " Grid.Row="1" Grid.Column="2" />
-                                            <TextBox x:Name="FinalPath_TextBox" Grid.Row="1" Grid.Column="3" Text="{Binding Path=DirectoryPath}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
-                                            <Button Content="Remove" Grid.Column="4" Grid.Row="1" BorderThickness="1" Background="Transparent" BorderBrush="Pink" Foreground="Red" Margin="5"
+                                                        <Label Content="Path: " Grid.Row="1" Grid.Column="2" />
+                                                        <TextBox x:Name="FinalPath_TextBox" Grid.Row="1" Grid.Column="3" Text="{Binding Path=DirectoryPath}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                                        <Button Content="Remove" Grid.Column="4" Grid.Row="1" BorderThickness="1" Background="Transparent" BorderBrush="Pink" Foreground="Red" Margin="5"
                                                 CommandParameter="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.RemoveFinalVolumeCommand}"/>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+
+
+                                    <TextBox x:Name="LogDir_TextBox" Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2"
+                                             Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
+                                             HorizontalContentAlignment="Left"/>
+                                    <Label Content="Log Directory: " Grid.Column="1" Grid.Row="3" />
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
                     </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource AddParamGroupbox}">
@@ -416,7 +582,9 @@
                 </GroupBox>
             </Grid>
         </ScrollViewer>
-        <Button x:Name="CreateJob_Button" Content="Start Job" Grid.Column="2" Grid.Row="3" Margin="5"/>
-        <Button x:Name="CancelJobCreation_Button" Content="Cancel" Grid.Column="1" Grid.Row="3" Margin="5" />
+        <Button x:Name="CreateJob_Button" Content="Start Job" Grid.Column="3" Grid.Row="3" Margin="5"/>
+        <Button x:Name="CancelJobCreation_Button" Content="Cancel" Grid.Column="1" Grid.Row="3" Margin="5"/>
+        <Button x:Name="SaveJob_Button" Content="Save Job" Grid.Column="2" Grid.Row="3" Margin="5"/>
+
     </Grid>
 </Window>
