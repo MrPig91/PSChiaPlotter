@@ -5,16 +5,23 @@ function Invoke-AddOldPlotDirectoryButtonClick {
     )
 
     try{
-        if (-not$Path.StartsWith($OldDirectories_ListBox.DataContext.DriveLetter)){
-            Show-MessageBox "The replot directory path does not exists in the volume you are trying to replot!" | Out-Null
-            return
+        if (-not$DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
+            $ValidPath = $false
+            foreach ($path in $OldDirectories_ListBox.DataContext.AccessPaths){
+                if ($OldDirectories_ListBox.DataContext.DirectoryPath.StartsWith($path)){
+                    $ValidPath = $true
+                }
+            } #foreach
+            if (-not$ValidPath){
+                [void](Show-MessageBox "The replot directory path does not exists in the volume you are trying to replot!")
+            }
         }
         if ($OldDirectories_ListBox.DataContext.DirectoryPath -eq $path){
             Show-MessageBox -Text "Your 'New Plot Directory' cannot be the same as a replot diretory!`n`nPlease change your 'New Plot Directory'!" -Icon Warning | Out-Null
             return
         }
         if ([System.IO.Directory]::Exists($Path)){
-
+    
             if ($Path -in $OldDirectories_ListBox.DataContext.OldPlotDirectories.Path){
                 Show-MessageBox -Icon Warning -Text "This old plot directory has already been added!" | Out-Null
                 return
