@@ -7,6 +7,7 @@ function Invoke-CancelReplotButtonClick{
         foreach ($finalVolume in $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes){
             $finalVolume.ReplotEnabled = $false
         }
+        $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.ReplotEnabled = $false
         $ReplotConfig_Window.Close()
     }
     catch{
