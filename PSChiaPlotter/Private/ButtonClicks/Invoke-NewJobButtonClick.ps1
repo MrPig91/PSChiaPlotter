@@ -47,6 +47,7 @@ function Invoke-NewJobButtonClick {
         $SaveJob_Button = $UIHash.NewJob_Window.FindName("SaveJob_Button")
         $ClearTempVolume_Button = $UIHash.NewJob_Window.FindName("RemoveTempVolumeButton")
         $ReplotConfig_Button = $UIHash.NewJob_Window.FindName("ReplotButton")
+        $BasicReplot_Button = $UIHash.NewJob_Window.FindName("BasicReplot_Button")
 
         #TabControl
         $AdvancedPlotting_TabControl = $UIHash.NewJob_Window.FindName("AdvancedPlotting_TabControl")
@@ -221,6 +222,16 @@ function Invoke-NewJobButtonClick {
         })
 
         $ReplotConfig_Button.Add_Click({
+            try{
+                Invoke-OpenReplotConfigButtonClick
+            }
+            catch{
+                Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+                Show-MessageBox -Text $_.Exception.Message -Icon Error -Title "Open Replot Config Error"
+            }
+        })
+
+        $BasicReplot_Button.Add_Click({
             try{
                 Invoke-OpenReplotConfigButtonClick
             }
