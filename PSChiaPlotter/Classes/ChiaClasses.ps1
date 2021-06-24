@@ -81,8 +81,8 @@ namespace PSChiaPlotter
         public string PoolContractAddress { get; set; }
         public bool PoolContractEnabled { get; set; }
 
-        public string BasicTempDirectory { get; set; }
-        public string BasicFinalDirectory { get; set; }
+        public ChiaVolume BasicTempDirectory { get; set; }
+        public ChiaVolume BasicFinalDirectory { get; set; }
         public string BasicSecondTempDirectory { get; set; }
         public bool EnableBasicSecondTempDirectory { get; set; }
 
