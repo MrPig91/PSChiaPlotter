@@ -250,7 +250,7 @@
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
-                        <Grid x:Name="BasicPlotting_Grid" Grid.Row="1" Grid.Column="1" Visibility="Visible">
+                        <Grid x:Name="BasicPlotting_Grid" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5" />
                                 <ColumnDefinition Width="auto" />
@@ -318,7 +318,7 @@
 
                         <TabControl x:Name="AdvancedPlotting_TabControl"
                                     Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
-                                    Visibility="Collapsed"
+                                    Visibility="Visible"
                                     VerticalAlignment="Stretch">
                             <TabItem Header="Temp Drives">
                                 <Grid>
