@@ -250,7 +250,7 @@
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
-                        <Grid x:Name="BasicPlotting_Grid" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
+                        <Grid x:Name="BasicPlotting_Grid" Grid.Row="1" Grid.Column="1" Visibility="Visible">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5" />
                                 <ColumnDefinition Width="auto" />
@@ -259,6 +259,7 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5" />
+                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
@@ -275,33 +276,49 @@
                                       IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.EnableBasicSecondTempDirectory}"
                                       Grid.Row="2" Grid.Column="1"/>
                             <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
-                            <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
-                            <Label Content="Note: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Top"/>
+                            <CheckBox Content="Replot Directory: "
+                                      IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ReplotEnabled}"
+                                      IsThreeState="False"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Right"
+                                      Grid.Row="4" Grid.Column="1" />
+                            <Label Content="Logging Path: " Grid.Row="5" Grid.Column="1"/>
+
 
                             <TextBox x:Name="TempDir_TextBox"
-                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory}"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory.DirectoryPath}"
                                      Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left"/>
                             <TextBox x:Name="SecondTempDir_TextBox"
                                      IsEnabled="{Binding ElementName=SecondTempCheckBox, Path=IsChecked}"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicSecondTempDirectory}"
                                      Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Left"/>
                             <TextBox x:Name="FinalDir_TextBox"
-                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory}"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory.DirectoryPath}"
                                      Grid.Row="3" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <Grid Grid.Row="4" Grid.Column="2" MinHeight="25" VerticalAlignment="Center"
+                                  IsEnabled="{Binding ElementName=EnableReplotCheckbox, Path=IsChecked}"
+                                  >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <ListBox x:Name="ReplotDir_ListBox"
+                                     IsEnabled="{Binding ElementName=EnableReplotCheckbox, Path=IsChecked}"
+                                     ItemsSource="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory.OldPlotDirectories}"
+                                     Grid.Column="0" Margin="5" VerticalAlignment="Stretch"/>
+                                <Button x:Name="BasicReplot_Button" Content="Add"
+                                        Margin="5" Padding="5,2,5,2"
+                                        Grid.Column="1"/>
+                            </Grid>
                             <TextBox x:Name="LoggingPath_TextBox"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
-                                     Grid.Row="4" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                                     Grid.Row="5" Grid.Column="2" HorizontalContentAlignment="Left"/>
 
-                            <TextBox Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" HorizontalContentAlignment="Left"
-                                     IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
-                                Text="When using Basic Directory plotting, no checks are performed to make sure there is enough space to plot. All volumes selected in advanced directories settings are ignored. MaxParallel is also ignored since disk size is not calculated. Use these basic setting at your own discretion!
-                                     Also changing the log directory in this setting will change the log directory in the advanced setting."
-                                       />
                         </Grid>
 
                         <TabControl x:Name="AdvancedPlotting_TabControl"
                                     Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
-                                    Visibility="Visible"
+                                    Visibility="Collapsed"
                                     VerticalAlignment="Stretch">
                             <TabItem Header="Temp Drives">
                                 <Grid>
