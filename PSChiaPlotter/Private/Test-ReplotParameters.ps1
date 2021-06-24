@@ -5,7 +5,13 @@ function Test-ReplotParameters{
     try{
         $ChiaParameters = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters
         if ($ChiaParameters.ReplotEnabled){
-            foreach ($replotVolume in $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes){
+            if ($DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
+                $FinalVolumes = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory
+            }
+            else{
+                $FinalVolumes = $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes
+            }
+            foreach ($replotVolume in $FinalVolumes){
                 if (-not$replotVolume.ReplotEnabled){
                     return "ReplotEnabled Property is not true for volume '$($replotVolume.DriveLetter)'.`n`nWhen replotting all final volumes must have plots to replot!"
                 }
@@ -25,7 +31,7 @@ function Test-ReplotParameters{
                     return "Your new plot directory path cannot be any of the old plot directory paths, please create a new folder for the new plots or move the old plots to a different folder!"
                 }
             }
-            $TotalReplotCount = ($DataHash.NewJobViewModel.NewChiaJob.FinalVolumes.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
+            $TotalReplotCount = ($FinalVolumes.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
             if ($TotalReplotCount -lt $DataHash.NewJobViewModel.NewChiaJob.TotalPlotCount){
                 $Response = Show-MessageBox -Icon Warning -Buttons YesNo -Text "You cannot plot more than the total number of plots you want to replot!`n`nWould you like to change the total plot count to $TotalReplotCount?"
                 if ($Response -eq [System.Windows.MessageBoxResult]::Yes){
@@ -37,6 +43,7 @@ function Test-ReplotParameters{
                 }
             }
         }
+
         return $true
     }
     catch{
