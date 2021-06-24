@@ -8,11 +8,22 @@ function Invoke-OpenReplotConfigButtonClick {
 
         $FinalVolume_DataGrid = $ReplotConfig_Window.FindName("FinalVolume_DataGrid")
 
-        $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes | foreach {
-            $_.ReplotEnabled = $true
+        if ($DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
+            if ([string]::IsNullOrEmpty($DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.DirectoryPath)){
+                [void](Show-MessageBox -Text "Please give a valid final directory path first!" -Icon Warning)
+                return
+            }
+            $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.ReplotEnabled = $true
+            $BasicVolumeList = New-Object -TypeName System.Collections.Generic.List[PSChiaPlotter.ChiaVolume]
+            $BasicVolumeList.Add($DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory)
+            $FinalVolume_DataGrid.ItemsSource = $BasicVolumeList
         }
-
-        $FinalVolume_DataGrid.ItemsSource = $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes
+        else{
+            $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes | foreach {
+                $_.ReplotEnabled = $true
+                $FinalVolume_DataGrid.ItemsSource = $DataHash.NewJobViewModel.NewChiaJob.FinalVolumes
+            }
+        }
 
         $AddOldPlot_Grid = $ReplotConfig_Window.FindName("AddOldPlot_Grid")
         $OldPlotDirectory_Textbox = $ReplotConfig_Window.FindName("OldPlotDirectory_Textbox")
@@ -36,7 +47,7 @@ function Invoke-OpenReplotConfigButtonClick {
         $AddOldPlotDirectory_Button.Add_Click({
             try{
                 $PathToAdd = Invoke-AddOldPlotDirectoryButtonClick -Path $OldPlotDirectory_Textbox.Text
-                if ($PathToAdd){
+                if ($null -ne $PathToAdd){
                     $OldDirectories_ListBox.DataContext.OldPlotDirectories.Add($PathToAdd)
                     $OldPlotDirectory_Textbox.Text = $OldDirectories_ListBox.DataContext.DirectoryPath
                     $OldDirectories_ListBox.DataContext.TotalReplotCount = ($OldDirectories_ListBox.DataContext.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
