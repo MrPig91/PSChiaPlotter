@@ -93,6 +93,8 @@ namespace PSChiaPlotter
             Threads = 2;
             Buckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
+            BasicTempDirectory = new ChiaVolume(string.Empty);
+            BasicFinalDirectory = new ChiaVolume(string.Empty);
         }
         public ChiaParameters(ChiaKSize ksize,int ram,int threads,string logdir)
         {
@@ -1256,6 +1258,7 @@ namespace PSChiaPlotter
         public ChiaVolume(string dirpath)
         {
             DirectoryPath = dirpath;
+            OldPlotDirectories = new ObservableCollection<OldPlotDirectory>();
         }
     }
 
