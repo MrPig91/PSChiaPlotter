@@ -22,15 +22,15 @@ function Test-ChiaParameters {
         }
     }
     if ($NewJob.BasicPlotting){
-        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicTempDirectory)){
-            return "Temp Directory `"$($ChiaParameters.BasicTempDirectory)`" does not exists"
+        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicTempDirectory.DirectoryPath)){
+            return "Temp Directory `"$($ChiaParameters.BasicTempDirectory.DirectoryPath)`" does not exists"
         }
-        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicFinalDirectory)){
-            return "Final Directory `"$($ChiaParameters.BasicFinalDirectory)`" does not exists"
+        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicFinalDirectory.DirectoryPath)){
+            return "Final Directory `"$($ChiaParameters.BasicFinalDirectory.DirectoryPath)`" does not exists"
         }
         if ($ChiaParameters.EnableBasicSecondTempDirectory){
-            if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicSecondTempDirectory)){
-                return "2nd Temp Directory `"$($ChiaParameters.BasicSecondTempDirectory)`" does not exists"
+            if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicSecondTempDirectory.DirectoryPath)){
+                return "2nd Temp Directory `"$($ChiaParameters.BasicSecondTempDirectory.DirectoryPath)`" does not exists"
             }
         }
     }
