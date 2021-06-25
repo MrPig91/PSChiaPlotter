@@ -262,9 +262,9 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="5" />
                             </Grid.RowDefinitions>
 
@@ -279,10 +279,12 @@
                             <CheckBox Content="Replot Directory: "
                                       IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ReplotEnabled}"
                                       IsThreeState="False"
-                                      VerticalAlignment="Center"
+                                      VerticalAlignment="Top"
+                                      Margin="0,5,0,0"
                                       HorizontalAlignment="Right"
                                       Grid.Row="4" Grid.Column="1" />
                             <Label Content="Logging Path: " Grid.Row="5" Grid.Column="1"/>
+                            <Label Content="Note: " Grid.Row="6" Grid.Column="1" />
 
 
                             <TextBox x:Name="TempDir_TextBox"
@@ -295,7 +297,7 @@
                             <TextBox x:Name="FinalDir_TextBox"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory.DirectoryPath}"
                                      Grid.Row="3" Grid.Column="2" HorizontalContentAlignment="Left"/>
-                            <Grid Grid.Row="4" Grid.Column="2" MinHeight="25" VerticalAlignment="Center"
+                            <Grid Grid.Row="4" Grid.Column="2" MinHeight="25" VerticalAlignment="Stretch"
                                   IsEnabled="{Binding ElementName=EnableReplotCheckbox, Path=IsChecked}"
                                   >
                                 <Grid.ColumnDefinitions>
@@ -305,14 +307,39 @@
                                 <ListBox x:Name="ReplotDir_ListBox"
                                      IsEnabled="{Binding ElementName=EnableReplotCheckbox, Path=IsChecked}"
                                      ItemsSource="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory.OldPlotDirectories}"
-                                     Grid.Column="0" Margin="5" VerticalAlignment="Stretch"/>
+                                     HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                     Grid.Column="0" Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="SlateGray" BorderThickness="1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="Path:" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    <TextBox Text="{Binding Path}" HorizontalContentAlignment="Left" Grid.Column="1" IsReadOnly="True" Margin="5" HorizontalAlignment="Stretch"/>
+                                                    <Separator Grid.Column="2"  Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="5"/>
+                                                    <Label Content="Old Plot Count:" Grid.Column="3" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    <Label Content="{Binding PlotCount}" Grid.Column="4" VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Black"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                                 <Button x:Name="BasicReplot_Button" Content="Add"
-                                        Margin="5" Padding="5,2,5,2"
+                                        Margin="5" Padding="5,2,5,2" MaxHeight="30"
+                                        VerticalAlignment="Top"
                                         Grid.Column="1"/>
                             </Grid>
                             <TextBox x:Name="LoggingPath_TextBox"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
                                      Grid.Row="5" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBlock Text="Basic plotting performs no checks to ensure free space when plotting." Grid.Column="2" Grid.Row="6"  VerticalAlignment="Center"/>
 
                         </Grid>
 
