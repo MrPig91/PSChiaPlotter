@@ -4,7 +4,7 @@ function Invoke-LoadJobButtonClick {
 
     try{
         $JobFilePath = $SavedJobs_ComboBox.SelectedValue
-        if (($JobFilePath -ne $null) -and (Test-Path $JobFilePath)){
+        if (($null -ne $JobFilePath) -and (Test-Path $JobFilePath)){
 
             #Have to transfer the properties over since the imported job is Desesersilzed Object
 
@@ -122,7 +122,7 @@ function Invoke-LoadJobButtonClick {
                 }
             }
 
-            $NewSavedJobViewModel.AvailableKSizes = $NewJobViewModel.AvailableKSizes
+            $NewSavedJobViewModel.AvailableKSizes = $DataHash.NewJobViewModel.AvailableKSizes
 
             $SecondTempVolume = $NewSavedJobViewModel.SecondTempVolumes | where UniqueId -eq $ImportedJob.NewChiaJob.InitialChiaParameters.SecondTempVolume.UniqueId
             $NewSavedJobViewModel.NewChiaJob.InitialChiaParameters.SecondTempVolume = $SecondTempVolume
@@ -158,13 +158,19 @@ function Invoke-LoadJobButtonClick {
                 35 {$Index = 4;break}
                 default {$Index = 1}
             }
-            $KSize_ComboBox.SelectedIndex = $Index
+            $UIHash.KSize_ComboBox.SelectedIndex = $Index
+            $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize = $UIHash.KSize_ComboBox.SelectedItem
             $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.RAM = $ImportedJob.NewChiaJob.InitialChiaParameters.RAM
 
             if ($DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
                 $AdvancedBasic_Button.Content = "Switch To Advance"
                 $AdvancedPlotting_TabControl.Visibility = [System.Windows.Visibility]::Collapsed
                 $BasicPlotting_Grid.Visibility = [System.Windows.Visibility]::Visible
+            }
+            else{
+                $AdvancedBasic_Button.Content = "Switch To Advance"
+                $BasicPlotting_Grid.Visibility = [System.Windows.Visibility]::Collapsed
+                $AdvancedPlotting_TabControl.Visibility = [System.Windows.Visibility]::Visible
             }
         }
     }
