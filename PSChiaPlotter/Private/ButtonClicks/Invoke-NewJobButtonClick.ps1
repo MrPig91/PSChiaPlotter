@@ -33,8 +33,8 @@ function Invoke-NewJobButtonClick {
         $UIHash.NewJob_Window.DataContext = $NewJobViewModel
 
         #Combobox
-        $KSize_ComboBox = $UIHash.NewJob_Window.FindName("KSize_ComboBox")
-        $KSize_ComboBox.SelectedIndex = 1
+        $UIHash.KSize_ComboBox = $UIHash.NewJob_Window.FindName("KSize_ComboBox")
+        $UIHash.KSize_ComboBox.SelectedIndex = 1
 
         $SavedJobs_ComboBox = $UIHash.NewJob_Window.FindName("SavedJobs_Combobox")
         $SavedJobs_ComboBox.ItemsSource = $SavedJobsList
@@ -46,6 +46,8 @@ function Invoke-NewJobButtonClick {
         $CancelJobCreation_Button = $UIHash.NewJob_Window.FindName("CancelJobCreation_Button")
         $SaveJob_Button = $UIHash.NewJob_Window.FindName("SaveJob_Button")
         $ClearTempVolume_Button = $UIHash.NewJob_Window.FindName("RemoveTempVolumeButton")
+        $ReplotConfig_Button = $UIHash.NewJob_Window.FindName("ReplotButton")
+        $BasicReplot_Button = $UIHash.NewJob_Window.FindName("BasicReplot_Button")
 
         #TabControl
         $AdvancedPlotting_TabControl = $UIHash.NewJob_Window.FindName("AdvancedPlotting_TabControl")
@@ -91,7 +93,7 @@ function Invoke-NewJobButtonClick {
             }
         })
 
-       $KSize_ComboBox.Add_SelectionChanged({
+       $UIHash.KSize_ComboBox.Add_SelectionChanged({
             try{
                 $KSizeTempSize = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.TempSize
                 $KSizeFinalSize = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.FinalSize
@@ -138,11 +140,25 @@ function Invoke-NewJobButtonClick {
                         return
                     }
                 }
+                if ($DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.PoolContractEnabled){
+                    $response = Show-MessageBox -Text "Portable plots are not currently supported on mainnet! This plot is not guranteed to work in the future, continue?" -Button YesNo -Icon Warning
+                    if ($response -eq [System.Windows.MessageBoxResult]::No){
+                        return
+                    }
+                }
+
                 $Results = Test-ChiaParameters $DataHash.NewJobViewModel.NewChiaJob
                 if ($Results -ne $true){
                     Show-Messagebox -Text $Results -Title "Invalid Parameters" -Icon Warning
                     return
                 }
+
+                $Results = Test-ReplotParameters
+                if ($Results -ne $true){
+                    Show-Messagebox -Text $Results -Title "Invalid Replot Parameters" -Icon Warning
+                    return
+                }
+
                 $DataHash.MainViewModel.AllJobs.Add($DataHash.NewJobViewModel.NewChiaJob)
                 $newJobRunSpace = New-ChiaJobRunspace -Job $DataHash.NewJobViewModel.NewChiaJob
                 $newJobRunSpace.Runspacepool = $ScriptsHash.RunspacePool
@@ -202,6 +218,26 @@ function Invoke-NewJobButtonClick {
             }
             catch{
                 Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+            }
+        })
+
+        $ReplotConfig_Button.Add_Click({
+            try{
+                Invoke-OpenReplotConfigButtonClick
+            }
+            catch{
+                Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+                Show-MessageBox -Text $_.Exception.Message -Icon Error -Title "Open Replot Config Error"
+            }
+        })
+
+        $BasicReplot_Button.Add_Click({
+            try{
+                Invoke-OpenReplotConfigButtonClick
+            }
+            catch{
+                Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+                Show-MessageBox -Text $_.Exception.Message -Icon Error -Title "Open Replot Config Error"
             }
         })
 

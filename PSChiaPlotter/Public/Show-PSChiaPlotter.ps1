@@ -71,6 +71,7 @@ function Show-PSChiaPlotter {
     $DataHash.WPF = Join-Path -Path $DataHash.ModuleRoot -ChildPath "WPFWindows"
     $DataHash.Classes = Join-Path -Path $DataHash.ModuleRoot -ChildPath "Classes"
     $DataHash.Runspaces = New-Object System.Collections.Generic.List[System.Object]
+    $DataHash.HelpFiles = Join-Path -Path $DataHash.ModuleRoot -ChildPath "HelpFiles"
     #DEBUG SWITCH
     $DataHash.Debug = $DebugWithNotepad.IsPresent
     $DataHash.LogPath = $LogPath

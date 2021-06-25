@@ -22,11 +22,11 @@ function Test-ChiaParameters {
         }
     }
     if ($NewJob.BasicPlotting){
-        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicTempDirectory)){
-            return "Temp Directory `"$($ChiaParameters.BasicTempDirectory)`" does not exists"
+        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicTempDirectory.DirectoryPath)){
+            return "Temp Directory `"$($ChiaParameters.BasicTempDirectory.DirectoryPath)`" does not exists"
         }
-        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicFinalDirectory)){
-            return "Final Directory `"$($ChiaParameters.BasicFinalDirectory)`" does not exists"
+        if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicFinalDirectory.DirectoryPath)){
+            return "Final Directory `"$($ChiaParameters.BasicFinalDirectory.DirectoryPath)`" does not exists"
         }
         if ($ChiaParameters.EnableBasicSecondTempDirectory){
             if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicSecondTempDirectory)){
@@ -44,7 +44,7 @@ function Test-ChiaParameters {
             }
             $ValidPath = $false
             foreach ($path in $tempvol.AccessPaths){
-                if ($tempvol.DirectoryPath.StartsWith($path)){
+                if ($tempvol.DirectoryPath.StartsWith($path,[System.StringComparison]::CurrentCultureIgnoreCase)){
                     $ValidPath = $true
                 }
             } #foreach
@@ -61,7 +61,7 @@ function Test-ChiaParameters {
             }
             $ValidPath = $false
             foreach ($path in $finalvol.AccessPaths){
-                if ($finalvol.DirectoryPath.StartsWith($path)){
+                if ($finalvol.DirectoryPath.StartsWith($path,[System.StringComparison]::CurrentCultureIgnoreCase)){
                     $ValidPath = $true
                 }
             } #foreach
@@ -79,6 +79,11 @@ function Test-ChiaParameters {
     }
     if ($NewJob.FirstDelay -gt 35791){
         return "First delay time is greater than 35791 minutes, which is the max"
+    }
+    if ($ChiaParameters.PoolContractEnabled){
+        if ([string]::IsNullOrEmpty($ChiaParameters.PoolContractAddress)){
+            return "Pool contract address is enabled, but no address was provided!"
+        }
     }
     return $true
 }

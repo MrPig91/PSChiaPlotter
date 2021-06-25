@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="New Job" Height="650" Width="600">
+        Title="New Job" Height="725" Width="650">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="Label">
@@ -262,8 +262,9 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="5" />
                             </Grid.RowDefinitions>
 
@@ -275,28 +276,71 @@
                                       IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.EnableBasicSecondTempDirectory}"
                                       Grid.Row="2" Grid.Column="1"/>
                             <Label Content="Final Directory Path: " Grid.Row="3" Grid.Column="1"/>
-                            <Label Content="Logging Path: " Grid.Row="4" Grid.Column="1"/>
-                            <Label Content="Note: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Top"/>
+                            <CheckBox Content="Replot Directory: "
+                                      IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ReplotEnabled}"
+                                      IsThreeState="False"
+                                      VerticalAlignment="Top"
+                                      Margin="0,5,0,0"
+                                      HorizontalAlignment="Right"
+                                      Grid.Row="4" Grid.Column="1" />
+                            <Label Content="Logging Path: " Grid.Row="5" Grid.Column="1"/>
+                            <Label Content="Note: " Grid.Row="6" Grid.Column="1" />
+
 
                             <TextBox x:Name="TempDir_TextBox"
-                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory}"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicTempDirectory.DirectoryPath}"
                                      Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left"/>
                             <TextBox x:Name="SecondTempDir_TextBox"
                                      IsEnabled="{Binding ElementName=SecondTempCheckBox, Path=IsChecked}"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicSecondTempDirectory}"
                                      Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Left"/>
                             <TextBox x:Name="FinalDir_TextBox"
-                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory}"
+                                     Text="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory.DirectoryPath}"
                                      Grid.Row="3" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <Grid Grid.Row="4" Grid.Column="2" MinHeight="25" VerticalAlignment="Stretch"
+                                  IsEnabled="{Binding ElementName=EnableReplotCheckbox, Path=IsChecked}"
+                                  >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <ListBox x:Name="ReplotDir_ListBox"
+                                     IsEnabled="{Binding ElementName=EnableReplotCheckbox, Path=IsChecked}"
+                                     ItemsSource="{Binding Path=NewChiaJob.InitialChiaParameters.BasicFinalDirectory.OldPlotDirectories}"
+                                     HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                                     Grid.Column="0" Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="SlateGray" BorderThickness="1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition Width="auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="Path:" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    <TextBox Text="{Binding Path}" HorizontalContentAlignment="Left" Grid.Column="1" IsReadOnly="True" Margin="5" HorizontalAlignment="Stretch"/>
+                                                    <Separator Grid.Column="2"  Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="5"/>
+                                                    <Label Content="Old Plot Count:" Grid.Column="3" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    <Label Content="{Binding PlotCount}" Grid.Column="4" VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Black"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <Button x:Name="BasicReplot_Button" Content="Add"
+                                        Margin="5" Padding="5,2,5,2" MaxHeight="30"
+                                        VerticalAlignment="Top"
+                                        Grid.Column="1"/>
+                            </Grid>
                             <TextBox x:Name="LoggingPath_TextBox"
                                      Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
-                                     Grid.Row="4" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                                     Grid.Row="5" Grid.Column="2" HorizontalContentAlignment="Left"/>
+                            <TextBlock Text="Basic plotting performs no checks to ensure free space when plotting." Grid.Column="2" Grid.Row="6"  VerticalAlignment="Center"/>
 
-                            <TextBox Grid.Row="5" Grid.Column="2" TextWrapping="Wrap" HorizontalContentAlignment="Left"
-                                     IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
-                                Text="When using Basic Directory plotting, no checks are performed to make sure there is enough space to plot. All volumes selected in advanced directories settings are ignored. MaxParallel is also ignored since disk size is not calculated. Use these basic setting at your own discretion!
-                                     Also changing the log directory in this setting will change the log directory in the advanced setting."
-                                       />
                         </Grid>
 
                         <TabControl x:Name="AdvancedPlotting_TabControl"
@@ -465,6 +509,7 @@
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
 
                                     <Label Content="Final Drives: " Grid.Column="1" Grid.Row="1"  Margin="5"/>
@@ -544,11 +589,26 @@
                                         </ListBox.ItemTemplate>
                                     </ListBox>
 
+                                    <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <TextBox x:Name="LogDir_TextBox" Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2"
+                                        <Label Content="Log Directory: " Grid.Column="0"/>
+
+                                        <TextBox x:Name="LogDir_TextBox" Grid.Column="1"
                                              Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
                                              HorizontalContentAlignment="Left"/>
-                                    <Label Content="Log Directory: " Grid.Column="1" Grid.Row="3" />
+                                        <CheckBox x:Name="EnableReplotCheckbox" Content="Enable Replot"
+                                                  Grid.Column="2" IsThreeState="False"
+                                                  IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ReplotEnabled}"
+                                                  VerticalAlignment="Center" />
+                                        <Button x:Name="ReplotButton" Content="Replot Config" Grid.Column="4" Margin="5" Padding="2"
+                                                IsEnabled="{Binding ElementName=EnableReplotCheckbox, Path=IsChecked}"/>
+                                    </Grid>
                                 </Grid>
                             </TabItem>
                         </TabControl>
@@ -556,9 +616,22 @@
                 </GroupBox>
                 <GroupBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource AddParamGroupbox}">
                     <GroupBox.Header>
-                        <CheckBox x:Name="AdditionalParametersCheckBox" Content="Additional Parameters" IsChecked="False" IsThreeState="False" />
+                        <CheckBox x:Name="AdditionalParametersCheckBox" Content="Additional Parameters" IsChecked="True" IsThreeState="False" />
                     </GroupBox.Header>
                     <Grid IsEnabled="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked}" Visibility="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.Resources>
+                            <Style x:Key="PoolKey" TargetType="TextBox">
+                                <Setter Property="Margin" Value="5" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressTextBox, Path=IsEnabled}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ElementName=PoolContractAddressTextBox, Path=IsEnabled}" Value="False">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Resources>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="auto" />
@@ -569,15 +642,21 @@
                             <RowDefinition Height="5" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                             <RowDefinition Height="5" />
                         </Grid.RowDefinitions>
 
-                        <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="1" />
+                        <CheckBox x:Name="PoolContractAddressCheckbox" Content="Pool Contract Address:"
+                                  ToolTip="Used to make portable plots to join pools. Cannot use Pool Public Key when using this parameter."
+                                  HorizontalAlignment="Right" VerticalAlignment="Center"
+                                  Grid.Column="1" Grid.Row="1" 
+                                  IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.PoolContractEnabled}" IsThreeState="False"/>
                         <Label Content="Farmer Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="2" />
+                        <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="3" />
 
-                        <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
+                        <TextBox x:Name="PoolContractAddressTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolContractAddress}" VerticalAlignment="Center" HorizontalContentAlignment="Left" IsEnabled="{Binding ElementName=PoolContractAddressCheckbox, Path=IsChecked}"/>
                         <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
-
+                        <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="3" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left" Style="{StaticResource PoolKey}"/>
                     </Grid>
                 </GroupBox>
             </Grid>

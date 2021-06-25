@@ -39,8 +39,8 @@ function New-ChiaQueueRunspace {
                 $Queue.IsBlocked = $false
 
                 if ($Job.BasicPlotting){
-                    $TempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicTempDirectory)
-                    $FinalVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicFinalDirectory)
+                    $TempVolume = $Queue.PlottingParameters.BasicTempDirectory
+                    $FinalVolume = $Queue.PlottingParameters.BasicFinalDirectory
                     if ($Queue.PlottingParameters.EnableBasicSecondTempDirectory){
                         $SecondTempVolume = [PSChiaPlotter.ChiaVolume]::new($Queue.PlottingParameters.BasicSecondTempDirectory)
                     }
@@ -113,7 +113,7 @@ function New-ChiaQueueRunspace {
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume
-                if ($Job.BasicPlotting){
+                if ($Job.BasicPlotting -and $Queue.PlottingParameters.EnableBasicSecondTempDirectory){
                     $plottingParameters.SecondTempVolume = $SecondTempVolume
                 }
                 $newRun = [PSChiaPlotter.ChiaRun]::new($Queue,$runNumber,$plottingParameters)
