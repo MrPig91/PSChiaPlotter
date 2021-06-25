@@ -18,7 +18,7 @@ function Get-BestChiaFinalDrive {
         foreach ($replotVolume in $ChiaVolumes){
             foreach ($oldDirectory in $replotVolume.OldPlotDirectories){
                 try{
-                    $oldplotcount = (Get-ChildItem -Path $oldDirectory.Path -Filter "plot-k$($oldDirectory.KSizeValue)*.plot" | Measure-Object).Count
+                    $oldplotcount = (Get-ChildItem -Path $oldDirectory.Path -Filter "plot-k$($oldDirectory.KSizeValue)*.plot" -File | Measure-Object).Count
                     $oldDirectory.PlotCount = $oldplotcount
                 }
                 catch{
@@ -29,7 +29,7 @@ function Get-BestChiaFinalDrive {
             $replotVolume.TotalReplotCount = ($replotVolume.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
         }
         $AvailableVolumes = $ChiaVolumes | where TotalReplotCount -gt 0 | sort -Property @{Expression = {$_.PendingFinalRuns.Count}; Descending = $false},@{Expression = "TotalReplotCount"; Descending = $True}
-        return ($AvailableVolumes | select -First 1)
+        return ($AvailableVolumes | Select-Object -First 1)
     }
     else{
         $sortedVolumes = $ChiaVolumes | Sort-Object -Property @{Expression = {$_.PendingFinalRuns.Count}; Descending = $false},@{Expression = "FreeSpace"; Descending = $True}
