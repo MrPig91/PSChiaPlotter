@@ -126,12 +126,11 @@ function Start-GUIChiaPlotting {
                             "Phase 4" {$ChiaRun.CurrentPhaseProgress = $progress.Phase4Progess}
                             "Copying" {$ChiaRun.CurrentPhaseProgress = $progress.CopyProgess}
                         }
-                        if (($progress.Phase -eq "Phase 4" -or $progress.Phase -eq "Copying") -and $ReplotEnabled -and -not$OldPlotDeleted){
+                        if (($progress.Phase -eq "Phase 4" -or $progress.Phase -eq "Copying" -or $progress.Phase3Progess -gt 75) -and $ReplotEnabled -and -not$OldPlotDeleted){
                             $OldPlotDeleted = $true
                             $oldDirectories = $ChiaRun.PlottingParameters.FinalVolume.OldPlotDirectories.Path
                             $OldPlot = Get-ChildItem -Path $oldDirectories -Filter "plot-k$($KSize)*.plot" | Select-Object -First 1
-                            if ($OldPlot){
-                                $OldPlotDeleted = $true
+                            if ($Null -ne $OldPlot){
                                 $OldPlot | Remove-Item -Force
                             }
                         }
