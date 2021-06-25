@@ -33,8 +33,8 @@ function Invoke-NewJobButtonClick {
         $UIHash.NewJob_Window.DataContext = $NewJobViewModel
 
         #Combobox
-        $KSize_ComboBox = $UIHash.NewJob_Window.FindName("KSize_ComboBox")
-        $KSize_ComboBox.SelectedIndex = 1
+        $UIHash.KSize_ComboBox = $UIHash.NewJob_Window.FindName("KSize_ComboBox")
+        $UIHash.KSize_ComboBox.SelectedIndex = 1
 
         $SavedJobs_ComboBox = $UIHash.NewJob_Window.FindName("SavedJobs_Combobox")
         $SavedJobs_ComboBox.ItemsSource = $SavedJobsList
@@ -93,7 +93,7 @@ function Invoke-NewJobButtonClick {
             }
         })
 
-       $KSize_ComboBox.Add_SelectionChanged({
+       $UIHash.KSize_ComboBox.Add_SelectionChanged({
             try{
                 $KSizeTempSize = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.TempSize
                 $KSizeFinalSize = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.FinalSize
