@@ -29,8 +29,8 @@ function Test-ChiaParameters {
             return "Final Directory `"$($ChiaParameters.BasicFinalDirectory.DirectoryPath)`" does not exists"
         }
         if ($ChiaParameters.EnableBasicSecondTempDirectory){
-            if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicSecondTempDirectory.DirectoryPath)){
-                return "2nd Temp Directory `"$($ChiaParameters.BasicSecondTempDirectory.DirectoryPath)`" does not exists"
+            if (-not[System.IO.Directory]::Exists($ChiaParameters.BasicSecondTempDirectory)){
+                return "2nd Temp Directory `"$($ChiaParameters.BasicSecondTempDirectory)`" does not exists"
             }
         }
     }
