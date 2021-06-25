@@ -113,7 +113,7 @@ function New-ChiaQueueRunspace {
                 $plottingParameters = [PSChiaPlotter.ChiaParameters]::New($Queue.PlottingParameters)
                 $plottingParameters.TempVolume = $TempVolume
                 $plottingParameters.FinalVolume = $FinalVolume
-                if ($Job.BasicPlotting){
+                if ($Job.BasicPlotting -and $Queue.PlottingParameters.EnableBasicSecondTempDirectory){
                     $plottingParameters.SecondTempVolume = $SecondTempVolume
                 }
                 $newRun = [PSChiaPlotter.ChiaRun]::new($Queue,$runNumber,$plottingParameters)
