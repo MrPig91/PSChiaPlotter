@@ -72,13 +72,14 @@ The following is a list of things I want to add or improve on in the module. Not
   - :white_check_mark: Add Saving Jobs For Reuse - Version 1.0.32+
   - :white_check_mark: Add Basic Plotting Directories As Alternative Option - Version 1.0.32+
   - :white_check_mark: Add Phase % text and progress bar in background of the cell - Version 1.0.32+
-  - [ ] Notifications Integration (Discord, Toast, etc.)
+  - :white_check_mark: Update module when pool plotting comes out - Version 1.0.46+
+  - :white_check_mark: Added Button column on Completed Runs tab for checking finished plot - Version 1.0.43+
+  - :white_check_mark: Add Replot Feature - Version 1.0.46+
   - [ ] Add Tab page to show a datagrid with all plotting stats
   - [ ] Add Current and Completed Tabs for Queue groupbox 
   - [ ] Add Madmax Alternative Plot Option (User can use a textbox to provide a path to the .exe)
   - [ ] Add the ability to add and remove columns on datagrids  
-  - [ ] Update module when pool plotting comes out
-  - [ ] Added Button column on Completed Runs tab for checking finished plot
+  - [ ] Notifications Integration (Discord, Toast, etc.)
   - [ ] Add Dark Mode
   
 - [ ] 3. Get-ChiaKPlotCombination
