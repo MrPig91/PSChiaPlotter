@@ -21,6 +21,12 @@ function Start-GUIChiaPlotting {
         $PoolPublicKey = $PlottingParameters.PoolPublicKey
         $FarmerPublicKey = $PlottingParameters.FarmerPublicKey
         $Buckets = $PlottingParameters.Buckets
+        $PoolContractEnabled = $PlottingParameters.PoolContractEnabled
+        $PoolContractAddress = $PlottingParameters.PoolContractAddress
+        $ReplotEnabled = $PlottingParameters.ReplotEnabled
+        
+        #used for replotting
+        $OldPlotDeleted = $false
 
         $E = if ($DisableBitfield){"-e"}
         $X = if ($ExcludeFinalDirectory){"-x"}
@@ -33,9 +39,15 @@ function Start-GUIChiaPlotting {
         $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
         $ChiaArguments = "plots create -k $KSize -b $Buffer -u $Buckets -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
 
-        if (-not[string]::IsNullOrWhiteSpace($PoolPublicKey)){
+        if ($PoolContractEnabled){
+            if (-not[string]::IsNullOrEmpty($PoolContractAddress)){
+                $ChiaArguments += " -c $PoolContractAddress"
+            }
+        }
+        elseif (-not[string]::IsNullOrWhiteSpace($PoolPublicKey)){
             $ChiaArguments += " -p $PoolPublicKey"
         }
+
         if (-not[string]::IsNullOrWhiteSpace($FarmerPublicKey)){
             $ChiaArguments += " -f $FarmerPublicKey"
         }
@@ -114,10 +126,19 @@ function Start-GUIChiaPlotting {
                             "Phase 4" {$ChiaRun.CurrentPhaseProgress = $progress.Phase4Progess}
                             "Copying" {$ChiaRun.CurrentPhaseProgress = $progress.CopyProgess}
                         }
+                        if (($progress.Phase -eq "Phase 4" -or $progress.Phase -eq "Copying" -or $progress.Phase3Progess -gt 75) -and $ReplotEnabled -and -not$OldPlotDeleted){
+                            $OldPlotDeleted = $true
+                            $oldDirectories = $ChiaRun.PlottingParameters.FinalVolume.OldPlotDirectories.Path
+                            $OldPlot = Get-ChildItem -Path $oldDirectories -Filter "plot-k$($KSize)*.plot" | Select-Object -First 1
+                            if ($Null -ne $OldPlot){
+                                $OldPlot | Remove-Item -Force
+                            }
+                        }
                         $ChiaRun.TempSize = Get-ChiaTempSize -DirectoryPath $TempDirectoryPath -PlotId $plotid
                         Start-Sleep (5 + $ChiaQueue.QueueNumber)
                     }
                     catch{
+                        Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
                         Start-Sleep 30
                     }
                 } #while

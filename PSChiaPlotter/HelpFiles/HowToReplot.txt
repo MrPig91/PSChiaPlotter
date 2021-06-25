@@ -1,0 +1,21 @@
+In order for PSChiaPlotter to provide the smoothest replotting experience, some restrictions had to be implemented.
+
+Restrictions
+    1. The KSize your are plotting must be the same as the KSize as the plot files you wish to replot
+    2. You new plots' final destination directory cannot be the same as any of the folders that you are replotting
+    3. The plot files you wish to replot must be on the same drive as the drive your final plots will end up
+    4. The total plots you wish to plot cannot exceed the total plots you are able to replot
+    5. All final volumes added must have their own replot directory
+
+You should be able to stumble through the GUI to get replotting setup, but here it is explained further.
+
+Instructions
+    1. You must have "Enable Replot" checkbox checked on the New Job Window
+    2. Click a volume from the datagrid above, this will enable the rest of the replot window's controls
+    3. Enter in the directory you want to replot and hit "Add"
+    4. If it meets all requirements then the directory will be added to the volume
+    5. You must do this for each final volume you have added (every final volume must have a replot directory)
+    6. Click Confirm Changes
+
+Additional Notes: The old plot file will be deleted when the plot that will replace it reaches 75% in phase 3 or beyond
+of the plotting process.
