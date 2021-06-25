@@ -33,7 +33,7 @@ function Test-ReplotParameters{
             }
             $TotalReplotCount = ($FinalVolumes.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
             if ($TotalReplotCount -lt $DataHash.NewJobViewModel.NewChiaJob.TotalPlotCount){
-                $Response = Show-MessageBox -Icon Warning -Buttons YesNo -Text "You cannot plot more than the total number of plots you want to replot!`n`nWould you like to change the total plot count to $TotalReplotCount?"
+                $Response = Show-MessageBox -Icon Warning -Buttons YesNo -Text "You cannot plot more than the total number of plots you want to replot!`n`nWould you like to change the total plot count to $([string]$TotalReplotCount)?"
                 if ($Response -eq [System.Windows.MessageBoxResult]::Yes){
                     $DataHash.NewJobViewModel.NewChiaJob.TotalPlotCount = $TotalReplotCount
                     return $true
@@ -43,7 +43,6 @@ function Test-ReplotParameters{
                 }
             }
         }
-
         return $true
     }
     catch{
