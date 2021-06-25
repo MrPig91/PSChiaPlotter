@@ -81,6 +81,15 @@ function Invoke-OpenReplotConfigButtonClick {
             }
         })
 
+        $HelpReplot_Button.Add_Click({
+            try{
+                Invoke-HelpReplotButtonClick
+            }
+            catch{
+                Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+            }
+        })
+
         $ReplotConfig_Window.ShowDialog()
     }
     catch{
