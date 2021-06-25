@@ -28,7 +28,7 @@ function Invoke-LoadJobButtonClick {
                 }
             }
 
-            $SkipParameterProperties = @("SecondTempVolume","KSize")
+            $SkipParameterProperties = @("SecondTempVolume","KSize","BasicFinalDirectory","BasicTempDirectory")
             $ParameterProperties = ($ImportedJob.NewChiaJob.InitialChiaParameters | Get-Member -MemberType Property).Name
             $ParameterProperties = $ParameterProperties | where {$_ -notin $SkipParameterProperties}
             foreach ($property in $ParameterProperties){
@@ -87,10 +87,18 @@ function Invoke-LoadJobButtonClick {
                 $FoundVolume = $Null
             }
 
+            #Basic Volumes
+            $FinalDirString = [string]$ImportedJob.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.DirectoryPath
+            $TempDirString = [string]$ImportedJob.NewChiaJob.InitialChiaParameters.BasicTempDirectory.DirectoryPath
+            $NewSavedJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory = [PSChiaPlotter.ChiaVolume]::new($FinalDirString)
+            $NewSavedJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.ReplotEnabled = $ImportedJob.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.ReplotEnabled
+            $NewSavedJobViewModel.NewChiaJob.InitialChiaParameters.BasicTempDirectory = [PSChiaPlotter.ChiaVolume]::new($TempDirString)
+
             if ($ImportedJob.NewChiaJob.InitialChiaParameters.ReplotEnabled){
                 foreach ($replotVolume in $ImportedJob.NewChiaJob.FinalVolumes){
+                    $FoundFinalVolume = $Null
                     $FoundFinalVolume = $NewSavedJobViewModel.FinalAvailableVolumes | where UniqueId -eq $replotVolume.UniqueId
-                    if ($FoundFinalVolume){
+                    if ($null -ne $FoundFinalVolume){
                         foreach ($oldplotdirectory in $replotVolume.OldPlotDirectories){
                             try{
                                 $totaloldplots = (Get-ChildItem -Path $oldplotdirectory.Path -Filter "plot-k$($oldplotdirectory.KSizeValue)*.plot" | Measure-Object).Count
@@ -104,7 +112,7 @@ function Invoke-LoadJobButtonClick {
                     }
                     else{
                         $FoundFinalVolume = $NewSavedJobViewModel.FinalVolumes | where UniqueId -eq $replotVolume.UniqueId
-                        if ($FoundFinalVolume){
+                        if ($null -ne $FoundFinalVolume){
                             foreach ($oldplotdirectory in $replotVolume.OldPlotDirectories){
                                 try{
                                     $totaloldplots = (Get-ChildItem -Path $oldplotdirectory.Path -Filter "plot-k$($oldplotdirectory.KSizeValue)*.plot" | Measure-Object).Count
@@ -118,8 +126,19 @@ function Invoke-LoadJobButtonClick {
                         }
                     }
                     $FoundFinalVolume.TotalReplotCount = ($FoundFinalVolume.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
-                    $FoundFinalVolume = $null
+                } #foreach final volume
+
+                foreach ($oldplotdirectory in $ImportedJob.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.OldPlotDirectories){
+                    try{
+                        $totaloldplots = (Get-ChildItem -Path $oldplotdirectory.Path -Filter "plot-k$($oldplotdirectory.KSizeValue)*.plot" | Measure-Object).Count
+                        $oldplot = [PSChiaPlotter.OldPlotDirectory]::New($oldplotdirectory.Path,$totaloldplots,$oldplotdirectory.KSizeValue)
+                        $NewSavedJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.OldPlotDirectories.Add($oldplot)
+                    }
+                    catch{
+                        Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
+                    }
                 }
+                $NewSavedJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.TotalReplotCount = ($NewSavedJobViewModel.NewChiaJob.InitialChiaParameters.BasicFinalDirectory.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
             }
 
             $NewSavedJobViewModel.AvailableKSizes = $DataHash.NewJobViewModel.AvailableKSizes
@@ -168,7 +187,7 @@ function Invoke-LoadJobButtonClick {
                 $BasicPlotting_Grid.Visibility = [System.Windows.Visibility]::Visible
             }
             else{
-                $AdvancedBasic_Button.Content = "Switch To Advance"
+                $AdvancedBasic_Button.Content = "Switch To Basic"
                 $BasicPlotting_Grid.Visibility = [System.Windows.Visibility]::Collapsed
                 $AdvancedPlotting_TabControl.Visibility = [System.Windows.Visibility]::Visible
             }
