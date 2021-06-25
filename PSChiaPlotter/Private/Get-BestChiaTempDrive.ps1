@@ -2,11 +2,13 @@ function Get-BestChiaTempDrive {
     [CmdletBinding()]
     param(
         $ChiaVolumes,
-        $ChiaJob
+        $ChiaJob,
+        $ChiaQueue
     )
 
-    $requiredTempSize = 239 * 1gb
-    $finalplotsize = 101.4 * 1gb
+    $requiredTempSize = $ChiaQueue.PlottingParameters.KSize.TempSize
+    $finalplotsize = $ChiaQueue.PlottingParameters.KSize.FinalSize
+
     $AllVolumes = Get-ChiaVolume
     foreach ($tempvol in $ChiaVolumes){
         $newVolumeInfo = $AllVolumes | where UniqueId -eq $tempvol.UniqueId
@@ -17,7 +19,6 @@ function Get-BestChiaTempDrive {
     }
     $sortedVolumes = $ChiaVolumes | sort -Property @{Expression = {$_.CurrentChiaRuns.Count}; Descending = $false},@{Expression = "FreeSpace"; Descending = $True}
     foreach ($volume in $sortedVolumes){
-        #$MasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $volume.UniqueId
         if (($Volume.CurrentChiaRuns.Count -lt $volume.MaxConCurrentTempChiaRuns) -or ($ChiaJob.IgnoreMaxParallel)){
             if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $requiredTempSize){
                 return $volume

@@ -57,27 +57,30 @@ The following is a list of things I want to add or improve on in the module. Not
   - :white_check_mark: Add blue color block when a proof is found. Also change RGB to last look up time - Version 1.0.29+
   - :white_check_mark: Add DarkMode and NoWalls - Version 1.0.29+
 - [ ] 2. Show-PSChiaPlotter 
-  - [ ] Add phase 1 concurrent plot limiter
-  - [ ] Add Tab page to show a datagrid with all plotting stats
-  - [ ] Add Current and Completed Tabs for Queue groupbox
+  - :white_check_mark: Add phase 1 concurrent plot limiter - Version 1.0.32+
   - :white_check_mark: Add seeing RAID drives - Version 1.0.28+
-  - [ ] Update module when pool plotting comes out
   - :white_check_mark: Add buckets parameter
   - :white_check_mark: Add option to remove safety feature that prevents over allocating space when plotting - Version 1.0.28+
-  - [ ] Add KSize option instead of having K32 only
+  - :white_check_mark: Add KSize option instead of having K32 only - Version 1.0.32+
   - :white_check_mark: Add Job Name - Version 1.0.28+
   - :white_check_mark: Add Drive Rotation in final and temp drives - Version 1.0.28+
   - :white_check_mark: Add PSChiaPlotter Version on summary groupbox or somewhere - Version 1.0.30+
   - :white_check_mark: Add Auto Check For Updates (or maybe a buttont to check for updates) - Version 1.0.30+
   - :white_check_mark: Add Logging Capabaility with different logging levels - Version 1.0.30+
   - :white_check_mark: Have GUI window not dependent on the Powershell window that started it - Version 1.0.30+
-  - [ ] Add the ability to add and remove columns on datagrids
-  - [ ] Add 2nd Temp Parameter
-  - [ ] Add Saving Jobs For Reuse
-  - [ ] Add Basic Plotting Directories As Alternative Option
+  - :white_check_mark: Add 2nd Temp Parameter - Version 1.0.32+
+  - :white_check_mark: Add Saving Jobs For Reuse - Version 1.0.32+
+  - :white_check_mark: Add Basic Plotting Directories As Alternative Option - Version 1.0.32+
+  - :white_check_mark: Add Phase % text and progress bar in background of the cell - Version 1.0.32+
+  - :white_check_mark: Update module when pool plotting comes out - Version 1.0.46+
+  - :white_check_mark: Added Button column on Completed Runs tab for checking finished plot - Version 1.0.43+
+  - :white_check_mark: Add Replot Feature - Version 1.0.46+
+  - [ ] Add Tab page to show a datagrid with all plotting stats
+  - [ ] Add Current and Completed Tabs for Queue groupbox 
   - [ ] Add Madmax Alternative Plot Option (User can use a textbox to provide a path to the .exe)
-  - [ ] Add Phase % text and progress bar in background of the cell
-  - [ ] Notifications Integration (Discord, Toast, etc.) 
+  - [ ] Add the ability to add and remove columns on datagrids  
+  - [ ] Notifications Integration (Discord, Toast, etc.)
+  - [ ] Add Dark Mode
   
 - [ ] 3. Get-ChiaKPlotCombination
   - [ ] Add which KSize parameter to filter out which KSizes you want
