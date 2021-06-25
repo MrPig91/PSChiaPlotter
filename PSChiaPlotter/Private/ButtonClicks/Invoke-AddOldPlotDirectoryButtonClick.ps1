@@ -27,7 +27,7 @@ function Invoke-AddOldPlotDirectoryButtonClick {
                 return
             }
             $currentKSize = $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.KSize.KSizeValue
-            $plots = Get-ChildItem -Path $Path -Filter "*.plot"
+            $plots = Get-ChildItem -Path $Path -Filter "*.plot" -File
             $matchedPlots = $plots | where Name -like "plot-k$($currentKSize)*.plot"
             $plotcount = ($matchedPlots | Measure-Object).Count
 
