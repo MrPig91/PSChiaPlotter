@@ -1,21 +1,22 @@
 function Get-OptimizedKSizePlotNumbers {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "MaximizedKSize")]
     param(
-        [MaximizedKSize[]]$MaximizedKSize
+        [MaximizedKSize[]]$MaximizedKSize,
+        [int]$KSFilter = 35
     )
 
     foreach ($size in $MaximizedKSize){
-        switch ($size.KSize){
-            "K32" {
+        if ( $size.KSize -ne $KSFilter) { continue }
+        switch ($KSFilter){
+            32 {
                 [OptimizedKPlots]::new(0,0,0,$Size.TotalBytes)
             }
-
-            "K33" {
+            33 {
                 for ($K33Count = 1; $K33Count -le $size.MaxPlots; $K33Count++){
                     [OptimizedKPlots]::new(0,0,$K33Count,$Size.TotalBytes)
                 } #for
             }
-            "K34" {
+            34 {
                 for ($K34Count = 1; $K34Count -le $size.maxplots; $K34Count++){
                     [OptimizedKPlots]::new(0,$K34Count,0,$Size.TotalBytes)
 
@@ -26,8 +27,7 @@ function Get-OptimizedKSizePlotNumbers {
                     } #for 33
                 } #for 34
             } #34
-
-            "K35" {
+            35 {
                 for ($k35count = 1; $k35count -le $size.maxplots; $k35count++){
 
                     [OptimizedKPlots]::new($k35count,0,0,$Size.TotalBytes)

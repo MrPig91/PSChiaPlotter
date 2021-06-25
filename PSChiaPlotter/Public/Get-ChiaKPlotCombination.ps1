@@ -1,31 +1,57 @@
-function Get-ChiaKPlotCombination{
-    [CmdletBinding(DefaultParameterSetName = "DriveLetter")]
+function Get-OptimizedKSizePlotNumbers {
+    [CmdletBinding(DefaultParameterSetName = "MaximizedKSize")]
     param(
-        [Parameter(ParameterSetName="FreeSpace")]
-        [int64[]]$FreeSpace,
-        [Parameter(ParameterSetName="DriveLetter")]
-        [string[]]$DriveLetter = (Get-Volume).DriveLetter
+        [MaximizedKSize[]]$MaximizedKSize,
+        [int]$KSFilter = 35
     )
 
-    if ($PSCmdlet.ParameterSetName -eq "FreeSpace"){
-        foreach ($space in $FreeSpace){
-            $Max = Get-MaxKSize -TotalBytes $space
-            $AllCombos = Get-OptimizedKSizePlotNumbers $Max | sort RemainingBytes
-            $AllCombos | Add-Member -MemberType NoteProperty -Name "StartingFreeSpace" -Value $space
-            $AllCombos
-        }
-    }
-    elseif ($PSCmdlet.ParameterSetName -eq "DriveLetter"){
-        foreach ($letter in $DriveLetter){
-            $Drive = Get-Volume -DriveLetter $letter
-            $Max = Get-MaxKSize -TotalBytes $Drive.SizeRemaining
-            $AllCombos = Get-OptimizedKSizePlotNumbers $Max | sort RemainingBytes
-            $AllCombos | Add-Member -NotePropertyMembers @{
-                DriveLetter = $letter
-                FriendlyName = $Drive.FileSystemLabel
+    foreach ($size in $MaximizedKSize){
+        if ( $size.KSize -ne $KSFilter) { continue }
+        switch ($KSFilter){
+            32 {
+                [OptimizedKPlots]::new(0,0,0,$Size.TotalBytes)
             }
-            $AllCombos | foreach {$_.psobject.TypeNames.Insert(0,"PSChiaPlotter.KSizeCombination")}
-            $AllCombos
-        }
-    }
+            33 {
+                for ($K33Count = 1; $K33Count -le $size.MaxPlots; $K33Count++){
+                    [OptimizedKPlots]::new(0,0,$K33Count,$Size.TotalBytes)
+                } #for
+            }
+            34 {
+                for ($K34Count = 1; $K34Count -le $size.maxplots; $K34Count++){
+                    [OptimizedKPlots]::new(0,$K34Count,0,$Size.TotalBytes)
+
+                    $k34sizeremaining = $Size.TotalBytes - ($K34Count * $size.KSizeBytes)
+                    $K33Max = Get-MaxKSize -TotalBytes $k34sizeremaining -KSize "K33"
+                    for ($k33 = 1; $k33 -le $k33max.MaxPlots; $k33++){
+                        [OptimizedKPlots]::new(0,$K34Count,$k33,$Size.TotalBytes)
+                    } #for 33
+                } #for 34
+            } #34
+            35 {
+                for ($k35count = 1; $k35count -le $size.maxplots; $k35count++){
+
+                    [OptimizedKPlots]::new($k35count,0,0,$Size.TotalBytes)
+
+                    $k35sizeremaining = $Size.TotalBytes - ($k35count * $size.KSizeBytes)
+                    $k33max = Get-MaxKSize -Totalbytes $k35sizeremaining -KSize "K33"
+
+                    for ($k33 = 1; $k33 -le $k33max.MaxPlots; $k33++){
+                        [OptimizedKPlots]::new($k35count,0,$k33,$Size.TotalBytes)
+                    } #for 33
+
+                    $k34max = Get-MaxKSize -Totalbytes $k35sizeremaining -KSize "K34"
+                    for ($k34 = 1; $k34 -le $k34max.maxplots; $k34++){
+                        [OptimizedKPlots]::new($k35count,$k34,0,$Size.TotalBytes)
+
+                        $sizeremaining = $Size.TotalBytes - (($k35count * $size.KSizeBytes) + ($k34 * $k34max.KSizeBytes))
+                        $K33max = Get-MaxKSize -TotalBytes $sizeremaining -KSize "K33"
+
+                        for ($k33 = 1;$k33 -le $k33max.maxplots; $k33++){
+                            [OptimizedKPlots]::new($k35count,$k34,$k33,$Size.TotalBytes)
+                        }
+                    }
+                }
+            }
+        } #switch
+    } #foreach
 }
