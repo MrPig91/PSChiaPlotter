@@ -14,7 +14,7 @@ function Get-BestChiaFinalDrive {
         $MasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $finalvol.UniqueId
         $finalvol.PendingFinalRuns = $MasterVolume.PendingFinalRuns
     }
-    if ($ChiaJob.ReplotEnabled){
+    if ($ChiaQueue.PlottingParameters.ReplotEnabled){
         foreach ($replotVolume in $ChiaVolumes){
             foreach ($oldDirectory in $replotVolume.OldPlotDirectories){
                 try{

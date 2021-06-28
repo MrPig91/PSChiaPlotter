@@ -7,8 +7,8 @@ function Invoke-AddOldPlotDirectoryButtonClick {
     try{
         if (-not$DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
             $ValidPath = $false
-            foreach ($path in $OldDirectories_ListBox.DataContext.AccessPaths){
-                if ($OldDirectories_ListBox.DataContext.DirectoryPath.StartsWith($path,[System.StringComparison]::CurrentCultureIgnoreCase)){
+            foreach ($accesspath in $OldDirectories_ListBox.DataContext.AccessPaths){
+                if ($OldDirectories_ListBox.DataContext.DirectoryPath.StartsWith($accesspath,[System.StringComparison]::CurrentCultureIgnoreCase)){
                     $ValidPath = $true
                 }
             } #foreach
@@ -38,7 +38,7 @@ function Invoke-AddOldPlotDirectoryButtonClick {
                 Show-MessageBox -Text "Plots were found, but they are not K$currentKSize and cannot be replotted with the current settings!" -Icon Warning | Out-Null
             }
             else{
-                Show-MessageBox -Text "No plots were found of any KSize in this directory!" -Icon Warning | Out-Null
+                Show-MessageBox -Text "No plots were found of any KSize in this directory - [$Path]!" -Icon Warning | Out-Null
             }
         }
         else{

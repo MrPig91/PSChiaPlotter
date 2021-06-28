@@ -3,7 +3,8 @@ function Get-ChiaPlotProgress {
     param(
         [Parameter(Mandatory)]
         [ValidateScript({Test-Path -Path $_})]
-        [string]$LogPath
+        [string]$LogPath,
+        [switch]$MadMax
     )
 
     if ([System.IO.Directory]::Exists($LogPath)){
@@ -11,16 +12,30 @@ function Get-ChiaPlotProgress {
     }
 
     #base code from https://github.com/swar/Swar-Chia-Plot-Manager/blob/7287eef4796dbfa4cc009086c6502d19f0706f3e/config.yaml.default
-    $phase1_line_end = 801
-    $phase2_line_end = 834
-    $phase3_line_end = 2474
-    $phase4_line_end = 2620
-    $copyfile_line_end = 2627
-    $phase1_weight = 33
-    $phase2_weight = 20
-    $phase3_weight = 42
-    $phase4_weight = 3
-    $copyphase_weight = 2
+    if ($MadMax){
+        $phase1_line_end = 8
+        $phase2_line_end = 22
+        $phase3_line_end = 36
+        $phase4_line_end = 41
+        $copyfile_line_end = 44
+        $phase1_weight = 43
+        $phase2_weight = 25
+        $phase3_weight = 25
+        $phase4_weight = 5
+        $copyphase_weight = 2  
+    }
+    else{
+        $phase1_line_end = 801
+        $phase2_line_end = 834
+        $phase3_line_end = 2474
+        $phase4_line_end = 2620
+        $copyfile_line_end = 2627
+        $phase1_weight = 33
+        $phase2_weight = 20
+        $phase3_weight = 42
+        $phase4_weight = 3
+        $copyphase_weight = 2  
+    }
 
     $LogItem = Get-Item -Path $LogPath
     $StartTime = $LogItem.CreationTime
@@ -28,8 +43,14 @@ function Get-ChiaPlotProgress {
     $ElaspedTime = New-TimeSpan -Start $StartTime -End $EndTime
 
     $LogFile = Get-Content -Path $LogPath
-    $plotId = $LogFile | Select-String -SimpleMatch "ID: " | foreach {$_.ToString().Split(" ")[1]}
-    $line_count = $LogFile.Count
+    if ($MadMax){
+        $plotId = $LogFile | Select-String -SimpleMatch "Plot Name: " | ForEach-Object {$_ -split "-" | Select-Object -Last 1}
+        $line_count = ($LogFile | Select-Object -Skip 14 | Measure-Object).Count
+    }
+    else{
+        $plotId = $LogFile | Select-String -SimpleMatch "ID: " | ForEach-Object {$_.ToString().Split(" ")[1]}
+        $line_count = $LogFile.Count
+    }
 
     $plotProgressObject = [PSCustomObject]@{
         Progress = 0
@@ -50,6 +71,9 @@ function Get-ChiaPlotProgress {
     }
     else{
         $Phase1Progess = ($line_count / $phase1_line_end)
+        if ($Phase1Progess -eq 0){
+            $Phase1Progess = .01
+        }
         $plotProgressObject.Phase1Progess = [math]::Round(($Phase1Progess * 100),2)
         $plotProgressObject.Progress += $phase1_weight * $Phase1Progess
         $plotProgressObject.Phase = "Phase 1"

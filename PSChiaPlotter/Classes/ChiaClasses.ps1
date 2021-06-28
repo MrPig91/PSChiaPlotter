@@ -85,6 +85,8 @@ namespace PSChiaPlotter
         public ChiaVolume BasicFinalDirectory { get; set; }
         public string BasicSecondTempDirectory { get; set; }
         public bool EnableBasicSecondTempDirectory { get; set; }
+        public bool AlternativePlotterEnabled { get; set; }
+        public string AlternativePlotterPath { get; set; }
 
         public ChiaParameters()
         {
@@ -123,6 +125,8 @@ namespace PSChiaPlotter
             PoolContractAddress = chiaParameters.PoolContractAddress;
             PoolContractEnabled = chiaParameters.PoolContractEnabled;
             ReplotEnabled = chiaParameters.ReplotEnabled;
+            AlternativePlotterEnabled = chiaParameters.AlternativePlotterEnabled;
+            AlternativePlotterPath = chiaParameters.AlternativePlotterPath;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
