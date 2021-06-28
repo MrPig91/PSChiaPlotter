@@ -159,6 +159,12 @@ function Invoke-NewJobButtonClick {
                     return
                 }
 
+                $Results = Test-AlternativePlotterParameters
+                if ($Results -ne $true){
+                    Show-Messagebox -Text $Results -Title "Invalid Replot Parameters" -Icon Warning
+                    return
+                }
+
                 $DataHash.MainViewModel.AllJobs.Add($DataHash.NewJobViewModel.NewChiaJob)
                 $newJobRunSpace = New-ChiaJobRunspace -Job $DataHash.NewJobViewModel.NewChiaJob
                 $newJobRunSpace.Runspacepool = $ScriptsHash.RunspacePool
