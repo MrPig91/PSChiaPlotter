@@ -80,6 +80,7 @@ The following is a list of things I want to add or improve on in the module. Not
   - [ ] Add Current and Completed Tabs for Queue groupbox 
   - [ ] Add the ability to add and remove columns on datagrids  
   - [ ] Notifications Integration (Discord, Toast, etc.)
+  - [ ] Add The Ability To Add More Plots To Running Jobs
   - [ ] Global Phase 1 Limitor
   - [ ] Add Dark Mode
   
