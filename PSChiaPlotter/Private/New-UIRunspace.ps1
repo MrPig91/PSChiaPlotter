@@ -143,12 +143,14 @@ function New-UIRunspace{
             $UIHash.MainWindow.add_Closing({
                 Get-childItem -Path $DataHash.PrivateFunctions -File | ForEach-Object {Import-Module $_.FullName}
                 # end session and close runspace on window exit
-                $DialogResult = Show-Messagebox -Text "Closing this window will end all Chia processes" -Title "Warning!" -Icon Warning -Buttons OKCancel
+                $DialogResult = Show-Messagebox -Text "Do you want to end all chia plotting processes?`n`nNote - PSChiaPlotter will NOT re-load these processes upon startup!" -Title "Warning!" -Icon Warning -Buttons YesNoCancel
                 if ($DialogResult -eq [System.Windows.MessageBoxResult]::Cancel) {
                     $PSItem.Cancel = $true
                 }
+                elseif ($DialogResult -eq [System.Windows.MessageBoxResult]::Yes){
+                    Stop-PSChiaPlotter -EndChiaProcess
+                }
                 else{
-                    #$ScriptsHash.QueueHandle.EndInvoke($QueueHandle)
                     Stop-PSChiaPlotter
                 }
             })
