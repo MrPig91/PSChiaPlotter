@@ -1,4 +1,4 @@
-<Window 
+<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -656,6 +656,7 @@
                         <Label Content="Pool Public Key:" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="3" />
                         <CheckBox Content="Alternative Plotter Path: " IsThreeState="False"
                                   Grid.Column="1" Grid.Row="4"
+                                  x:Name="AlternativePlotterCheckbox"
                                   IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.AlternativePlotterEnabled}"
                                   HorizontalAlignment="Right" VerticalAlignment="Center"
                                   ToolTip="The full path to the alternative plotter .exe file" />
@@ -663,7 +664,7 @@
                         <TextBox x:Name="PoolContractAddressTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolContractAddress}" VerticalAlignment="Center" HorizontalContentAlignment="Left" IsEnabled="{Binding ElementName=PoolContractAddressCheckbox, Path=IsChecked}"/>
                         <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
                         <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="3" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left" Style="{StaticResource PoolKey}"/>
-                        <TextBox x:Name="AlternativePlotterTextBox" Grid.Row="4" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.AlternativePlotterPath}" VerticalAlignment="Center" HorizontalContentAlignment="Left" />
+                        <TextBox x:Name="AlternativePlotterTextBox" Grid.Row="4" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.AlternativePlotterPath}" VerticalAlignment="Center" HorizontalContentAlignment="Left" IsEnabled="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked}" />
                     </Grid>
                 </GroupBox>
             </Grid>
