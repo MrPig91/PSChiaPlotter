@@ -54,6 +54,7 @@ namespace PSChiaPlotter
         public int Threads { get; set; }
         public int Buckets { get; set; }
         public ChiaVolume TempVolume { get; set; }
+        public bool AutoPlotCheckEnabled { get; set; }
         public ChiaVolume SecondTempVolume
         {
             get { return _secondtempvolume; }
@@ -127,6 +128,7 @@ namespace PSChiaPlotter
             ReplotEnabled = chiaParameters.ReplotEnabled;
             AlternativePlotterEnabled = chiaParameters.AlternativePlotterEnabled;
             AlternativePlotterPath = chiaParameters.AlternativePlotterPath;
+            AutoPlotCheckEnabled = chiaParameters.AutoPlotCheckEnabled;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -638,6 +640,7 @@ namespace PSChiaPlotter
         private int _exitcode;
         private DateTime _exittime;
         private double _currentphaseprogress;
+        private double _plotcheckratio;
     
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -678,6 +681,17 @@ namespace PSChiaPlotter
         public string LogPath { get; set; }
         public int ProcessID { get; set; }
         public ChiaParameters PlottingParameters { get; set; }
+
+            
+        public double PlotCheckRatio
+        {
+            get { return _plotcheckratio; }
+            set
+            {
+                _plotcheckratio = value;
+                OnPropertyChanged();
+            }
+        }
     
         public string CheckPlotPowershellCommand { get; set; }
     
