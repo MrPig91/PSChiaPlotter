@@ -217,6 +217,12 @@ function Start-GUIChiaPlotting {
                     $DataHash.MainViewModel.CompletedRuns.Add($ChiaRun)
                     $ChiaRun.CheckPlotPowershellCommand = "&'$ChiaPath' plots check -g $plotid"
                     Update-ChiaGUISummary -Success
+                    if ($ChiaRun.PlottingParameters.AutoPlotCheckEnabled){
+                        $PlotCheckResults = Test-ChiaPlot -Path $plotid -ErrorAction Continue
+                        if ($Null -ne $PlotCheckResults){
+                            $ChiaRun.PlotCheckRatio = [math]::Round($PlotCheckResults.Ratio,2)
+                        }
+                    } #if autoplotcheck
                 }
                 $ChiaQueue.CurrentRun = $null
                 $DataHash.MainViewModel.CurrentRuns.Remove($ChiaRun)

@@ -216,15 +216,19 @@
                         <TextBox x:Name="Buckets_TextBox" Grid.Row="2" Grid.Column="4" Text="{Binding Path=NewChiaJob.InitialChiaParameters.Buckets}" />
                         <Separator Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="3" Height="1" VerticalAlignment="Center" Margin="5"/>
                         <UniformGrid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Rows="1">
+                            <CheckBox Content="Auto Check Plots" 
+                                      IsThreeState="False"
+                                      IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.AutoPlotCheckEnabled}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <CheckBox Content="Disable Bitfield"
-                                Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Center"
+                                HorizontalAlignment="Center"
                                 IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.DisableBitField}" IsThreeState="False"
-                                VerticalAlignment="Center" FontSize="11"/>
+                                VerticalAlignment="Center"/>
                             <CheckBox Content="Exclude Final Directory"
-                                Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center"
+                                HorizontalAlignment="Center"
                                 IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ExcludeFinalDirectory}"
                                 Margin="5,0,0,0" IsThreeState="False"
-                                VerticalAlignment="Center" FontSize="11"/>
+                                VerticalAlignment="Center"/>
                         </UniformGrid>
 
                     </Grid>

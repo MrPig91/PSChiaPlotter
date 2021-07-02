@@ -453,6 +453,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Ratio" Binding="{Binding Path=PlotCheckRatio}" />
                                 <DataGridTextColumn Header="Pool Plot" Binding="{Binding Path=PlottingParameters.PoolContractEnabled}" />
                                 <DataGridTextColumn Header="Replot" Binding="{Binding Path=PlottingParameters.ReplotEnabled}" />
                             </DataGrid.Columns>
