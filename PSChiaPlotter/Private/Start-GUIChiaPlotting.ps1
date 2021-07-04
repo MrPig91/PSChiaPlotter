@@ -26,6 +26,7 @@ function Start-GUIChiaPlotting {
         $ReplotEnabled = $PlottingParameters.ReplotEnabled
         $AlternativePlotterEnabled = $PlottingParameters.AlternativePlotterEnabled
         $AlternativePlotterPath = $PlottingParameters.AlternativePlotterPath
+        $Phase3and4Buckets = $PlottingParameters.PhaseThreeFourBuckets
         
         #used for replotting
         $OldPlotDeleted = $false
@@ -44,7 +45,10 @@ function Start-GUIChiaPlotting {
             $FinalDirectoryPath = $FinalDirectoryPath + '\'
 
             $PlotterPath = $AlternativePlotterPath
-            $ChiaArguments = $ChiaArguments = "-u $Buckets -r $Threads -t $TempDirectoryPath -d $FinalDirectoryPath"
+            $ChiaArguments = "-u $Buckets -r $Threads -t $TempDirectoryPath -d $FinalDirectoryPath"
+            if ($Phase3and4Buckets -ne 128){
+                $ChiaArguments += " -v $Phase3and4Buckets"
+            }
         }
         else{
             $PlotterPath = $ChiaPath
