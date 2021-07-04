@@ -45,7 +45,11 @@ function Get-ChiaPlotProgress {
     $LogFile = Get-Content -Path $LogPath
     if ($MadMax){
         $plotId = $LogFile | Select-String -SimpleMatch "Plot Name: " | ForEach-Object {$_ -split "-" | Select-Object -Last 1}
-        $line_count = ($LogFile | Select-Object -Skip 14 | Measure-Object).Count
+        $SkipLines = 14
+        if ($null -ne ($LogFile | Select-String -SimpleMatch 'Number of Buckets P3+P4')){
+            $SkipLines++
+        }
+        $line_count = ($LogFile | Select-Object -Skip $SkipLines | Measure-Object).Count
     }
     else{
         $plotId = $LogFile | Select-String -SimpleMatch "ID: " | ForEach-Object {$_.ToString().Split(" ")[1]}
