@@ -33,6 +33,7 @@ function New-UIRunspace{
             $UIHash.CheckForUpdate_Button = $MainWindow.FindName("CheckForUpateButton")
             $UIHash.PauseQueue_Button = $MainWindow.FindName("PauseQueue_Button")
             $UIHash.QuitQueue_Button = $MainWindow.FindName("QuitQueue_Button")
+            $UIHash.AddPlotLogPath_Button = $MainWindow.FindName("AddPlotLogPath_Button")
             $DataHash.RefreshingDrives = $false
 
             $DataHash.MainViewModel = [PSChiaPlotter.MainViewModel]::new()
@@ -44,7 +45,7 @@ function New-UIRunspace{
 
             #Add Master Copy of volumes to MainViewModel these are used to keep track of
             # all jobs that are running on the drives
-            Get-ChiaVolume | foreach {
+            Get-ChiaVolume | ForEach-Object {
                 $DataHash.MainViewModel.AllVolumes.Add($_)
             }
 
@@ -127,6 +128,16 @@ function New-UIRunspace{
                 catch{
                     Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
                     Show-Messagebox "Unable to open log file, check the path '$($DataHash.MainViewModel.LogPath)'" | Out-Null
+                }
+            })
+
+            $UIHash.AddPlotLogPath_Button.Add_Click({
+                try{
+                    Invoke-AddPlotLogDirectoryPath
+                }
+                catch{
+                    Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+                    Show-Messagebox "Unable to add log directory path!" -Icon Error | Out-Null
                 }
             })
 
