@@ -88,6 +88,7 @@ namespace PSChiaPlotter
         public bool EnableBasicSecondTempDirectory { get; set; }
         public bool AlternativePlotterEnabled { get; set; }
         public string AlternativePlotterPath { get; set; }
+        public int PhaseThreeFourBuckets { get; set; }
 
         public ChiaParameters()
         {
@@ -95,6 +96,7 @@ namespace PSChiaPlotter
             RAM = 3390;
             Threads = 2;
             Buckets = 128;
+            PhaseThreeFourBuckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
             BasicTempDirectory = new ChiaVolume(string.Empty);
             BasicFinalDirectory = new ChiaVolume(string.Empty);
@@ -129,6 +131,7 @@ namespace PSChiaPlotter
             AlternativePlotterEnabled = chiaParameters.AlternativePlotterEnabled;
             AlternativePlotterPath = chiaParameters.AlternativePlotterPath;
             AutoPlotCheckEnabled = chiaParameters.AutoPlotCheckEnabled;
+            PhaseThreeFourBuckets = chiaParameters.PhaseThreeFourBuckets;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
