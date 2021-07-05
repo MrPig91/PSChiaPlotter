@@ -76,7 +76,7 @@ The following is a list of things I want to add or improve on in the module. Not
   - :white_check_mark: Added Button column on Completed Runs tab for checking finished plot - Version 1.0.43+
   - :white_check_mark: Add Madmax Alternative Plot Option (User can use a textbox to provide a path to the .exe) - Version 1.0.47+
   - :white_check_mark: Add Replot Feature - Version 1.0.46+
-  - [ ] Add Tab page to show a datagrid with all plotting stats
+  - :white_check_mark: Add Tab page to show a datagrid with all plotting stats - Version 1.0.50+
   - [ ] Add Current and Completed Tabs for Queue groupbox 
   - [ ] Add the ability to add and remove columns on datagrids  
   - [ ] Notifications Integration (Discord, Toast, etc.)
