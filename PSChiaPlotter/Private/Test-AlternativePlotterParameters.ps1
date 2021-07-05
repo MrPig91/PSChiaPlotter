@@ -8,9 +8,18 @@ function Test-AlternativePlotterParameters {
             if (-not(Test-Path -Path $ChiaParameters.AlternativePlotterPath -PathType Leaf)){
                 return "The path to the alternative plotter is invalid - [$($ChiaParameters.AlternativePlotterPath)]"
             }
-            if ([string]::IsNullOrEmpty($ChiaParameters.PoolPublicKey)){
-                return "You must supply a pool public key for the alternative plotter to use!"
+            
+            if ($ChiaParameters.PoolContractEnabled){
+                if ([string]::IsNullOrEmpty($ChiaParameters.PoolContractAddress)){
+                    return "You must supply a Pool Contract Address for the alternative plotter to use!"
+                }
             }
+            else{
+                if ([string]::IsNullOrEmpty($ChiaParameters.PoolPublicKey)){
+                    return "You must supply a pool public key for the alternative plotter to use!"
+                }
+            }
+
             if ([string]::IsNullOrEmpty($ChiaParameters.FarmerPublicKey)){
                 return "You must supply a farmer public key for the alternative plotter to use!"
             }
