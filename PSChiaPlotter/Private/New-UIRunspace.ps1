@@ -34,6 +34,7 @@ function New-UIRunspace{
             $UIHash.PauseQueue_Button = $MainWindow.FindName("PauseQueue_Button")
             $UIHash.QuitQueue_Button = $MainWindow.FindName("QuitQueue_Button")
             $UIHash.AddPlotLogPath_Button = $MainWindow.FindName("AddPlotLogPath_Button")
+            $UIHash.RemovePlotLogPath_Button = $MainWindow.FindName("RemovePlotLogPath_Button")
             $DataHash.RefreshingDrives = $false
 
             $DataHash.MainViewModel = [PSChiaPlotter.MainViewModel]::new()
@@ -42,6 +43,13 @@ function New-UIRunspace{
             $DataHash.MainViewModel.LogLevel = "Error"
 
             $UIHash.MainWindow.DataContext = $DataHash.MainViewModel
+
+            #TextBox
+            $UIHash.AddPlotLog_TextBox = $MainWindow.FindName("AddPlotLog_TextBox")
+            $UIHash.AddPlotLog_TextBox.Text = "$ENV:USERPROFILE\.chia\mainnet\plotter"
+
+            #Listbox
+            $UIHash.PlotLog_ListBox = $MainWindow.FindName("PlotLog_ListBox")
 
             #Add Master Copy of volumes to MainViewModel these are used to keep track of
             # all jobs that are running on the drives
@@ -133,11 +141,21 @@ function New-UIRunspace{
 
             $UIHash.AddPlotLogPath_Button.Add_Click({
                 try{
-                    Invoke-AddPlotLogDirectoryPath
+                    Invoke-AddPlotLogDirectoryPathButtonClick -PlotLogDirPath $UIHash.AddPlotLog_TextBox.Text
                 }
                 catch{
                     Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
                     Show-Messagebox "Unable to add log directory path!" -Icon Error | Out-Null
+                }
+            })
+
+            $UIHash.RemovePlotLogPath_Button.Add_Click({
+                try{
+                    Invoke-RemovePlotLogDirectoryButtonClick
+                }
+                catch{
+                    Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+                    [void](Show-Messagebox "Unable to remove log directory path!" -Icon Error)
                 }
             })
 
