@@ -88,6 +88,7 @@ namespace PSChiaPlotter
         public bool EnableBasicSecondTempDirectory { get; set; }
         public bool AlternativePlotterEnabled { get; set; }
         public string AlternativePlotterPath { get; set; }
+        public int PhaseThreeFourBuckets { get; set; }
 
         public ChiaParameters()
         {
@@ -95,6 +96,7 @@ namespace PSChiaPlotter
             RAM = 3390;
             Threads = 2;
             Buckets = 128;
+            PhaseThreeFourBuckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
             BasicTempDirectory = new ChiaVolume(string.Empty);
             BasicFinalDirectory = new ChiaVolume(string.Empty);
@@ -129,6 +131,7 @@ namespace PSChiaPlotter
             AlternativePlotterEnabled = chiaParameters.AlternativePlotterEnabled;
             AlternativePlotterPath = chiaParameters.AlternativePlotterPath;
             AutoPlotCheckEnabled = chiaParameters.AutoPlotCheckEnabled;
+            PhaseThreeFourBuckets = chiaParameters.PhaseThreeFourBuckets;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -1371,6 +1374,8 @@ namespace PSChiaPlotter
         public ObservableCollection<ChiaJob> AllJobs { get; set; }
         public ObservableCollection<ChiaVolume> AllVolumes { get; set; }
 
+        public ObservableCollection<string> PlotLogDirectoryPaths { get; set; }
+        public ObservableCollection<Object> AllPlottingLogStats { get; set; }
 
         public MainViewModel()
         {
@@ -1381,6 +1386,8 @@ namespace PSChiaPlotter
             AllQueues = new ObservableCollection<ChiaQueue>();
             AllJobs = new ObservableCollection<ChiaJob>();
             AllVolumes = new ObservableCollection<ChiaVolume>();
+            PlotLogDirectoryPaths = new ObservableCollection<string>();
+            AllPlottingLogStats = new ObservableCollection<object>();
 
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllJobs, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllQueues, new System.Object());
@@ -1389,6 +1396,8 @@ namespace PSChiaPlotter
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(CompletedRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(FailedRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllVolumes, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(PlotLogDirectoryPaths, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllPlottingLogStats, new System.Object());
         }
 
 
