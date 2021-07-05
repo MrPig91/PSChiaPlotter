@@ -1374,6 +1374,8 @@ namespace PSChiaPlotter
         public ObservableCollection<ChiaJob> AllJobs { get; set; }
         public ObservableCollection<ChiaVolume> AllVolumes { get; set; }
 
+        public ObservableCollection<string> PlotLogDirectoryPaths { get; set; }
+        public ObservableCollection<Object> AllPlottingLogStats { get; set; }
 
         public MainViewModel()
         {
@@ -1384,6 +1386,8 @@ namespace PSChiaPlotter
             AllQueues = new ObservableCollection<ChiaQueue>();
             AllJobs = new ObservableCollection<ChiaJob>();
             AllVolumes = new ObservableCollection<ChiaVolume>();
+            PlotLogDirectoryPaths = new ObservableCollection<string>();
+            AllPlottingLogStats = new ObservableCollection<object>();
 
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllJobs, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllQueues, new System.Object());
@@ -1392,6 +1396,8 @@ namespace PSChiaPlotter
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(CompletedRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(FailedRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllVolumes, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(PlotLogDirectoryPaths, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllPlottingLogStats, new System.Object());
         }
 
 
