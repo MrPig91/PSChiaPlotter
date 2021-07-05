@@ -3,7 +3,6 @@ function Invoke-AddOldPlotDirectoryButtonClick {
     param(
         [string]$Path
     )
-
     try{
         if (-not$DataHash.NewJobViewModel.NewChiaJob.BasicPlotting){
             $ValidPath = $false
