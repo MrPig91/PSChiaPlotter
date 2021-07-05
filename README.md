@@ -117,7 +117,11 @@ for ($i = 1; $i -le $parallel;$i++){
 
 ## Donate
 If you find these tools useful and want to donate you can use any of the below addresses.
+
 XCH: xch1xlsrczvnfzjfeg7ejpaxy7evcn0nvsr73s4gcmzdqd7zkzlvy8ds49qvv2
+
 ETH: 0xeeb3d0FEECaAfEd8BBC705370579689BFA024Be4
+
 XMR: 4Adn4LNiaqjUfkAq1RNmLLcRd2oBDdGx8HWL4L76eZmMWQGbowrYhvuajRCdFYLq6pGAPgXYE9P3g2wvVp36FFRn3EAzRjW
+
 BAN: ban_37o6aossupgce34dma9r6na4hi79j6mhqrtp1gkr8ygz6nxjz8t9q3emkp4h
