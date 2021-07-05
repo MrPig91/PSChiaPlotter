@@ -655,28 +655,30 @@
                             <Label Content="Plotting Directory Log Path:" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
                             <Label Content="Added Plot Log Directories:" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom"  HorizontalAlignment="Right"
                                    Visibility="{Binding ElementName=PlotLog_ListBox, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            <TextBox Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left" Margin="5"/>
+                            <TextBox x:Name="AddPlotLog_TextBox" Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Left" Margin="5"/>
                             <Button x:Name="AddPlotLogPath_Button" Content="Add" Grid.Column="3" Grid.Row="1" Margin="0,5,0,5" />
                             <ListBox x:Name="PlotLog_ListBox" Grid.Row="2" Grid.Column="2" Margin="5" ItemsSource="{Binding Path=PlotLogDirectoryPaths}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            <Button x:Name="RemovePlotLogPath_Button" Content="Remove" Grid.Row="2" Grid.Column="3"  Margin="0,5,0,5" Visibility="{Binding ElementName=PlotLog_ListBox, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <Button x:Name="RemovePlotLogPath_Button" Content="Remove" Grid.Row="2" Grid.Column="3" Height="25" VerticalAlignment="Top" Margin="0,5,0,5" Visibility="{Binding ElementName=PlotLog_ListBox, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         </Grid>
                     </GroupBox>
 
                     <DataGrid x:Name="DataGrid" 
                               ItemsSource="{Binding Path=AllPlottingLogStats}"
+                              RowBackground="Azure"
+                              AlternatingRowBackground="LightGray"
                               Grid.Column="1" Grid.Row="2" AutoGenerateColumns="False" Margin="5">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Plot ID" Binding="{Binding Path=PlotId}" Width="75" />
                             <DataGridTextColumn Header="KSize" Binding="{Binding Path=KSize}"/>
                             <DataGridTextColumn Header="RAM (MiB)" Binding="{Binding Path='RAM(MiB)'}"/>
                             <DataGridTextColumn Header="Threads" Binding="{Binding Path=Threads}"/>
-                            <DataGridTextColumn Header="Phase 1" Binding="{Binding Path=Phase_1, StringFormat={}{0:hh} hrs {0:mm} mins}"/>
-                            <DataGridTextColumn Header="Phase 2" Binding="{Binding Path=Phase_2, StringFormat={}{0:hh} hrs {0:mm} mins}"/>
-                            <DataGridTextColumn Header="Phase 3" Binding="{Binding Path=Phase_3, StringFormat={}{0:hh} hrs {0:mm} mins}"/>
-                            <DataGridTextColumn Header="Phase 4" Binding="{Binding Path=Phase_4, StringFormat={}{0:hh} hrs {0:mm} mins}"/>
-                            <DataGridTextColumn Header="Plotting Time" Binding="{Binding Path=PlotTime, StringFormat={}{0:hh} hrs {0:mm} mins}"/>
-                            <DataGridTextColumn Header="Copy Time" Binding="{Binding Path=CopyPhase, StringFormat={}{0:hh} hrs {0:mm} mins}"/>
-                            <DataGridTextColumn Header="Plot + Copy" Binding="{Binding Path=PlotAndCopy, StringFormat={}{0:hh} hrs {0:mm} mins}"/>
+                            <DataGridTextColumn Header="Phase 1" Binding="{Binding Path=Phase_1, StringFormat={}{0:hh}:{0:mm}}"/>
+                            <DataGridTextColumn Header="Phase 2" Binding="{Binding Path=Phase_2, StringFormat={}{0:hh}:{0:mm}}"/>
+                            <DataGridTextColumn Header="Phase 3" Binding="{Binding Path=Phase_3, StringFormat={}{0:hh}:{0:mm}}"/>
+                            <DataGridTextColumn Header="Phase 4" Binding="{Binding Path=Phase_4, StringFormat={}{0:hh}:{0:mm}}"/>
+                            <DataGridTextColumn Header="Plotting Time" Binding="{Binding Path=PlotTime, StringFormat={}{0:hh}:{0:mm}}"/>
+                            <DataGridTextColumn Header="Copy Time" Binding="{Binding Path=CopyPhase, StringFormat={}{0:hh}:{0:mm}}"/>
+                            <DataGridTextColumn Header="Plot + Copy" Binding="{Binding Path=PlotAndCopy, StringFormat={}{0:hh}:{0:mm}}"/>
                             <DataGridTextColumn Header="Start Time" Binding="{Binding Path=Time_Started}"/>
                             <DataGridTextColumn Header="Temp Dir" Binding="{Binding Path=Temp_drive}"/>
                             <DataGridTextColumn Header="Final Dir" Binding="{Binding Path=Final_drive}"/>
