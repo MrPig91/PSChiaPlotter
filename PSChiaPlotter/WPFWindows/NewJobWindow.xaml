@@ -665,8 +665,11 @@
                                   IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.AlternativePlotterEnabled}"
                                   HorizontalAlignment="Right" VerticalAlignment="Center"
                                   ToolTip="The full path to the alternative plotter .exe file" />
-                        <Label Content="Phase 3/4 Buckets:" HorizontalAlignment="Right"
+                        <CheckBox Content="Phase 3/4 Buckets:" HorizontalAlignment="Right"
+                               x:Name="Phase3and4BucketsCheckbox"
                                Grid.Column="1" Grid.Row="5"
+                               IsThreeState="False"
+                               IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.Phase3and4BucketsEnabled}"
                                ToolTip="Used with stotiks MadMax version v0.0.6 and above"
                                Visibility="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
@@ -674,7 +677,11 @@
                         <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
                         <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="3" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left" Style="{StaticResource PoolKey}"/>
                         <TextBox x:Name="AlternativePlotterTextBox" Grid.Row="4" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.AlternativePlotterPath}" VerticalAlignment="Center" HorizontalContentAlignment="Left" IsEnabled="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked}" />
-                        <TextBox x:Name="Phase3and4Buckets" Grid.Row="5" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PhaseThreeFourBuckets}" VerticalAlignment="Center" HorizontalContentAlignment="Left" Visibility="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox x:Name="Phase3and4Buckets" Grid.Row="5" Grid.Column="2"
+                                 IsEnabled="{Binding ElementName=Phase3and4BucketsCheckbox, Path=IsChecked}"
+                                 Text="{Binding Path=NewChiaJob.InitialChiaParameters.PhaseThreeFourBuckets}"
+                                 VerticalAlignment="Center" HorizontalContentAlignment="Left"
+                                 Visibility="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Grid>
                 </GroupBox>
             </Grid>
