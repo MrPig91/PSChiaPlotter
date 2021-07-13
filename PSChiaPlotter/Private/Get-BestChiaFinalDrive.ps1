@@ -34,7 +34,7 @@ function Get-BestChiaFinalDrive {
     else{
         $sortedVolumes = $ChiaVolumes | Sort-Object -Property @{Expression = {$_.PendingFinalRuns.Count}; Descending = $false},@{Expression = "FreeSpace"; Descending = $True}
         foreach ($volume in $sortedVolumes){
-            if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $finalplotsize){
+            if ((($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $finalplotsize) -or ($ChiaJob.DisableFreeSpaceCheck -eq $true)){
                     return $volume
             }
         }
