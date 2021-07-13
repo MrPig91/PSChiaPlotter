@@ -89,6 +89,7 @@ namespace PSChiaPlotter
         public bool AlternativePlotterEnabled { get; set; }
         public string AlternativePlotterPath { get; set; }
         public int PhaseThreeFourBuckets { get; set; }
+        public bool Phase3and4BucketsEnabled { get; set; }
 
         public ChiaParameters()
         {
@@ -132,6 +133,7 @@ namespace PSChiaPlotter
             AlternativePlotterPath = chiaParameters.AlternativePlotterPath;
             AutoPlotCheckEnabled = chiaParameters.AutoPlotCheckEnabled;
             PhaseThreeFourBuckets = chiaParameters.PhaseThreeFourBuckets;
+            Phase3and4BucketsEnabled = chiaParameters.Phase3and4BucketsEnabled;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
