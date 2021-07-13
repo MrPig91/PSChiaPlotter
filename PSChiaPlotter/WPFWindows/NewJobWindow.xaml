@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSChiaPlotter"
-        Title="New Job" Height="725" Width="650">
+        Title="New Job" Height="725" Width="675">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style TargetType="Label">
@@ -79,6 +79,19 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding ElementName=AdditionalParametersCheckBox, Path=IsChecked}" Value="True">
                     <Setter Property="BorderThickness" Value="2" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TotalPlots" TargetType="TextBox">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=PlotInfiniteCheckBox, Path=IsChecked}" Value="False">
+                    <Setter Property="IsEnabled" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=PlotInfiniteCheckBox, Path=IsChecked}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -167,7 +180,7 @@
                                   Content="Enable Phase 1 Limit" VerticalAlignment="Center"
                                   IsThreeState="False" IsChecked="{Binding Path=NewChiaJob.EnablePhaseOneLimitor}" />
 
-                        <TextBox x:Name="TotalPlots_TextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.TotalPlotCount}" />
+                        <TextBox x:Name="TotalPlots_TextBox" Grid.Row="1" Grid.Column="2" Text="{Binding Path=NewChiaJob.TotalPlotCount}" Style="{StaticResource TotalPlots}"/>
                         <TextBox x:Name="Parallel_TextBox" Grid.Row="1" Grid.Column="4" Text="{Binding Path=NewChiaJob.QueueCount}"/>
                         <TextBox x:Name="Delay_TextBox" Grid.Row="2" Grid.Column="4"  Text="{Binding Path=NewChiaJob.DelayInMinutes}" />
                         <TextBox x:Name="FirstDelay_TextBox" Grid.Row="2" Grid.Column="2"  Text="{Binding Path=NewChiaJob.FirstDelay}" />
@@ -216,6 +229,11 @@
                         <TextBox x:Name="Buckets_TextBox" Grid.Row="2" Grid.Column="4" Text="{Binding Path=NewChiaJob.InitialChiaParameters.Buckets}" />
                         <Separator Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="3" Height="1" VerticalAlignment="Center" Margin="5"/>
                         <UniformGrid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Rows="1">
+                            <CheckBox Content="Plot Infinite"
+                                      x:Name="PlotInfiniteCheckBox"
+                                      IsChecked="{Binding Path=NewChiaJob.PlotInfinite}"
+                                      Margin="5,0,0,0" IsThreeState="False"
+                                      VerticalAlignment="Center"/>
                             <CheckBox Content="Auto Check Plots" 
                                       IsThreeState="False"
                                       IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.AutoPlotCheckEnabled}"
@@ -599,6 +617,7 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
                                         </Grid.ColumnDefinitions>
 
                                         <Label Content="Log Directory: " Grid.Column="0"/>
@@ -606,8 +625,14 @@
                                         <TextBox x:Name="LogDir_TextBox" Grid.Column="1"
                                              Text="{Binding Path=NewChiaJob.InitialChiaParameters.LogDirectory}"
                                              HorizontalContentAlignment="Left"/>
+                                        <CheckBox Content="Ignore Free Space"
+                                                  ToolTip="This will disable checking the final drive's free space before starting a new plotting process"
+                                                  IsThreeState="False"
+                                                  IsChecked="{Binding Path=NewChiaJob.DisableFreeSpaceCheck}"
+                                                  Grid.Column="2" Margin="0,0,5,0"
+                                                  VerticalAlignment="Center"/>
                                         <CheckBox x:Name="EnableReplotCheckbox" Content="Enable Replot"
-                                                  Grid.Column="2" IsThreeState="False"
+                                                  Grid.Column="3" IsThreeState="False"
                                                   IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.ReplotEnabled}"
                                                   VerticalAlignment="Center" />
                                         <Button x:Name="ReplotButton" Content="Replot Config" Grid.Column="4" Margin="5" Padding="2"
@@ -665,8 +690,12 @@
                                   IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.AlternativePlotterEnabled}"
                                   HorizontalAlignment="Right" VerticalAlignment="Center"
                                   ToolTip="The full path to the alternative plotter .exe file" />
-                        <Label Content="Phase 3/4 Buckets:" HorizontalAlignment="Right"
+                        <CheckBox Content="Phase 3/4 Buckets:" HorizontalAlignment="Right"
+                               x:Name="Phase3and4BucketsCheckbox"
                                Grid.Column="1" Grid.Row="5"
+                               IsThreeState="False"
+                               VerticalAlignment="Center"
+                               IsChecked="{Binding Path=NewChiaJob.InitialChiaParameters.Phase3and4BucketsEnabled}"
                                ToolTip="Used with stotiks MadMax version v0.0.6 and above"
                                Visibility="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
@@ -674,7 +703,11 @@
                         <TextBox x:Name="FarmerPublicKeyTextBox" Grid.Row="2" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.FarmerPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left"/>
                         <TextBox x:Name="PoolPublicKeyTextBox" Grid.Row="3" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PoolPublicKey}" VerticalAlignment="Center" HorizontalContentAlignment="Left" Style="{StaticResource PoolKey}"/>
                         <TextBox x:Name="AlternativePlotterTextBox" Grid.Row="4" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.AlternativePlotterPath}" VerticalAlignment="Center" HorizontalContentAlignment="Left" IsEnabled="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked}" />
-                        <TextBox x:Name="Phase3and4Buckets" Grid.Row="5" Grid.Column="2" Text="{Binding Path=NewChiaJob.InitialChiaParameters.PhaseThreeFourBuckets}" VerticalAlignment="Center" HorizontalContentAlignment="Left" Visibility="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox x:Name="Phase3and4Buckets" Grid.Row="5" Grid.Column="2"
+                                 IsEnabled="{Binding ElementName=Phase3and4BucketsCheckbox, Path=IsChecked}"
+                                 Text="{Binding Path=NewChiaJob.InitialChiaParameters.PhaseThreeFourBuckets}"
+                                 VerticalAlignment="Center" HorizontalContentAlignment="Left"
+                                 Visibility="{Binding ElementName=AlternativePlotterCheckbox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Grid>
                 </GroupBox>
             </Grid>

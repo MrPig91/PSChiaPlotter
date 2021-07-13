@@ -31,6 +31,9 @@ function Test-ReplotParameters{
                     return "Your new plot directory path cannot be any of the old plot directory paths, please create a new folder for the new plots or move the old plots to a different folder!"
                 }
             }
+            if ($DataHash.NewJobViewModel.NewChiaJob.PlotInfinite -eq $true){
+                return "Plot Infinite needs to be disabled when the replot feature is in use!"
+            }
             $TotalReplotCount = ($FinalVolumes.OldPlotDirectories | Measure-Object -Property PlotCount -Sum).Sum
             if ($TotalReplotCount -lt $DataHash.NewJobViewModel.NewChiaJob.TotalPlotCount){
                 $Response = Show-MessageBox -Icon Warning -Buttons YesNo -Text "You cannot plot more than the total number of plots you want to replot!`n`nWould you like to change the total plot count to $([string]$TotalReplotCount)?"

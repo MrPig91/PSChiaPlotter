@@ -23,7 +23,7 @@ function Get-BestChiaTempDrive {
             return $volume
         }
         elseif (($Volume.CurrentChiaRuns.Count -lt $volume.MaxConCurrentTempChiaRuns) -or ($ChiaJob.IgnoreMaxParallel)){
-            if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $requiredTempSize){
+            if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $requiredTempSize -or ($ChiaJob.DisableFreeSpaceCheck -eq $true)){
                 return $volume
             }
         }
