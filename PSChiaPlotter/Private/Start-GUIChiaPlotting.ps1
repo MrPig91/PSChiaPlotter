@@ -28,12 +28,27 @@ function Start-GUIChiaPlotting {
         $AlternativePlotterPath = $PlottingParameters.AlternativePlotterPath
         $Phase3and4Buckets = $PlottingParameters.PhaseThreeFourBuckets
         $Phase3and4BucketsEnabled = $PlottingParameters.Phase3and4BucketsEnabled
+        $PlotWhileCopy = $PlottingParameters.PlotWhileCopy
         
         #used for replotting
         $OldPlotDeleted = $false
 
         $E = if ($DisableBitfield){"-e"}
         $X = if ($ExcludeFinalDirectory){"-x"}
+
+        if ($PlotWhileCopy -eq $true){
+            if ($AlternativePlotterEnabled -eq $true){
+                $FinalDirectoryPath = $TempDirectoryPath
+            }
+            else{
+                if (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
+                    $FinalDirectoryPath = $SecondTempDirectoryPath
+                }
+                else{
+                    $FinalDirectoryPath = $TempDirectoryPath
+                }
+            }
+        }
 
         #remove any trailing '\' since chia.exe hates them
         $TempDirectoryPath = $TempDirectoryPath.TrimEnd(@('\','/'))
@@ -177,6 +192,16 @@ function Start-GUIChiaPlotting {
                     }
                 } #while
 
+                if ($PlotWhileCopy -eq $true -and ($ChiaRun.ChiaProcess.ExitCode -eq 0)){
+                    if (-not$ChiaJob.BasicPlotting){
+                        Start-PlotCopyPhase -RunToCopy $ChiaRun -FinalVol $FinalMasterVolume -TempVol $TempMasterVolume
+                    }
+                    else{
+                        Start-PlotCopyPhase -RunToCopy $ChiaRun
+                    }
+                    return #need to return so that the next plot can start
+                }
+
                 $ChiaJob.RunsInProgress.Remove($ChiaRun)
                 $ChiaJob.CompletedRunCount++
 
@@ -190,7 +215,7 @@ function Start-GUIChiaPlotting {
                     $ChiaRun.ExitTime = $ChiaProcess.ExitTime
                 }
 
-                if ($ChiaRun.ChiaPRocess.ExitCode -ne 0){
+                if ($ChiaRun.ChiaProcess.ExitCode -ne 0){
                     $ChiaRun.Status = "Failed"
                     $ChiaQueue.FailedPlotCount++
                     $ChiaJob.FailedPlotCount++

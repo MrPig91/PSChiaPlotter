@@ -90,6 +90,7 @@ namespace PSChiaPlotter
         public string AlternativePlotterPath { get; set; }
         public int PhaseThreeFourBuckets { get; set; }
         public bool Phase3and4BucketsEnabled { get; set; }
+        public bool PlotWhileCopy { get; set; }
 
         public ChiaParameters()
         {
@@ -134,6 +135,7 @@ namespace PSChiaPlotter
             AutoPlotCheckEnabled = chiaParameters.AutoPlotCheckEnabled;
             PhaseThreeFourBuckets = chiaParameters.PhaseThreeFourBuckets;
             Phase3and4BucketsEnabled = chiaParameters.Phase3and4BucketsEnabled;
+            PlotWhileCopy = chiaParameters.PlotWhileCopy;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
