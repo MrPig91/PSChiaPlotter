@@ -23,6 +23,7 @@ function Start-PlotCopyPhase {
             $RunToCopy.Phase = "Copy"
             $RunToCopy.CurrentPhaseProgress = 0
             $RunToCopy.Progress = 98
+            $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
             if ($RunToCopy.PlottingParameters.AlternativePlotterEnabled -eq $true){
                 $tempFinalPath = $RunToCopy.PlottingParameters.TempVolume.DirectoryPath
             }
@@ -58,10 +59,10 @@ function Start-PlotCopyPhase {
             $CopyRunJob.CompletedPlotCount++
             $RunToCopy.ParentQueue.CompletedPlotCount++
             $DataHash.MainViewModel.CompletedRuns.Add($RunToCopy)
-            $RunToCopy.CheckPlotPowershellCommand = "&'$ChiaPath' plots check -g $plotid"
+            $RunToCopy.CheckPlotPowershellCommand = "&'$ChiaPath' plots check -g $($RunToCopy.PlotId)"
             Update-ChiaGUISummary -Success
             if ($RunToCopy.PlottingParameters.AutoPlotCheckEnabled){
-                $PlotCheckResults = Test-ChiaPlot -Path $plotid -ErrorAction Continue
+                $PlotCheckResults = Test-ChiaPlot -Path $RunToCopy.PlotId -ErrorAction Continue
                 if ($Null -ne $PlotCheckResults){
                     $RunToCopy.PlotCheckRatio = [math]::Round($PlotCheckResults.Ratio,2)
                 }
