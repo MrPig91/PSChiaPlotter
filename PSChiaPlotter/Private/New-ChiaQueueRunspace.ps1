@@ -89,7 +89,7 @@ function New-ChiaQueueRunspace {
                         }
                         catch{
                             $Queue.Status = "Failed To Grab Volume Info"
-                            Write-Error -LogType "Error" -ErrorObject $_
+                            Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
                             Start-Sleep -Seconds 30
                         }
                     }
