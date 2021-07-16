@@ -37,16 +37,16 @@ function Start-GUIChiaPlotting {
         $X = if ($ExcludeFinalDirectory){"-x"}
 
         if ($PlotWhileCopy -eq $true){
-            if ($ChiaJob.BasicPlotting -and $ChiaRun.PlottingParameters.EnableBasicSecondTempDirectory){
+            if ($AlternativePlotterEnabled -eq $true){
+                $FinalDirectoryPath = $TempDirectoryPath
+            }
+            else{
                 if (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
                     $FinalDirectoryPath = $SecondTempDirectoryPath
                 }
-            }
-            elseif (-not[string]::IsNullOrWhiteSpace($SecondTempDirectoryPath)){
-                $FinalDirectoryPath = $SecondTempDirectoryPath
-            }
-            else{
-                $FinalDirectoryPath = $TempDirectoryPath
+                else{
+                    $FinalDirectoryPath = $TempDirectoryPath
+                }
             }
         }
 

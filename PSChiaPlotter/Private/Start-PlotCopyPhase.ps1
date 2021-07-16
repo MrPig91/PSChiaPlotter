@@ -23,11 +23,16 @@ function Start-PlotCopyPhase {
             $RunToCopy.Phase = "Copy"
             $RunToCopy.CurrentPhaseProgress = 0
             $RunToCopy.Progress = 98
-            if (-not[string]::IsNullOrEmpty($RunToCopy.PlottingParameters.SecondTempVolume.DirectoryPath)){
-                $tempFinalPath = $RunToCopy.PlottingParameters.SecondTempVolume.DirectoryPath
+            if ($RunToCopy.PlottingParameters.AlternativePlotterEnabled -eq $true){
+                $tempFinalPath = $RunToCopy.PlottingParameters.TempVolume.DirectoryPath
             }
             else{
-                $tempFinalPath = $RunToCopy.PlottingParameters.TempVolume.DirectoryPath
+                if (-not[string]::IsNullOrEmpty($RunToCopy.PlottingParameters.SecondTempVolume.DirectoryPath)){
+                    $tempFinalPath = $RunToCopy.PlottingParameters.SecondTempVolume.DirectoryPath
+                }
+                else{
+                    $tempFinalPath = $RunToCopy.PlottingParameters.TempVolume.DirectoryPath
+                }
             }
             $plotPath = Join-Path $tempFinalPath -ChildPath "*$($RunToCopy.PlotId)*"
             $PlotItem = Get-Item -Path $plotPath
