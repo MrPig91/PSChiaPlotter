@@ -1,19 +1,23 @@
 function Stop-PSChiaPlotter{
     [CmdletBinding()]
-    param()
+    param(
+        [switch]$EndChiaProcess
+    )
 
     $RunningQueues = $DataHash.MainViewModel.AllQueues | Where-Object Status -eq "Running"
     foreach ($Queue in $RunningQueues){
         $queue.Status = "Paused"
     }
 
-    $ALLChiaProcesses = $DataHash.MainViewModel.CurrentRuns
-    foreach ($run in $ALLChiaProcesses){
-        try{
-            Stop-Process $run.ProcessID
-        }
-        catch{
-            Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+    if ($EndChiaProcess){
+        $ALLChiaProcesses = $DataHash.MainViewModel.CurrentRuns
+        foreach ($run in $ALLChiaProcesses){
+            try{
+                Stop-Process $run.ProcessID
+            }
+            catch{
+                Write-PSChiaPlotterLog -LogType ERROR -ErrorObject $_
+            }
         }
     }
     $RunningRunspaces = $DataHash.Runspaces

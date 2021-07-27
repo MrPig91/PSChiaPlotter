@@ -74,12 +74,14 @@ The following is a list of things I want to add or improve on in the module. Not
   - :white_check_mark: Add Phase % text and progress bar in background of the cell - Version 1.0.32+
   - :white_check_mark: Update module when pool plotting comes out - Version 1.0.46+
   - :white_check_mark: Added Button column on Completed Runs tab for checking finished plot - Version 1.0.43+
+  - :white_check_mark: Add Madmax Alternative Plot Option (User can use a textbox to provide a path to the .exe) - Version 1.0.47+
   - :white_check_mark: Add Replot Feature - Version 1.0.46+
-  - [ ] Add Tab page to show a datagrid with all plotting stats
+  - :white_check_mark: Add Tab page to show a datagrid with all plotting stats - Version 1.0.50+
   - [ ] Add Current and Completed Tabs for Queue groupbox 
-  - [ ] Add Madmax Alternative Plot Option (User can use a textbox to provide a path to the .exe)
   - [ ] Add the ability to add and remove columns on datagrids  
   - [ ] Notifications Integration (Discord, Toast, etc.)
+  - [ ] Add The Ability To Add More Plots To Running Jobs
+  - [ ] Global Phase 1 Limitor
   - [ ] Add Dark Mode
   
 - [ ] 3. Get-ChiaKPlotCombination
@@ -114,5 +116,12 @@ for ($i = 1; $i -le $parallel;$i++){
 ```
 
 ## Donate
-If you find these tools useful and want to donate you can send XCH to the below address.
+If you find these tools useful and want to donate you can use any of the below addresses.
+
 XCH: xch1xlsrczvnfzjfeg7ejpaxy7evcn0nvsr73s4gcmzdqd7zkzlvy8ds49qvv2
+
+ETH: 0xeeb3d0FEECaAfEd8BBC705370579689BFA024Be4
+
+XMR: 4Adn4LNiaqjUfkAq1RNmLLcRd2oBDdGx8HWL4L76eZmMWQGbowrYhvuajRCdFYLq6pGAPgXYE9P3g2wvVp36FFRn3EAzRjW
+
+BAN: ban_37o6aossupgce34dma9r6na4hi79j6mhqrtp1gkr8ygz6nxjz8t9q3emkp4h

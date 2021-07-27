@@ -54,6 +54,7 @@ namespace PSChiaPlotter
         public int Threads { get; set; }
         public int Buckets { get; set; }
         public ChiaVolume TempVolume { get; set; }
+        public bool AutoPlotCheckEnabled { get; set; }
         public ChiaVolume SecondTempVolume
         {
             get { return _secondtempvolume; }
@@ -85,6 +86,11 @@ namespace PSChiaPlotter
         public ChiaVolume BasicFinalDirectory { get; set; }
         public string BasicSecondTempDirectory { get; set; }
         public bool EnableBasicSecondTempDirectory { get; set; }
+        public bool AlternativePlotterEnabled { get; set; }
+        public string AlternativePlotterPath { get; set; }
+        public int PhaseThreeFourBuckets { get; set; }
+        public bool Phase3and4BucketsEnabled { get; set; }
+        public bool PlotWhileCopy { get; set; }
 
         public ChiaParameters()
         {
@@ -92,6 +98,7 @@ namespace PSChiaPlotter
             RAM = 3390;
             Threads = 2;
             Buckets = 128;
+            PhaseThreeFourBuckets = 128;
             LogDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".chia\\mainnet\\plotter");
             BasicTempDirectory = new ChiaVolume(string.Empty);
             BasicFinalDirectory = new ChiaVolume(string.Empty);
@@ -123,6 +130,12 @@ namespace PSChiaPlotter
             PoolContractAddress = chiaParameters.PoolContractAddress;
             PoolContractEnabled = chiaParameters.PoolContractEnabled;
             ReplotEnabled = chiaParameters.ReplotEnabled;
+            AlternativePlotterEnabled = chiaParameters.AlternativePlotterEnabled;
+            AlternativePlotterPath = chiaParameters.AlternativePlotterPath;
+            AutoPlotCheckEnabled = chiaParameters.AutoPlotCheckEnabled;
+            PhaseThreeFourBuckets = chiaParameters.PhaseThreeFourBuckets;
+            Phase3and4BucketsEnabled = chiaParameters.Phase3and4BucketsEnabled;
+            PlotWhileCopy = chiaParameters.PlotWhileCopy;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -262,7 +275,7 @@ namespace PSChiaPlotter
             set
             {
                 _completedruncount = value;
-                if (CompletedRunCount == TotalPlotCount)
+                if (CompletedRunCount == TotalPlotCount && PlotInfinite == false)
                 {
                     Status = "Completed";
                 }
@@ -340,6 +353,9 @@ namespace PSChiaPlotter
         public ObservableCollection<ChiaQueue> Queues { get; set; }
         public int DelayInMinutes { get; set; }
         public int FirstDelay { get; set; }
+
+        public bool DisableFreeSpaceCheck { get; set; }
+        public bool PlotInfinite { get; set; }
 
 
         public ChiaJob()
@@ -634,6 +650,7 @@ namespace PSChiaPlotter
         private int _exitcode;
         private DateTime _exittime;
         private double _currentphaseprogress;
+        private double _plotcheckratio;
     
         public int JobNumber { get; set; }
         public int QueueNumber { get; set; }
@@ -674,6 +691,17 @@ namespace PSChiaPlotter
         public string LogPath { get; set; }
         public int ProcessID { get; set; }
         public ChiaParameters PlottingParameters { get; set; }
+
+            
+        public double PlotCheckRatio
+        {
+            get { return _plotcheckratio; }
+            set
+            {
+                _plotcheckratio = value;
+                OnPropertyChanged();
+            }
+        }
     
         public string CheckPlotPowershellCommand { get; set; }
     
@@ -1353,6 +1381,8 @@ namespace PSChiaPlotter
         public ObservableCollection<ChiaJob> AllJobs { get; set; }
         public ObservableCollection<ChiaVolume> AllVolumes { get; set; }
 
+        public ObservableCollection<string> PlotLogDirectoryPaths { get; set; }
+        public ObservableCollection<Object> AllPlottingLogStats { get; set; }
 
         public MainViewModel()
         {
@@ -1363,6 +1393,8 @@ namespace PSChiaPlotter
             AllQueues = new ObservableCollection<ChiaQueue>();
             AllJobs = new ObservableCollection<ChiaJob>();
             AllVolumes = new ObservableCollection<ChiaVolume>();
+            PlotLogDirectoryPaths = new ObservableCollection<string>();
+            AllPlottingLogStats = new ObservableCollection<object>();
 
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllJobs, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllQueues, new System.Object());
@@ -1371,6 +1403,8 @@ namespace PSChiaPlotter
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(CompletedRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(FailedRuns, new System.Object());
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllVolumes, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(PlotLogDirectoryPaths, new System.Object());
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllPlottingLogStats, new System.Object());
         }
 
 

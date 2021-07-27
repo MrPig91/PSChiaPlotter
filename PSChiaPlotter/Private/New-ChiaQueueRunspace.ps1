@@ -17,14 +17,14 @@ function New-ChiaQueueRunspace {
         Get-childItem -Path $DataHash.PrivateFunctions -File -Recurse | ForEach-Object {Import-Module $_.FullName}
         Get-childItem -Path $DataHash.Classes -File | ForEach-Object {Import-Module $_.FullName}
         try{
-            for ($runNumber = 1;($Job.CompletedRunCount + $Job.RunsInProgress.Count) -lt $Job.TotalPlotCount;$runNumber++){
+            for ($runNumber = 1;Test-PlotCount $Job;$runNumber++){
                 $ChiaProcess = $Null
 
                 while ($Queue.IsBlocked -or $Queue.Pause){
                     if ($Queue.Quit){
                         break
                     }
-                    if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                    if (Test-PlotCount $Job -BreakLoop){
                         break
                     }
                     if ($Queue.Pause){
@@ -47,7 +47,7 @@ function New-ChiaQueueRunspace {
                     $PhaseOneIsOpen = Test-PhaseOneIsOpen -ChiaJob $Job
                     while ($PhaseOneIsOpen -eq $false){
                         $Queue.Status = "Waiting - Phase 1 Limit"
-                        if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                        if (Test-PlotCount $Job -BreakLoop){
                             break
                         }
                         if ($Queue.Quit){
@@ -64,7 +64,7 @@ function New-ChiaQueueRunspace {
                             if ($Queue.Quit){
                                 break
                             }
-                            if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                            if (Test-PlotCount $Job -BreakLoop){
                                 break
                             }
                             Start-Sleep -Seconds 6
@@ -89,7 +89,7 @@ function New-ChiaQueueRunspace {
                         }
                         catch{
                             $Queue.Status = "Failed To Grab Volume Info"
-                            Write-Error -LogType "Error" -ErrorObject $_
+                            Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_
                             Start-Sleep -Seconds 30
                         }
                     }
@@ -102,7 +102,7 @@ function New-ChiaQueueRunspace {
                     $BlockedQueue.IsBlocked = $false
                     $BlockedQueue = $null
                 }
-                if (($Job.CompletedRunCount + $Job.RunsInProgress.Count) -ge $Job.TotalPlotCount){
+                if (Test-PlotCount $Job -BreakLoop){
                     break
                 }
                 if ($Queue.Quit){
@@ -137,6 +137,12 @@ function New-ChiaQueueRunspace {
             $Queue.IsBlocked = $false
 
             $Queue.Status = "Finished"
+            if ($Job.PlotInfinite -eq $true){
+                $QueueFinishedCount = ($Job.Queues | where Status -ne "Finished" | Measure-Object).Count
+                if ($QueueFinishedCount -eq 0){
+                    $Job.Status = "Completed"
+                }
+            }
         }
         catch{
             Write-PSChiaPlotterLog -LogType "Error" -ErrorObject $_

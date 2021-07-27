@@ -140,9 +140,10 @@ function Invoke-NewJobButtonClick {
                         return
                     }
                 }
-                if ($DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.PoolContractEnabled){
-                    $response = Show-MessageBox -Text "Portable plots are not currently supported on mainnet! This plot is not guranteed to work in the future, continue?" -Button YesNo -Icon Warning
-                    if ($response -eq [System.Windows.MessageBoxResult]::No){
+
+                if ($DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.PlotWhileCopy -and $DataHash.NewJobViewModel.NewChiaJob.InitialChiaParameters.AlternativePlotterEnabled -eq $false){
+                    $Response = Show-MessageBox -Text "I advise to check 'Exclude Final Directory' when using 'Plot While Copy'. This is because the OG chia plotter will add the temp directory to your farming directories instead of the final directory`n`nDo you want to continue and start the job?" -Icon Warning -Buttons YesNo
+                    if ($Response -eq [System.Windows.MessageBoxResult]::No){
                         return
                     }
                 }
@@ -154,6 +155,12 @@ function Invoke-NewJobButtonClick {
                 }
 
                 $Results = Test-ReplotParameters
+                if ($Results -ne $true){
+                    Show-Messagebox -Text $Results -Title "Invalid Replot Parameters" -Icon Warning
+                    return
+                }
+
+                $Results = Test-AlternativePlotterParameters
                 if ($Results -ne $true){
                     Show-Messagebox -Text $Results -Title "Invalid Replot Parameters" -Icon Warning
                     return
@@ -197,6 +204,9 @@ function Invoke-NewJobButtonClick {
                     if ($Response -eq [System.Windows.MessageBoxResult]::Yes){
                         $DataHash.NewJobViewModel | Export-Clixml -Path $SaveJobPath -Depth 10 -Force
                         Show-MessageBox "$($DataHash.NewJobViewModel.NewChiaJob.JobName) job saved to $PSChiaPlotterFolderPath"
+                        return
+                    }
+                    else {
                         return
                     }
                 }

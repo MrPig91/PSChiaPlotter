@@ -17,10 +17,13 @@ function Get-BestChiaTempDrive {
         $tempvol.CurrentChiaRuns = $MasterVolume.CurrentChiaRuns
         $tempvol.PendingFinalRuns = $MasterVolume.PendingFinalRuns
     }
-    $sortedVolumes = $ChiaVolumes | sort -Property @{Expression = {$_.CurrentChiaRuns.Count}; Descending = $false},@{Expression = "FreeSpace"; Descending = $True}
+    $sortedVolumes = $ChiaVolumes | Sort-Object -Property @{Expression = {$_.CurrentChiaRuns.Count}; Descending = $false},@{Expression = "FreeSpace"; Descending = $True}
     foreach ($volume in $sortedVolumes){
-        if (($Volume.CurrentChiaRuns.Count -lt $volume.MaxConCurrentTempChiaRuns) -or ($ChiaJob.IgnoreMaxParallel)){
-            if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $requiredTempSize){
+        if ($ChiaJob.ChiaParameters.AlternativePlotterEnabled -eq $true){
+            return $volume
+        }
+        elseif (($Volume.CurrentChiaRuns.Count -lt $volume.MaxConCurrentTempChiaRuns) -or ($ChiaJob.IgnoreMaxParallel)){
+            if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $requiredTempSize -or ($ChiaJob.DisableFreeSpaceCheck -eq $true)){
                 return $volume
             }
         }

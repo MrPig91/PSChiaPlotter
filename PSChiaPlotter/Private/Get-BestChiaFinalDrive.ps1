@@ -14,7 +14,7 @@ function Get-BestChiaFinalDrive {
         $MasterVolume = $DataHash.MainViewModel.AllVolumes | where UniqueId -eq $finalvol.UniqueId
         $finalvol.PendingFinalRuns = $MasterVolume.PendingFinalRuns
     }
-    if ($ChiaJob.ReplotEnabled){
+    if ($ChiaQueue.PlottingParameters.ReplotEnabled){
         foreach ($replotVolume in $ChiaVolumes){
             foreach ($oldDirectory in $replotVolume.OldPlotDirectories){
                 try{
@@ -34,7 +34,7 @@ function Get-BestChiaFinalDrive {
     else{
         $sortedVolumes = $ChiaVolumes | Sort-Object -Property @{Expression = {$_.PendingFinalRuns.Count}; Descending = $false},@{Expression = "FreeSpace"; Descending = $True}
         foreach ($volume in $sortedVolumes){
-            if (($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $finalplotsize){
+            if ((($volume.FreeSpace - ($Volume.PendingFinalRuns.Count * $finalplotsize)) -gt $finalplotsize) -or ($ChiaJob.DisableFreeSpaceCheck -eq $true)){
                     return $volume
             }
         }
