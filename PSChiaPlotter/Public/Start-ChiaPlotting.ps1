@@ -71,7 +71,7 @@ function Start-ChiaPlotting {
     $FinalDirectoryPath = $FinalDirectoryPath.TrimEnd('\')
 
     #path to chia.exe
-    $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
+    $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\Programs\Chia\resources\app.asar.unpacked\daemon\chia.exe").FullName
     $ChiaArguments = "plots create -k $KSize -b $Buffer -r $Threads -t `"$TempDirectoryPath`" -d `"$FinalDirectoryPath`" $E $X"
 
     if ($KSize -eq 25){

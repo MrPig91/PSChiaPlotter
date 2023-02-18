@@ -23,7 +23,7 @@ function Start-PlotCopyPhase {
             $RunToCopy.Phase = "Copy"
             $RunToCopy.CurrentPhaseProgress = 0
             $RunToCopy.Progress = 98
-            $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
+            $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\Programs\Chia\resources\app.asar.unpacked\daemon\chia.exe").FullName
             if ($RunToCopy.PlottingParameters.AlternativePlotterEnabled -eq $true){
                 $tempFinalPath = $RunToCopy.PlottingParameters.TempVolume.DirectoryPath
             }
