@@ -12,7 +12,7 @@ function Test-ChiaPlotParallel {
     )
 
     Begin{
-        $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon").FullName
+        $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\Programs\Chia\resources\app.asar.unpacked\daemon").FullName
         if ($ENV:Path.Split(";") -notcontains $ChiaPath){
             $ENV:Path += ";$ChiaPath"
         }

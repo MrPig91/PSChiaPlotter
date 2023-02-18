@@ -55,7 +55,7 @@ function Start-GUIChiaPlotting {
         $FinalDirectoryPath = $FinalDirectoryPath.TrimEnd(@('\','/'))
 
         #path to chia.exe or alternative plotter
-        $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe").FullName
+        $ChiaPath = (Get-Item -Path "$ENV:LOCALAPPDATA\Programs\Chia\resources\app.asar.unpacked\daemon\chia.exe").FullName
         if ($AlternativePlotterEnabled -eq $true){
             $TempDirectoryPath = $TempDirectoryPath + '\'
             $FinalDirectoryPath = $FinalDirectoryPath + '\'
@@ -280,10 +280,10 @@ function Start-GUIChiaPlotting {
         else{
             $Message = "chia.exe was not found"
             $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
-                    [System.IO.FileNotFoundException]::new($Message,"$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe"),
+                    [System.IO.FileNotFoundException]::new($Message,"$ENV:LOCALAPPDATA\Programs\Chia\resources\app.asar.unpacked\daemon\chia.exe"),
                     'ChiaPathInvalid',
                     [System.Management.Automation.ErrorCategory]::ObjectNotFound,
-                    "$ENV:LOCALAPPDATA\chia-blockchain\app-*\resources\app.asar.unpacked\daemon\chia.exe"
+                    "$ENV:LOCALAPPDATA\Programs\Chia\resources\app.asar.unpacked\daemon\chia.exe"
                 )
                 $PSCmdlet.ThrowTerminatingError($ErrorRecord)
             $PSCmdlet.ThrowTerminatingError("Invalid Log Path Directory: $LogDirectoryPath")
